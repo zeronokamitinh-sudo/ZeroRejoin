@@ -19,14 +19,15 @@ init(autoreset=True)
 
 # Biến toàn cục để lưu package
 current_package_prefix = None
+# Đổi tên hiển thị thành ZeroNokami theo yêu cầu
+DISPLAY_NAME = "ZeroNokami"
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def banner():
     clear()
-    
-    # LOGO ZERONOKAMI (Dãn dòng để không bị dính chữ)
+    # LOGO ZERONOKAMI
     logo = """
  ███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗
  ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║
@@ -36,27 +37,25 @@ def banner():
   ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝
     """
     print(Fore.BLUE + Style.BRIGHT + logo)
-    print("\n") # Tạo khoảng trống với Logo
+    print("\n")
 
-    # KHUNG MENU (Đã xóa thông tin phụ)
+    # KHUNG MENU
     W = 60 
     print(Fore.YELLOW + Style.BRIGHT + " ╔" + "═" * (W-2) + "╗")
-    
     header = " ZERONOKAMI - MENU "
     print(Fore.YELLOW + Style.BRIGHT + " ║" + Fore.CYAN + Style.BRIGHT + header.center(W-2) + Fore.YELLOW + Style.BRIGHT + "║")
     print(Fore.YELLOW + Style.BRIGHT + " ╠" + "═" * (W-2) + "╣")
 
-    def print_item(cmd_str, desc_str, color=Fore.GREEN):
+    def print_item(cmd_str, desc_str, color=Fore.CYAN):
         content = f" {cmd_str}  {desc_str}"
         line = content.ljust(W-4)
         print(Fore.YELLOW + Style.BRIGHT + " ║ " + color + Style.BRIGHT + line + Fore.YELLOW + Style.BRIGHT + " ║")
 
-    print_item("[1]", "Start Auto Rejoin")
-    print_item("[2]", "Setup Game ID")
-    print_item("[3]", "Auto Login Cookie")
-    print_item("[4]", "Enable Webhook")
-    print_item("[5]", "Auto Check User")
+    print_item("[3]", "Auto Login with Cookie")
+    print_item("[4]", "Enable Discord Webhook")
+    print_item("[5]", "Auto Check User Setup")
     print_item("[6]", "Configure Package Prefix")
+    print_item("[7]", "Auto Change Android ID")
     print_item("[0]", "Exit", color=Fore.RED)
 
     print(Fore.YELLOW + Style.BRIGHT + " ╚" + "═" * (W-2) + "╝\n")
@@ -65,40 +64,36 @@ def banner():
 while True:
     banner()
     try:
-        ch = input(Fore.GREEN + Style.BRIGHT + "[ ZeroNokami ] - Enter command: ")
+        # Tiền tố lệnh chính
+        prefix_label = f"{Fore.YELLOW}[ {DISPLAY_NAME} ]{Fore.WHITE} - "
+        ch = input(prefix_label + "Enter command: ")
         
-        if ch == "1":
-            print(Fore.GREEN + Style.BRIGHT + "\n[+] Đang auto rejoin... (giả lập)")
-            time.sleep(1)
-            
-        elif ch == "2":
-            gameid = input(Fore.CYAN + Style.BRIGHT + "\n[?] Nhập Game ID: ")
-            print(Fore.GREEN + Style.BRIGHT + f"[+] Đã set Game ID: {gameid}")
-            
-        elif ch == "3":
-            print(Fore.YELLOW + Style.BRIGHT + "\n[!] Chức năng Auto Login đang bảo trì...")
-
-        elif ch == "6":
-            print("") 
+        if ch == "6":
+            # 1. Chỉ hiện dòng Current package prefix (Màu xanh lá) nếu đã có dữ liệu
             if current_package_prefix:
-                print(Fore.CYAN + Style.BRIGHT + f"Current package prefix: {current_package_prefix}")
+                print(f"{Fore.GREEN}[ {DISPLAY_NAME} ] - Current package prefix: {current_package_prefix}")
             
-            new_prefix = input(Fore.WHITE + Style.BRIGHT + "Enter new pack prefix: ")
+            # 2. Dòng nhập liệu (Vàng - Trắng) theo đúng format ảnh 1
+            prompt = f"{Fore.YELLOW}[ {DISPLAY_NAME} ]{Fore.WHITE} - Enter new package prefix (or press Enter to keep current): "
+            new_prefix = input(prompt)
             
             if new_prefix:
                 current_package_prefix = new_prefix
-                print(Fore.GREEN + Style.BRIGHT + "Save the package successfully")
-            else:
-                print(Fore.RED + "Package prefix cannot be empty!")
-
+                # 3. Thông báo lưu thành công và cập nhật theo format ảnh 2
+                print(f"{Fore.GREEN}[ {DISPLAY_NAME} ] - Configuration saved successfully.")
+                print(f"{Fore.GREEN}[ {DISPLAY_NAME} ] - Package prefix updated to: {current_package_prefix}")
+            
         elif ch == "0":
-            print(Fore.RED + Style.BRIGHT + "\n[!] Tạm biệt!")
+            print(Fore.RED + Style.BRIGHT + f"\n[ {DISPLAY_NAME} ] - Tạm biệt!")
             sys.exit()
             
-        else:
-            print(Fore.RED + Style.BRIGHT + "\n[!] Lệnh không hợp lệ!")
+        elif ch == "":
+            continue
             
-        input(Fore.WHITE + Style.BRIGHT + "\nEnter to continue...")
+        else:
+            print(f"{Fore.RED}[ {DISPLAY_NAME} ] - Command not implemented yet.")
+            
+        input(f"{Fore.GREEN}\nPress Enter to return...")
         
     except KeyboardInterrupt:
         sys.exit()
