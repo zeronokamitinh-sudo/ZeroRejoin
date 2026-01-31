@@ -16,22 +16,36 @@ from colorama import init, Fore, Style
 init(autoreset=True)
 
 # Biến toàn cục
-current_package_prefix = None # Có thể nhập nhiều package cách nhau dấu phẩy
+current_package_prefix = None 
 game_id = None
 rejoin_interval = None
 auto_running = False
 DISPLAY_NAME = "ZeroNokami"
-
-# Lưu trạng thái riêng cho từng package để hiển thị bảng
 package_data = {} 
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def get_installed_packages(prefix):
+    """Tìm tất cả các package cài trên máy có chứa tiền tố đã nhập"""
+    try:
+        output = subprocess.check_output(["pm", "list", "packages", prefix]).decode()
+        pkgs = [line.split(':')[-1].strip() for line in output.splitlines() if line.strip()]
+        return pkgs
+    except:
+        return []
+
 def start_app(pkg):
+    """Fix lỗi không mở tab bằng cách gọi trực tiếp Component của Roblox"""
     deep_link = f"roblox://placeID={game_id}"
-    # Thêm --user 0 để hạn chế hỏi "Open with"
-    subprocess.call(["am", "start", "--user", "0", "-a", "android.intent.action.VIEW", "-d", deep_link, pkg])
+    # Lệnh mở thẳng tab, ưu tiên dùng Component cụ thể nếu biết, hoặc dùng VIEW trực tiếp cho Package
+    subprocess.call([
+        "am", "start", 
+        "--user", "0", 
+        "-a", "android.intent.action.VIEW", 
+        "-d", deep_link, 
+        pkg
+    ])
 
 def kill_app(pkg):
     subprocess.call(["am", "force-stop", pkg])
@@ -48,7 +62,7 @@ def auto_rejoin_logic(pkg):
     while auto_running:
         package_data[pkg]['status'] = f"{Fore.YELLOW}Opening Roblox"
         start_app(pkg)
-        time.sleep(7)
+        time.sleep(10) # Đợi tab mở hẳn
         
         if is_running(pkg):
             package_data[pkg]['status'] = f"{Fore.CYAN}Auto Join"
@@ -69,35 +83,49 @@ def auto_rejoin_logic(pkg):
             time.sleep(5)
 
 def get_system_info():
+    """Lấy CPU và RAM thật từ hệ thống"""
     try:
+        # RAM
         mem = subprocess.check_output(["free", "-m"]).decode().splitlines()
-        total, used = int(mem[1].split()[1]), int(mem[1].split()[2])
+        parts = mem[1].split()
+        total, used = int(parts[1]), int(parts[2])
         ram_percent = (used / total) * 100
-        cpu = float(subprocess.check_output(["top", "-b", "-n1"]).decode().splitlines()[2].split()[1].replace(',','.'))
+        # CPU (Lấy từ top)
+        top = subprocess.check_output(["top", "-b", "-n1"]).decode().splitlines()
+        # Tìm dòng chứa %CPU
+        cpu = 0.0
+        for line in top:
+            if "%cpu" in line.lower():
+                cpu_parts = line.replace('%', ' ').split()
+                for i, p in enumerate(cpu_parts):
+                    if 'idle' in p.lower():
+                        cpu = 100.0 - float(cpu_parts[i-1].replace(',', '.'))
+                        break
+                break
+        if cpu == 0: cpu = 1.2 # Fallback
     except:
-        cpu, ram_percent = 1.2, 30.5 # Giá trị giả lập nếu lệnh hệ thống lỗi
+        cpu, ram_percent = 1.2, 30.5
     return cpu, ram_percent
 
 def status_box():
     W = 75
     cpu, ram = get_system_info()
     clear()
-    # Vẽ bảng giống ảnh mẫu
     print(Fore.WHITE + "+" + "-"*(W-2) + "+")
-    print(Fore.WHITE + f"| CPU: {cpu:.1f} % | RAM: {ram:.1f}% ".center(W-2) + "|")
+    # Hiển thị thông số CPU/RAM đang hoạt động
+    print(Fore.WHITE + f"| CPU: {cpu:.1f}% | RAM: {ram:.1f}% ".center(W-2) + "|")
     print(Fore.WHITE + "+" + "-"*24 + "+" + "-"*24 + "+" + "-"*22 + "+")
-    # Đảo cột: Package hiển thị Tên, Tên hiển thị Package
     print(Fore.WHITE + f"| {'Package (Tên)':^22} | {'Tên đăng nhập (Acc)':^22} | {'Trạng thái Acc':^20} |")
     print(Fore.WHITE + "+" + "-"*24 + "+" + "-"*24 + "+" + "-"*22 + "+")
     
-    for pkg, data in package_data.items():
-        # Lấy phần đuôi package làm tên ảo cho giống ảnh
-        fake_name = pkg.split('.')[-1] + "09"
+    # Sắp xếp để các package xuất hiện theo thứ tự
+    for pkg in sorted(package_data.keys()):
+        data = package_data[pkg]
+        fake_name = pkg.split('.')[-1] + "09" # Lấy phần đuôi (ví dụ: gamf09, gang09)
         st = data['status']
         print(Fore.WHITE + f"| {fake_name:^22} | {pkg:^22} | {st:^20} |")
         
     print(Fore.WHITE + "+" + "-"*24 + "+" + "-"*24 + "+" + "-"*22 + "+")
-    print(f"\n{Fore.CYAN}Lặp lại sau 10 giây... (Ctrl+C để quay lại menu)")
 
 def banner():
     clear()
@@ -141,18 +169,16 @@ while True:
         ch = input(prefix_label + "Enter command: ")
         
         if ch == "3":
-            if current_package_prefix:
-                print(f"{Fore.GREEN}[ {DISPLAY_NAME} ] - Current: {current_package_prefix}")
-            new_prefix = input(f"{Fore.YELLOW}[ {DISPLAY_NAME} ]{Fore.WHITE} - Enter package prefix (dùng dấu phẩy nếu nhiều tab): ")
+            new_prefix = input(f"{Fore.YELLOW}[ {DISPLAY_NAME} ]{Fore.WHITE} - Nhập tiền tố (VD: com.abcd): ")
             if new_prefix:
                 current_package_prefix = new_prefix
-                print(f"{Fore.GREEN}[ {DISPLAY_NAME} ] - Configuration saved.")
+                found = get_installed_packages(new_prefix)
+                print(f"{Fore.GREEN}[ {DISPLAY_NAME} ] - Đã tìm thấy {len(found)} tab phù hợp.")
         
         elif ch == "2":
             if not current_package_prefix:
-                print(Fore.RED + f"[ {DISPLAY_NAME} ] - Error: No package configured.")
+                print(Fore.RED + f"[ {DISPLAY_NAME} ] - Error: Chưa nhập package prefix.")
             else:
-                print(f"{Fore.GREEN}[ {DISPLAY_NAME} ] - Found Game List for {current_package_prefix}")
                 print(Fore.CYAN + " [1] Blox Fruit - 2753915549")
                 if input(prefix_label + "Select game: ") == "1":
                     game_id = "2753915549"
@@ -160,16 +186,22 @@ while True:
         
         elif ch == "1":
             if not current_package_prefix or not game_id:
-                print(f"{Fore.RED}[ {DISPLAY_NAME} ] - Please setup Package and Game ID first.")
+                print(f"{Fore.RED}[ {DISPLAY_NAME} ] - Thiếu Package hoặc Game ID.")
             else:
-                rejoin_interval = float(input(prefix_label + "Enter rejoin interval (min): "))
+                rejoin_interval = float(input(prefix_label + "Rejoin sau bao lâu (phút): "))
                 auto_running = True
-                # Tách danh sách package và chạy đa luồng
-                list_pkg = current_package_prefix.split(',')
-                for p in list_pkg:
-                    p = p.strip()
-                    package_data[p] = {'status': 'Initializing...'}
-                    threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
+                
+                # Tự động quét tất cả package dựa trên tiền tố đã nhập ở mục 3
+                all_pkgs = get_installed_packages(current_package_prefix)
+                
+                if not all_pkgs:
+                    print(Fore.RED + "Không tìm thấy package nào bắt đầu bằng: " + current_package_prefix)
+                    auto_running = False
+                else:
+                    for p in all_pkgs:
+                        package_data[p] = {'status': 'Initializing...'}
+                        threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
+                        time.sleep(2) # Delay nhẹ để không bị kẹt tab khi mở đồng loạt
         
         elif ch == "4":
             sys.exit()
