@@ -1,4 +1,17 @@
-import os, time, sys
+import os, time, sys, subprocess
+
+# --- TỰ ĐỘNG FIX LỖI THIẾU THƯ VIỆN ---
+def install_dependencies():
+    try:
+        from colorama import init, Fore, Style
+    except ImportError:
+        print(">> Đang cài đặt thư viện colorama để sửa lỗi...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "colorama"])
+        print(">> Đã cài đặt xong! Vui lòng đợi khởi động...")
+        time.sleep(1)
+        os.execv(sys.executable, ['python'] + sys.argv)
+
+install_dependencies()
 from colorama import init, Fore, Style
 
 # Khởi tạo colorama
@@ -13,7 +26,7 @@ def clear():
 def banner():
     clear()
     
-    # 1. LOGO ZERONOKAMI (Đã đổi sang màu XANH DƯƠNG)
+    # LOGO ZERONOKAMI (Dãn dòng để không bị dính chữ)
     logo = """
  ███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗
  ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║
@@ -23,14 +36,9 @@ def banner():
   ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝
     """
     print(Fore.BLUE + Style.BRIGHT + logo)
+    print("\n") # Tạo khoảng trống với Logo
 
-    # 2. THÔNG TIN PHỤ
-    print(Fore.RED + Style.BRIGHT + " => " + Fore.WHITE + Style.BRIGHT + "★ VIET NAM VERSION ★" + Fore.RED + Style.BRIGHT + " <=")
-    print(Fore.RED + Style.BRIGHT + " - Version:" + Fore.WHITE + " 5.0.0 | Created By zeronokami.shop | Bản hoàn chỉnh")
-    print(Fore.RED + Style.BRIGHT + " - Credit: " + Fore.WHITE + " zeronokami.shop")
-    print(Fore.RED + Style.BRIGHT + " - Method: " + Fore.WHITE + " Check Executor & Auto Rejoin\n")
-
-    # 3. KHUNG MENU
+    # KHUNG MENU (Đã xóa thông tin phụ)
     W = 60 
     print(Fore.YELLOW + Style.BRIGHT + " ╔" + "═" * (W-2) + "╗")
     
@@ -57,7 +65,6 @@ def banner():
 while True:
     banner()
     try:
-        # Thay đổi dòng nhập lệnh theo yêu cầu
         ch = input(Fore.GREEN + Style.BRIGHT + "[ ZeroNokami ] - Enter command: ")
         
         if ch == "1":
@@ -72,7 +79,7 @@ while True:
             print(Fore.YELLOW + Style.BRIGHT + "\n[!] Chức năng Auto Login đang bảo trì...")
 
         elif ch == "6":
-            print("") # Xuống dòng cho đẹp
+            print("") 
             if current_package_prefix:
                 print(Fore.CYAN + Style.BRIGHT + f"Current package prefix: {current_package_prefix}")
             
@@ -91,7 +98,6 @@ while True:
         else:
             print(Fore.RED + Style.BRIGHT + "\n[!] Lệnh không hợp lệ!")
             
-        # Dòng Enter to continue theo yêu cầu
         input(Fore.WHITE + Style.BRIGHT + "\nEnter to continue...")
         
     except KeyboardInterrupt:
