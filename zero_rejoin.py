@@ -93,25 +93,26 @@ def status_box():
     W = 80
     cpu, ram = get_system_info()
     clear()
-    # High-end border design
+    # High-end border design (Cyan Theme)
     print(Fore.CYAN + "╔" + "═"*(W-2) + "╗")
     print(Fore.CYAN + "║" + f"{Fore.WHITE}{Style.BRIGHT} MONITORING SYSTEM - CPU: {cpu:.1f}% | RAM: {ram:.1f}% ".center(W-2) + Fore.CYAN + "║")
     print(Fore.CYAN + "╠" + "═"*26 + "╦" + "═"*26 + "╦" + "═"*24 + "╣")
-    print(Fore.CYAN + "║" + f"{Fore.YELLOW} Display Name (ID) ".center(26) + "║" + f"{Fore.YELLOW} Package Identifier ".center(26) + "║" + f"{Fore.YELLOW} Status ".center(24) + "║")
+    print(Fore.CYAN + "║" + f"{Fore.YELLOW} Roblox Username ".center(26) + "║" + f"{Fore.YELLOW} Package ID ".center(26) + "║" + f"{Fore.YELLOW} Status ".center(24) + "║")
     print(Fore.CYAN + "╠" + "═"*26 + "╬" + "═"*26 + "╬" + "═"*24 + "╣")
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        # Hiển thị Tên rút gọn từ package hoặc ID giả định cho chuyên nghiệp
-        display_name = f"Roblox_Tab_{pkg.split('.')[-1].upper()}"
+        # Displaying formatted Roblox-style username (@Name)
+        roblox_user = f"@{pkg.split('.')[-1].upper()}"
         st = data['status']
-        print(Fore.CYAN + "║" + f"{Fore.WHITE} {display_name[:24]:^24} " + Fore.CYAN + "║" + f"{Fore.WHITE} {pkg[:24]:^24} " + Fore.CYAN + "║" + f" {st:^22} " + Fore.CYAN + "║")
+        print(Fore.CYAN + "║" + f"{Fore.WHITE} {roblox_user[:24]:^24} " + Fore.CYAN + "║" + f"{Fore.WHITE} {pkg[:24]:^24} " + Fore.CYAN + "║" + f" {st:^22} " + Fore.CYAN + "║")
         
     print(Fore.CYAN + "╚" + "═"*26 + "╩" + "═"*26 + "╩" + "═"*24 + "╝")
 
 def banner():
     clear()
-    logo = f"""{Fore.MAGENTA}{Style.BRIGHT}
+    # Changed Logo color to Cyan/Light Blue
+    logo = f"""{Fore.CYAN}{Style.BRIGHT}
     ███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗
     ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║
       ███╔╝ █████╗  ██████╔╝██║   ██║██╔██╗ ██║██║   ██║█████╔╝ ███████║██╔████╔██║██║
@@ -150,7 +151,7 @@ while True:
 
     banner()
     try:
-        prefix_label = f"{Fore.WHITE}[ {Fore.MAGENTA}{DISPLAY_NAME}{Fore.WHITE} ] - {Fore.CYAN}"
+        prefix_label = f"{Fore.WHITE}[ {Fore.CYAN}{DISPLAY_NAME}{Fore.WHITE} ] - {Fore.GREEN}"
         ch = input(prefix_label + "Command Line: ")
         
         if ch == "3":
@@ -164,7 +165,8 @@ while True:
             if not current_package_prefix:
                 print(Fore.RED + ">> Error: Please set package prefix first!")
             else:
-                print(Fore.CYAN + " [1] Blox Fruit (2753915549)")
+                # Removed the ID number for a cleaner look
+                print(Fore.CYAN + " [1] Blox Fruit")
                 if input(prefix_label + "Select Option: ") == "1":
                     game_id = "2753915549"
                     print(f"{Fore.GREEN}>> Game ID successfully linked.")
