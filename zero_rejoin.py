@@ -1,103 +1,93 @@
 import os, time, sys
 from colorama import init, Fore, Style
 
-# Khởi tạo colorama, autoreset=True để tự động reset màu sau mỗi lệnh print
+# Khởi tạo colorama
 init(autoreset=True)
 
 def clear():
-    # Lệnh xóa màn hình cho cả Windows và Linux/Mac
+    # Xóa màn hình phù hợp cho cả Windows và Linux/Termux
     os.system('cls' if os.name == 'nt' else 'clear')
-
-def print_line(left, right, width=60):
-    # Hàm hỗ trợ in dòng menu để không bị lệch khung
-    # Cấu trúc: ║ [1]  │ Start Auto Rejoin... ║
-    content_len = width - 8 - len(left) # 8 là trừ đi các ký tự viền và khoảng cách
-    print(Fore.YELLOW + "║ " + Fore.GREEN + f"{left:<4}" + Fore.YELLOW + " │ " + Fore.BLUE + f"{right:<{content_len}}" + Fore.YELLOW + " ║")
 
 def banner():
     clear()
     
-    # 1. PHẦN TÊN TOOL (ASCII ART) - Màu Đỏ, Bỏ khung viền
-    # Font chữ dạng Blocky giống ảnh
-    ascii_art = """
-███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗
-╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║
-  ███╔╝ █████╗  ██████╔╝██║   ██║██╔██╗ ██║██║   ██║█████╔╝ ███████║██╔████╔██║██║
- ███╔╝  ██╔══╝  ██╔══██╗██║   ██║██║╚██╗██║██║   ██║██╔═██╗ ██╔══██║██║╚██╔╝██║██║
-███████╗███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝██║  ██╗██║  ██║██║ ╚═╝ ██║██║
-╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝
+    # 1. LOGO ZERONOKAMI (Chữ lớn, màu đỏ rực)
+    logo = """
+ ███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗
+ ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║
+   ███╔╝ █████╗  ██████╔╝██║   ██║██╔██╗ ██║██║   ██║█████╔╝ ███████║██╔████╔██║██║
+  ███╔╝  ██╔══╝  ██╔══██╗██║   ██║██║╚██╗██║██║   ██║██╔═██╗ ██╔══██║██║╚██╔╝██║██║
+ ███████╗███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝██║  ██╗██║  ██║██║ ╚═╝ ██║██║
+ ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝
     """
-    print(Fore.RED + Style.BRIGHT + ascii_art)
+    print(Fore.RED + Style.BRIGHT + logo)
 
-    # 2. PHẦN THÔNG TIN (INFO)
-    print(Fore.RED + "=> " + Fore.YELLOW + "★ VIET NAM VERSION ★" + Fore.RED + " <=")
-    print(Fore.GREEN + "- Version: " + Fore.WHITE + "5.0.0 | Created By ZeroNokami | Bản hoàn chỉnh")
-    print(Fore.GREEN + "- Credit:  " + Fore.WHITE + "zeronokami.shop")
-    print(Fore.GREEN + "- Method:  " + Fore.WHITE + "Check Executor\n")
+    # 2. THÔNG TIN PHỤ
+    print(Fore.RED + " => " + Fore.WHITE + "★ VIET NAM VERSION ★" + Fore.RED + " <=")
+    print(Fore.RED + " - Version:" + Fore.WHITE + " 5.0.0 | Created By zeronokami.shop | Bản hoàn chỉnh")
+    print(Fore.RED + " - Credit: " + Fore.WHITE + " zeronokami.shop")
+    print(Fore.RED + " - Method: " + Fore.WHITE + " Check Executor\n")
 
-    # 3. PHẦN MENU (BẢNG VIP) - Cố định độ rộng để không vỡ khung
-    # URL ở trên viền
-    url_text = " ZERONOKAMI - MENU "
-    print(Fore.YELLOW + "┌" + Fore.GREEN + url_text + Fore.YELLOW + ("─" * (52 - len(url_text))) + "┐")
+    # 3. KHUNG MENU (Đã đổi tiêu đề thành ZERONOKAMI - MENU)
+    # W là độ rộng cố định, giúp khung không bị vỡ khi resize terminal
+    W = 60 
     
-    # Header của bảng
-    print(Fore.YELLOW + "│ " + Fore.WHITE + "LỆNH" + " " * 3 + Fore.YELLOW + "│ " + Fore.WHITE + "MÔ TẢ LỆNH" + " " * 39 + Fore.YELLOW + "│")
-    print(Fore.YELLOW + "├───────┼────────────────────────────────────────────────────┤")
+    # Viền trên
+    print(Fore.YELLOW + " ╔" + "═" * (W-2) + "╗")
     
-    # Nội dung menu (Dùng format để căn lề chuẩn từng milimet)
-    # Cấu trúc: │ [x]   │ Tên chức năng                                      │
-    menu_items = [
-        ("[ 1 ]", "Start Auto Rejoin (Auto setup User ID)"),
-        ("[ 2 ]", "Setup Game ID for Packages"),
-        ("[ 3 ]", "Auto Login with Cookie"),
-        ("[ 4 ]", "Enable Discord Webhook"),
-        ("[ 5 ]", "Auto Check User Setup"),
-        ("[ 6 ]", "Configure Package Prefix"),
-        ("[ 7 ]", "Auto Change Android ID"),
-        ("[ 0 ]", "Exit Tool")
+    # Tiêu đề bảng mới: ZERONOKAMI - MENU
+    header = " ZERONOKAMI - MENU "
+    print(Fore.YELLOW + " ║" + Fore.CYAN + Style.BRIGHT + header.center(W-2) + Fore.YELLOW + "║")
+    
+    # Đường kẻ ngăn cách tiêu đề và cột
+    print(Fore.YELLOW + " ╠" + "═" * 7 + "╦" + "═" * (W-10) + "╣")
+    
+    # Tiêu đề cột
+    print(Fore.YELLOW + " ║ " + Fore.WHITE + "LỆNH" + "  ║ " + Fore.WHITE + "MÔ TẢ LỆNH" + " " * (W-22) + Fore.YELLOW + "║")
+    print(Fore.YELLOW + " ╠" + "═" * 7 + "╬" + "═" * (W-10) + "╣")
+
+    # Danh sách chức năng
+    menu = [
+        (" 1 ", "Start Auto Rejoin (Auto setup User ID)"),
+        (" 2 ", "Setup Game ID for Packages"),
+        (" 3 ", "Auto Login with Cookie"),
+        (" 4 ", "Enable Discord Webhook"),
+        (" 5 ", "Auto Check User Setup"),
+        (" 6 ", "Configure Package Prefix"),
+        (" 7 ", "Auto Change Android ID"),
+        (" 0 ", "Exit Tool")
     ]
 
-    for cmd, desc in menu_items:
-        # {:<5} nghĩa là dành 5 khoảng trống canh lề trái cho cột lệnh
-        # {:<50} nghĩa là dành 50 khoảng trống canh lề trái cho mô tả
-        print(Fore.YELLOW + "│ " + Fore.GREEN + f"{cmd:<5}" + Fore.YELLOW + " │ " + Fore.BLUE + f"{desc:<50}" + Fore.YELLOW + " │")
+    for code, desc in menu:
+        # ljust tự động bù khoảng trắng để viền bên phải luôn thẳng hàng
+        line_desc = desc.ljust(W-12)
+        print(Fore.YELLOW + f" ║ {Fore.GREEN}{code}{Fore.YELLOW}  ║ {Fore.BLUE}{line_desc}{Fore.YELLOW} ║")
 
-    # Đóng khung
-    print(Fore.YELLOW + "└───────┴────────────────────────────────────────────────────┘")
+    # Viền dưới
+    print(Fore.YELLOW + " ╚" + "═" * 7 + "╩" + "═" * (W-10) + "╝")
 
 while True:
     banner()
     try:
-        # Dòng nhập lệnh style giống ảnh
-        print("") # Xuống dòng cho thoáng
-        cmd_input = input(Fore.YELLOW + "[ zeronokami.shop ]" + Fore.WHITE + " - Enter command: ")
+        # Dòng nhập lệnh bên dưới menu
+        print("") 
+        cmd = input(f"{Fore.YELLOW}[ {Fore.WHITE}zeronokami.shop{Fore.YELLOW} ] - {Fore.WHITE}Enter command: {Fore.GREEN}")
         
-        if cmd_input == "1":
-            print(Fore.GREEN + "\n[+] Đang khởi động Auto Rejoin...")
-            for i in range(1, 6):
-                print(Fore.CYAN + f"[*] Đang kết nối lại lần {i}...", end="\r")
-                time.sleep(1)
-            print(Fore.GREEN + "\n[+] Hoàn tất! (Demo)")
-            
-        elif cmd_input == "2":
-            gameid = input(Fore.CYAN + "\nNhập Game ID: ")
-            print(Fore.GREEN + f"[+] Đã lưu Game ID: {gameid}")
-            
-        elif cmd_input == "3":
-            print(Fore.MAGENTA + "\n[!] Đang check cookie (Demo)...")
-            
-        elif cmd_input == "0":
-            print(Fore.RED + "\nGoodbye!")
-            sys.exit()
-            
+        if cmd == "0":
+            print(Fore.RED + "\n[!] Đang thoát chương trình...")
+            time.sleep(1)
+            break
+        elif cmd == "1":
+            print(Fore.CYAN + "\n[+] Đang thực hiện Auto Rejoin...")
+            time.sleep(2)
+        # Bạn có thể thêm các điều kiện elif cmd == "2", "3"... tại đây
         else:
-            print(Fore.RED + "\n[!] Lệnh không hợp lệ!")
+            print(Fore.RED + "\n[!] Lệnh không hợp lệ, vui lòng thử lại!")
+            time.sleep(1)
             
-        input(Fore.WHITE + "\nNhấn Enter để quay lại menu...")
-        
     except KeyboardInterrupt:
-        print(Fore.RED + "\nĐã dừng tool.")
-        sys.exit()
+        print(Fore.RED + "\n[!] Đã dừng bởi người dùng.")
+        break
     except Exception as e:
-        print(Fore.RED + f"Lỗi: {e}")
-        input()
+        print(Fore.RED + f"\n[!] Có lỗi xảy ra: {e}")
+        break
