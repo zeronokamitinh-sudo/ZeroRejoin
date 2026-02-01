@@ -21,10 +21,20 @@ rejoin_interval = None
 auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {} 
-W = 120 # Độ rộng cố định để khung luôn thẳng hàng
+
+# --- CẤU HÌNH GIAO DIỆN ---
+# W = 100 là kích thước tối ưu nhất cho Logo này trên Mobile
+# Giúp hạn chế vỡ khung khi zoom hơn so với 120
+W = 100 
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+# Hàm tính độ dài hiển thị thực tế (Bỏ qua mã màu ANSI)
+# Đây là chìa khóa để fix lỗi lệch khung
+def get_len_visual(text):
+    ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
+    return len(ansi_escape.sub('', str(text)))
 
 # --- LOGIC GỐC GIỮ NGUYÊN 100% ---
 def get_roblox_username(pkg):
@@ -107,9 +117,25 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- CẬP NHẬT GIAO DIỆN THEO YÊU CẦU ---
+# --- GIAO DIỆN ĐÃ FIX LỖI BIẾN DẠNG ---
+def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
+    """Hàm vẽ dòng nội dung đảm bảo không bao giờ lệch khung"""
+    visual_len = get_len_visual(content_str)
+    padding = W - 2 - visual_len
+    
+    if padding < 0: padding = 0 # Tránh lỗi nếu chữ quá dài
+    
+    if align == 'center':
+        pad_left = padding // 2
+        pad_right = padding - pad_left
+    else: # align left
+        pad_left = 0
+        pad_right = padding
+        
+    # In ra: Khung trái + space + Nội dung (có màu) + space + Khung phải
+    print(Fore.WHITE + "┃" + " " * pad_left + text_color + content_str + " " * pad_right + Fore.WHITE + "┃")
+
 def draw_logo():
-    # Logo Zero Manager Font to rõ nét
     art = [
         r" ███████╗███████╗██████╗  ██████╗     ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         r" ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗    ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -119,22 +145,17 @@ def draw_logo():
         r" ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝     ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝"
     ]
     for line in art:
-        # Căn giữa logo và bao bọc bởi đường kẻ dọc để khớp khung
-        padding_total = (W - 2) - len(line)
-        left_pad = padding_total // 2
-        right_pad = padding_total - left_pad
-        print(Fore.WHITE + "┃" + (" " * left_pad) + Fore.RED + line + (" " * right_pad) + Fore.WHITE + "┃")
+        draw_line_content(line, Fore.RED, align='center')
 
 def banner():
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo()
-    credit_str = "By ZeroNokami | High-Performance Engine"
-    print(Fore.WHITE + "┃" + credit_str.center(W - 2) + "┃")
+    
+    draw_line_content("By ZeroNokami | High-Performance Engine", Fore.WHITE, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
-    title = "[ TERMINAL CONTROL INTERFACE ]"
-    print(Fore.WHITE + "┃" + Fore.YELLOW + Style.BRIGHT + title.center(W - 2) + "┃")
+    draw_line_content("[ TERMINAL CONTROL INTERFACE ]", Fore.YELLOW + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
     opts = [
@@ -145,9 +166,13 @@ def banner():
     ]
     
     for num, txt, col in opts:
+        # Tạo chuỗi nội dung
         content = f"    [{num}] {txt}"
-        padding = " " * (W - len(content) - 2)
-        print(Fore.WHITE + "┃" + col + content + padding + Fore.WHITE + "┃")
+        # Tính toán khoảng trắng thủ công thay vì dùng chuỗi f-string định dạng
+        # Để đảm bảo màu sắc không làm sai lệch độ rộng
+        visual_len = len(content)
+        padding_right = W - 2 - visual_len
+        print(Fore.WHITE + "┃" + col + content + " " * padding_right + Fore.WHITE + "┃")
         
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
@@ -159,14 +184,16 @@ def status_box():
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
     header = f" MONITOR: CPU {cpu:.1f}% | RAM {ram:.1f}% "
-    print(Fore.WHITE + "┃" + Fore.CYAN + Style.BRIGHT + header.center(W - 2) + "┃")
+    draw_line_content(header, Fore.CYAN + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
-    u_w, p_w = 25, 35
-    s_w = W - u_w - p_w - 6
+    # Tính toán layout bảng status
+    u_w, p_w = 20, 30 # Giảm nhẹ kích thước cột để vừa W=100
+    s_w = W - u_w - p_w - 6 # Tự động tính cột còn lại
     
-    label = f"  {'USER':<{u_w}}{'PACKAGE':<{p_w}}{'STATUS':<{s_w}}  "
-    print(Fore.WHITE + "┃" + Fore.WHITE + label + "┃")
+    # Header bảng
+    label_str = f"  {'USER':<{u_w}}{'PACKAGE':<{p_w}}{'STATUS':<{s_w}}  "
+    print(Fore.WHITE + "┃" + label_str + " " * (W - 2 - len(label_str)) + "┃") # Fix padding tuyệt đối
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
     for pkg in sorted(package_data.keys()):
@@ -175,11 +202,19 @@ def status_box():
         p_name = str(pkg.split('.')[-1])[:p_w-2]
         st_color = data['status']
         
-        clean_st = re.sub(r'\x1b\[[0-9;]*m', '', st_color)
-        st_padding = " " * (s_w - len(clean_st) - 2)
+        # Tính độ dài status không màu
+        clean_st = get_len_visual(st_color)
         
-        row = f"  {user:<{u_w}}{p_name:<{p_w}}{st_color}{st_padding}  "
-        print(Fore.WHITE + "┃" + Fore.WHITE + row + Fore.WHITE + "┃")
+        # In từng phần tử và tính padding thủ công cho phần status cuối cùng
+        # để đảm bảo tổng độ dài luôn bằng W-2
+        part1 = f"  {user:<{u_w}}{p_name:<{p_w}}"
+        len_p1 = len(part1)
+        
+        # Padding còn lại cho status và khoảng trắng cuối
+        remaining_space = W - 2 - len_p1
+        
+        # Status text (có màu)
+        print(Fore.WHITE + "┃" + Fore.WHITE + part1 + st_color + " " * (remaining_space - clean_st) + Fore.WHITE + "┃")
     
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
