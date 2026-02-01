@@ -25,7 +25,7 @@ package_data = {}
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-# --- TÍNH NĂNG GỐC GIỮ NGUYÊN ---
+# --- LOGIC GỐC GIỮ NGUYÊN 100% ---
 def get_roblox_username(pkg):
     try:
         dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
@@ -109,73 +109,63 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- STATUS BOX: KHUNG NÉT ĐỨT TRẮNG ---
+# --- FIX HIỂN THỊ: CHỐNG BIẾN DẠNG KHI ZOOM ---
 def status_box():
     cpu, ram = get_system_info()
-    W = 66
+    W = 50 # Độ rộng hẹp hơn để tránh vỡ khi zoom to
     clear()
-    
-    print(Fore.WHITE + ". " + "- " * ((W-4)//2) + " .")
-    header = f" MONITORING: CPU {cpu:.1f}% | RAM {ram:.1f}% "
-    print(Fore.WHITE + "| " + Fore.CYAN + Style.BRIGHT + header.center(W-4) + Fore.WHITE + " |")
-    print(Fore.WHITE + ": " + "- " * 7 + "+ " + "- " * 10 + "+ " + "- " * 10 + " :")
-    print(Fore.WHITE + "| " + "USER".center(14) + "| " + "PACKAGE".center(20) + "| " + "STATUS".center(20) + " |")
-    print(Fore.WHITE + ": " + "- " * 7 + "+ " + "- " * 10 + "+ " + "- " * 10 + " :")
-    
+    print(Fore.WHITE + ".-" * (W // 2) + ".")
+    header = f" MONITOR: CPU {cpu:.1f}% | RAM {ram:.1f}% "
+    print(Fore.WHITE + "| " + Fore.CYAN + header.center(W-3) + Fore.WHITE + " |")
+    print(Fore.WHITE + "|-" + "-" * (W-3) + "-|")
+    print(Fore.WHITE + f"| {'USER':^12} | {'PACKAGE':^16} | {'STATUS':^13} |")
+    print(Fore.WHITE + "|-" + "-" * (W-3) + "-|")
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        user = (data.get('user', "Unknown")[:13])
-        p_display = (pkg.split('.')[-1][:18])
+        user = (data.get('user', "Unknown")[:11])
+        p_display = (pkg.split('.')[-1][:14])
         st = data['status']
-        
-        line = Fore.WHITE + "| " + Fore.YELLOW + f"{user.center(14)}" + Fore.WHITE + "| " + \
-               Fore.GREEN + f"{p_display.center(20)}" + Fore.WHITE + "| " + \
-               f"{st.center(20)}" + Fore.WHITE + " |"
+        line = Fore.WHITE + f"| {Fore.YELLOW}{user:^10} {Fore.WHITE}| {Fore.GREEN}{p_display:^14} {Fore.WHITE}| {st:^11} {Fore.WHITE}|"
         print(line)
-        
-    print(Fore.WHITE + "' " + "- " * ((W-4)//2) + " '")
+    print(Fore.WHITE + "'" + "-" * (W-1) + "'")
 
-# --- BANNER: CHỮ TO CỰC ĐẠI & KHUNG NÉT ĐỨT ---
+# --- BANNER X5: CHỐNG BIẾN DẠNG MENU ---
 def banner():
     clear()
-    # Danh sách màu sắc cho hiệu ứng xéo đa sắc
     colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA]
     
-    # Chữ ZERONOKAMI phiên bản Big Block to hơn
-    big_art = [
-        "  ______  ______ _____   ____  _   _  ____  _  __            __  __ _____ ",
-        " |___  / |  ____|  __ \ / __ \| \ | |/ __ \| |/ /    /\     |  \/  |_   _|",
-        "    / /  | |__  | |__) | |  | |  \| | |  | | ' /    /  \    | \  / | | |  ",
-        "   / /   |  __| |  _  /| |  | | |\  | |  | |  <    / /\ \   | |\/| | | |  ",
-        "  / /__  | |____| | \ \| |__| | | \ | |__| | . \  / ____ \  | |  | |_| |_ ",
-        " /_____| |______|_|  \_\\____/|_|  \_\____/|_|\_\/_/    \_\ |_|  |_|_____|"
+    # Chữ ZERONOKAMI kích thước x5 (Standard Block)
+    # Rút gọn khoảng cách để tránh tràn màn hình khi zoom
+    art = [
+        "  ZZZZZ  EEEEE  RRRR    OOOOO  N   N  OOOOO  K  K   AAA   M   M  IIIII",
+        "     Z   E      R   R  O     O NN  N O     O K K   A   A  MM MM    I  ",
+        "    Z    EEEE   RRRR   O     O N N N O     O KK    AAAAA  M M M    I  ",
+        "   Z     E      R  R   O     O N  NN O     O K K   A   A  M   M    I  ",
+        "  ZZZZZ  EEEEE  R   R   OOOOO  N   N  OOOOO  K  K  A   A  M   M  IIIII"
     ]
 
-    for i, line in enumerate(big_art):
+    for i, line in enumerate(art):
         colored_line = ""
         for j, char in enumerate(line):
-            # Công thức tạo màu xéo từ trái sang phải, trên xuống dưới
-            color_idx = (i + (j // 6)) % len(colors)
+            # Hiệu ứng màu xéo
+            color_idx = (i + (j // 8)) % len(colors)
             colored_line += colors[color_idx] + char
         print(Style.BRIGHT + colored_line)
-
-    W = 75 
-    print("\n" + Fore.WHITE + ". " + "- " * ((W-4)//2) + " .")
-    print(Fore.WHITE + "| " + Fore.YELLOW + Style.BRIGHT + f" {DISPLAY_NAME} - CONTROL PANEL ".center(W-4) + Fore.WHITE + " |")
-    print(Fore.WHITE + ": " + "- " * ((W-4)//2) + " :")
     
-    options = [
-        ("[1]", "Start Auto-Rejoin Engine", Fore.GREEN),
-        ("[2]", "Assign Game ID / Link", Fore.CYAN),
-        ("[3]", "Set Package Prefix", Fore.YELLOW),
-        ("[4]", "Exit System", Fore.RED)
-    ]
+    W = 55
+    print("\n" + Fore.WHITE + ".-" * (W // 2) + ".")
+    print(Fore.WHITE + "| " + Fore.YELLOW + f"{DISPLAY_NAME} CONTROL PANEL".center(W-3) + Fore.WHITE + " |")
+    print(Fore.WHITE + "| " + "-" * (W-3) + " |")
     
-    for opt in options:
+    opts = [("[1]", "Start Auto-Join", Fore.GREEN),
+            ("[2]", "Set Game ID", Fore.CYAN),
+            ("[3]", "Set Prefix", Fore.YELLOW),
+            ("[4]", "Exit", Fore.RED)]
+    
+    for opt in opts:
         content = f" {opt[0]} {opt[1]}"
-        print(Fore.WHITE + "| " + opt[2] + content.ljust(W-4) + Fore.WHITE + " |")
-        
-    print(Fore.WHITE + "' " + "- " * ((W-4)//2) + " '")
+        print(Fore.WHITE + "| " + opt[2] + content.ljust(W-3) + Fore.WHITE + " |")
+    print(Fore.WHITE + "'" + "-" * (W-1) + "'")
 
 # Main Loop (Giữ nguyên logic gốc)
 while True:
@@ -191,76 +181,67 @@ while True:
 
     banner()
     try:
-        prefix_label = f"{Fore.WHITE}[ {Fore.CYAN}{DISPLAY_NAME}{Fore.WHITE} ] - {Fore.GREEN}"
-        ch = input(prefix_label + "Command Line: ")
+        prefix_label = f"{Fore.WHITE}[{Fore.CYAN}{DISPLAY_NAME}{Fore.WHITE}]-{Fore.GREEN} "
+        ch = input(prefix_label + "> ")
         
         if ch == "3":
-            new_prefix = input(prefix_label + "Enter Package Prefix: ")
+            new_prefix = input(prefix_label + "Prefix: ")
             if new_prefix:
                 current_package_prefix = new_prefix
                 found = get_installed_packages(new_prefix)
-                print(f"{Fore.GREEN}>> Detected {len(found)} matching packages.")
+                print(f"{Fore.GREEN}>> Found {len(found)} pkgs.")
         
         elif ch == "2":
             if not current_package_prefix:
-                print(Fore.RED + ">> Error: Please set package prefix first!")
+                print(Fore.RED + ">> Set prefix first!")
             else:
-                print(Fore.CYAN + "\n --- SELECT GAME ---")
+                print(Fore.CYAN + "\n--- GAMES ---")
                 game_list = {
                     "1": ("Blox Fruit", "2753915549"),
-                    "2": ("99 Night In The Forest", "79546208627805"),
+                    "2": ("Night Forest", "79546208627805"),
                     "3": ("Deals Rails", "116495829188952"),
                     "4": ("Fisch", "16732694052"),
-                    "5": ("Anime Defenders", "17017769292"),
-                    "6": ("Bee Swarm Simulator", "1537690962"),
-                    "7": ("Steal A Brainrot", "109983668079237"),
-                    "8": ("Escape Tsunami For Brainrot", "131623223084840"),
-                    "9": ("Anime Adventure", "8304191830"),
+                    "5": ("Anime Def", "17017769292"),
+                    "6": ("Bee Swarm", "1537690962"),
+                    "7": ("Brainrot 1", "109983668079237"),
+                    "8": ("Brainrot 2", "131623223084840"),
+                    "9": ("Anime Adv", "8304191830"),
                     "10": ("King Legacy", "4520749081"),
                 }
                 for k, v in game_list.items():
-                    print(f"{Fore.WHITE} [{k}] {v[0]}")
-                print(Fore.YELLOW + " [11] Other Game / Private Server Link")
+                    print(f"[{k}] {v[0]}")
+                print("[11] Custom Link")
                 
-                game_choice = input(f"\n{prefix_label}Select Option: ")
-                
+                game_choice = input(f"\n{prefix_label}Select: ")
                 if game_choice in game_list:
                     game_id = game_list[game_choice][1]
-                    print(f"{Fore.GREEN}>> Linked: {game_list[game_choice][0]}")
+                    print(f"{Fore.GREEN}>> Linked.")
                 elif game_choice == "11":
-                    link = input(prefix_label + "Paste Link (VIP/Server): ")
+                    link = input(prefix_label + "Link: ")
                     if link:
                         game_id = link
-                        print(f"{Fore.GREEN}>> Custom link linked.")
-                else:
-                    print(Fore.RED + ">> Invalid selection.")
+                        print(f"{Fore.GREEN}>> Linked.")
         
         elif ch == "1":
             if not current_package_prefix or not game_id:
-                print(f"{Fore.RED}>> Error: Missing configuration!")
+                print(f"{Fore.RED}>> Missing Config!")
             else:
-                interval_input = input(prefix_label + "Interval (Minutes): ")
-                rejoin_interval = float(interval_input)
+                iv = input(prefix_label + "Minutes: ")
+                rejoin_interval = float(iv)
                 auto_running = True
                 all_pkgs = get_installed_packages(current_package_prefix)
-                
                 if not all_pkgs:
-                    print(Fore.RED + ">> No packages found!")
                     auto_running = False
                 else:
                     for p in all_pkgs:
-                        package_data[p] = {
-                            'status': 'Initializing...',
-                            'user': "**********" 
-                        }
+                        package_data[p] = {'status': 'Init...', 'user': "**********"}
                         threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
                         time.sleep(2)
         
         elif ch == "4":
-            print(Fore.RED + "Terminating system...")
             sys.exit()
             
         if not auto_running:
-            input(f"\n{Fore.GREEN}Press Enter to go back...")
-    except Exception:
+            input(f"\n{Fore.GREEN}Enter to back...")
+    except:
         pass
