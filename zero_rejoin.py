@@ -127,8 +127,8 @@ def status_box():
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        # Hiện @Username thật nếu quét được, nếu chưa có thì hiện Scanning
-        roblox_user = data.get('user', "Scanning...")
+        # HIỆN DẤU ********** CHO ĐẾN KHI CÓ USERNAME THẬT
+        roblox_user = data.get('user', "**********")
         st = data['status']
         print(Fore.CYAN + "║" + f"{Fore.WHITE} {roblox_user:^{w1-2}} " + Fore.CYAN + "║" + f"{Fore.WHITE} {pkg:^{w2-2}} " + Fore.CYAN + "║" + f" {st:^{w3-2}} " + Fore.CYAN + "║")
         
@@ -136,34 +136,23 @@ def status_box():
 
 def banner():
     clear()
-    # Fix Logo: Sử dụng raw string và căn chỉnh từng dòng để không bị biến dạng
-    logo = f"""{Fore.WHITE}{Style.BRIGHT}
+    # TRẢ LẠI MÀU CYAN CHO LOGO VÀ FIX LỖI BIẾN DẠNG
+    print(f"""{Fore.CYAN}{Style.BRIGHT}
     ███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗
     ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║
       ███╔╝ █████╗  ██████╔╝██║   ██║██╔██╗ ██║██║   ██║█████╔╝ ███████║██╔████╔██║██║
      ███╔╝  ██╔══╝  ██╔══██╗██║   ██║██║╚██╗██║██║   ██║██╔═██╗ ██╔══██║██║╚██╔╝██║██║
     ███████╗███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝██║  ██╗██║  ██║██║ ╚═╝ ██║██║
-    ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝
-    """
-    print(logo)
+    ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝""")
     
     W = 60 
     print(Fore.BLUE + "╔" + "═" * (W-2) + "╗")
-    header = " MAIN CONTROL INTERFACE "
-    print(Fore.BLUE + "║" + Fore.WHITE + Style.BRIGHT + header.center(W-2) + Fore.BLUE + "║")
+    print(Fore.BLUE + "║" + f"{Fore.WHITE}{Style.BRIGHT} {DISPLAY_NAME} - CONTROL PANEL ".center(W-2) + Fore.BLUE + "║")
     print(Fore.BLUE + "╠" + "═" * (W-2) + "╣")
-    
-    # Menu Control fix thẳng hàng tuyệt đối
-    def print_item(cmd_str, desc_str, color=Fore.GREEN):
-        desc = f"{color}{desc_str}"
-        # Tính toán khoảng trống để thanh dọc ║ không bị lệch
-        # 14 là độ dài code màu của cmd_str và color
-        print(Fore.BLUE + "║" + f"  {Fore.YELLOW}{cmd_str:<4} {desc}".ljust(W + 11) + Fore.BLUE + "║")
-        
-    print_item("[1]", "Start Auto-Rejoin Engine")
-    print_item("[2]", "Assign Game ID / Private Link")
-    print_item("[3]", "Set Package Prefix")
-    print_item("[4]", "Exit System", color=Fore.RED)
+    print(Fore.BLUE + "║" + f"  {Fore.YELLOW}[1]{Fore.GREEN} Start Auto-Rejoin Engine".ljust(W+9) + Fore.BLUE + "║")
+    print(Fore.BLUE + "║" + f"  {Fore.YELLOW}[2]{Fore.GREEN} Assign Game ID / Private Link".ljust(W+9) + Fore.BLUE + "║")
+    print(Fore.BLUE + "║" + f"  {Fore.YELLOW}[3]{Fore.GREEN} Set Package Prefix".ljust(W+9) + Fore.BLUE + "║")
+    print(Fore.BLUE + "║" + f"  {Fore.YELLOW}[4]{Fore.RED} Exit System".ljust(W+9) + Fore.BLUE + "║")
     print(Fore.BLUE + "╚" + "═" * (W-2) + "╝\n")
 
 # Main Loop (GIỮ NGUYÊN 100% LOGIC GỐC)
@@ -180,8 +169,7 @@ while True:
 
     banner()
     try:
-        # Tên ZeroNokami ở prefix cũng đổi sang màu trắng sáng theo ý bạn
-        prefix_label = f"{Fore.WHITE}[ {Fore.WHITE}{Style.BRIGHT}{DISPLAY_NAME}{Fore.RESET}{Fore.WHITE} ] - {Fore.GREEN}"
+        prefix_label = f"{Fore.WHITE}[ {Fore.CYAN}{DISPLAY_NAME}{Fore.WHITE} ] - {Fore.GREEN}"
         ch = input(prefix_label + "Command Line: ")
         
         if ch == "3":
@@ -241,7 +229,7 @@ while True:
                     for p in all_pkgs:
                         package_data[p] = {
                             'status': 'Initializing...',
-                            'user': "Scanning..." 
+                            'user': "**********" 
                         }
                         threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
                         time.sleep(2)
