@@ -37,7 +37,7 @@ def get_roblox_username(pkg):
                 return match.group(0)
     except:
         pass
-    return None # Trả về None nếu chưa thấy tên thật
+    return None 
 
 def get_installed_packages(prefix):
     try:
@@ -78,7 +78,6 @@ def auto_rejoin_logic(pkg):
         start_app(pkg)
         time.sleep(12) 
         
-        # Cập nhật Username thực tế
         real_name = get_roblox_username(pkg)
         if real_name:
             package_data[pkg]['user'] = real_name
@@ -119,7 +118,6 @@ def status_box():
     print(Fore.CYAN + "╔" + "═"*(W-2) + "╗")
     print(Fore.CYAN + "║" + f"{Fore.WHITE}{Style.BRIGHT} MONITORING SYSTEM - CPU: {cpu:.1f}% | RAM: {ram:.1f}% ".center(W-2) + Fore.CYAN + "║")
     
-    # Cố định tỷ lệ cột để không bị nhảy khi tên dài
     w1, w2 = 28, 28
     w3 = W - w1 - w2 - 4
     
@@ -129,8 +127,8 @@ def status_box():
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        # Nếu chưa lấy được tên thật, hiển thị thông báo đang chờ thay vì đuôi package
-        roblox_user = data.get('user', "Waiting for Scan...")
+        # Hiện @Username thật nếu quét được, nếu chưa có thì hiện Scanning
+        roblox_user = data.get('user', "Scanning...")
         st = data['status']
         print(Fore.CYAN + "║" + f"{Fore.WHITE} {roblox_user:^{w1-2}} " + Fore.CYAN + "║" + f"{Fore.WHITE} {pkg:^{w2-2}} " + Fore.CYAN + "║" + f" {st:^{w3-2}} " + Fore.CYAN + "║")
         
@@ -138,41 +136,35 @@ def status_box():
 
 def banner():
     clear()
-    cols, _ = os.get_terminal_size()
+    # Fix Logo: Sử dụng raw string và căn chỉnh từng dòng để không bị biến dạng
+    logo = f"""{Fore.WHITE}{Style.BRIGHT}
+    ███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗
+    ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║
+      ███╔╝ █████╗  ██████╔╝██║   ██║██╔██╗ ██║██║   ██║█████╔╝ ███████║██╔████╔██║██║
+     ███╔╝  ██╔══╝  ██╔══██╗██║   ██║██║╚██╗██║██║   ██║██╔═██╗ ██╔══██║██║╚██╔╝██║██║
+    ███████╗███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝██║  ██╗██║  ██║██║ ╚═╝ ██║██║
+    ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝
+    """
+    print(logo)
     
-    # Logo căn chỉnh động - Không dùng khoảng trắng cứng để tránh biến dạng khi zoom
-    logo_lines = [
-        "███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗",
-        "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║",
-        "  ███╔╝ █████╗  ██████╔╝██║   ██║██╔██╗ ██║██║   ██║█████╔╝ ███████║██╔████╔██║██║",
-        " ███╔╝  ██╔══╝  ██╔══██╗██║   ██║██║╚██╗██║██║   ██║██╔═██╗ ██╔══██║██║╚██╔╝██║██║",
-        "███████╗███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝██║  ██╗██║  ██║██║ ╚═╝ ██║██║",
-        "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝"
-    ]
-    
-    print(Fore.CYAN + Style.BRIGHT)
-    for line in logo_lines:
-        print(line.center(cols))
-    
-    W = 60 if cols > 60 else cols - 2
-    
-    print("\n" + Fore.BLUE + "╔" + "═" * (W-2) + "╗".center(cols - W if cols > W else 0))
-    header = f" {DISPLAY_NAME} - CONTROL PANEL "
+    W = 60 
+    print(Fore.BLUE + "╔" + "═" * (W-2) + "╗")
+    header = " MAIN CONTROL INTERFACE "
     print(Fore.BLUE + "║" + Fore.WHITE + Style.BRIGHT + header.center(W-2) + Fore.BLUE + "║")
     print(Fore.BLUE + "╠" + "═" * (W-2) + "╣")
     
+    # Menu Control fix thẳng hàng tuyệt đối
     def print_item(cmd_str, desc_str, color=Fore.GREEN):
-        # Fix lỗi hiển thị màu bằng cách tính toán độ dài thực tế của text
-        text_part = f"  {Fore.YELLOW}{cmd_str}  {color}{desc_str}"
-        padding = W - 4
-        # Sử dụng format string để đảm bảo khung bên phải luôn thẳng
-        print(Fore.BLUE + "║" + f"{text_part:<{padding+14}}" + Fore.BLUE + "║")
+        desc = f"{color}{desc_str}"
+        # Tính toán khoảng trống để thanh dọc ║ không bị lệch
+        # 14 là độ dài code màu của cmd_str và color
+        print(Fore.BLUE + "║" + f"  {Fore.YELLOW}{cmd_str:<4} {desc}".ljust(W + 11) + Fore.BLUE + "║")
         
     print_item("[1]", "Start Auto-Rejoin Engine")
     print_item("[2]", "Assign Game ID / Private Link")
     print_item("[3]", "Set Package Prefix")
     print_item("[4]", "Exit System", color=Fore.RED)
-    print(Fore.BLUE + "╚" + "═" * (W-2) + "╝")
+    print(Fore.BLUE + "╚" + "═" * (W-2) + "╝\n")
 
 # Main Loop (GIỮ NGUYÊN 100% LOGIC GỐC)
 while True:
@@ -188,7 +180,8 @@ while True:
 
     banner()
     try:
-        prefix_label = f"{Fore.WHITE}[ {Fore.CYAN}{DISPLAY_NAME}{Fore.WHITE} ] - {Fore.GREEN}"
+        # Tên ZeroNokami ở prefix cũng đổi sang màu trắng sáng theo ý bạn
+        prefix_label = f"{Fore.WHITE}[ {Fore.WHITE}{Style.BRIGHT}{DISPLAY_NAME}{Fore.RESET}{Fore.WHITE} ] - {Fore.GREEN}"
         ch = input(prefix_label + "Command Line: ")
         
         if ch == "3":
@@ -248,7 +241,7 @@ while True:
                     for p in all_pkgs:
                         package_data[p] = {
                             'status': 'Initializing...',
-                            'user': "Waiting for Scan..." # Mặc định không hiện đuôi package nữa
+                            'user': "Scanning..." 
                         }
                         threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
                         time.sleep(2)
