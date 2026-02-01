@@ -106,17 +106,10 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- FIX LỖI BIẾN DẠNG: TỰ ĐỘNG THÍCH NGHI CHIỀU RỘNG ---
+# --- CẬP NHẬT GIAO DIỆN: KHUNG ÔM SÁT CHỮ ASCII ---
 def banner():
     clear()
-    try:
-        # Lấy chiều rộng thực tế của terminal để khung luôn vừa vặn
-        W = os.get_terminal_size().columns - 2
-        if W < 110: W = 110 # Giới hạn tối thiểu để chữ ASCII không bị nát
-    except:
-        W = 110
-
-    # Chữ "ZERO MANAGER" chuẩn nét
+    # Chữ "ZERO MANAGER"
     art = [
         r"  ________  _______ .______       ______      .___  ___.      ___      .__   __.      ___       _______  _______ .______      ",
         r" |       / |   ____||   _  \     /  __  \     |   \/   |     /   \     |  \ |  |     /   \     /  _____||   ____||   _  \     ",
@@ -125,20 +118,21 @@ def banner():
         r"   /  /---.|  |____ |  |\  \----|  `--'  |    |  |  |  |  /  _____  \  |  |\   |  /  _____  \ |  |__| | |  |____ |  |\  \----.",
         r"  /________|_______|| _| `._____|\______/     |__|  |__| /__/     \__\ |__| \__| /__/     \__\ \______| |_______|| _| `._____|"
     ]
+    
+    # Tính toán chiều rộng khung dựa trên độ dài của dòng ASCII Art (122 ký tự)
+    # Thêm một chút khoảng đệm (padding) để nhìn không bị dính vách
+    W = len(art[0]) + 4 
 
     colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA]
     
+    # Vẽ khung ôm sát
     print(Fore.WHITE + "┏" + "━" * W + "┓")
     
     for line in art:
-        # Căn giữa chữ trong khung linh hoạt
-        padding = (W - len(line)) // 2
-        if padding < 0: padding = 0
-        
-        content = (" " * padding + line).ljust(W)
+        content = f"  {line}  ".ljust(W)
         colored_line = ""
         for j, char in enumerate(content):
-            if char.strip(): # Chỉ tô màu ký tự chữ, không tô khoảng trắng để tránh lỗi hiển thị
+            if char.strip(): 
                 color_idx = (j // 15) % len(colors)
                 colored_line += colors[color_idx] + char
             else:
@@ -152,31 +146,28 @@ def banner():
     print(Fore.WHITE + "┣" + "━" * W + "┫")
     
     opts = [
-        (Fore.GREEN,  "  [1] EXECUTE ENGINE : Start Auto-Rejoin"),
-        (Fore.CYAN,   "  [2] CONFIGURATION  : Assign Game ID"),
-        (Fore.YELLOW, "  [3] SYSTEM SETUP   : Set Package Prefix"),
-        (Fore.RED,    "  [4] TERMINATE      : Exit Safely")
+        (Fore.GREEN,  " [1] EXECUTE ENGINE : Start Auto-Rejoin"),
+        (Fore.CYAN,   " [2] CONFIGURATION  : Assign Game ID"),
+        (Fore.YELLOW, " [3] SYSTEM SETUP   : Set Package Prefix"),
+        (Fore.RED,    " [4] TERMINATE      : Exit Safely")
     ]
     
     for col, txt in opts:
-        print(Fore.WHITE + "┃" + (col + txt).ljust(W + 9) + Fore.WHITE + "┃")
+        # Căn lề trái cho tùy chọn, cách lề 4 khoảng trắng
+        print(Fore.WHITE + "┃" + (col + "    " + txt).ljust(W + 9) + Fore.WHITE + "┃")
     print(Fore.WHITE + "┗" + "━" * W + "┛")
 
 def status_box():
     cpu, ram = get_system_info()
     clear()
-    try:
-        W = os.get_terminal_size().columns - 2
-        if W < 110: W = 110
-    except:
-        W = 110
+    # Giữ nguyên chiều rộng khung đồng bộ với Banner
+    W = 122 + 4
 
     print(Fore.WHITE + "┏" + "━" * W + "┓")
     header = f" MONITOR: CPU {cpu:.1f}% | RAM {ram:.1f}% "
     print(Fore.WHITE + "┃" + (Fore.CYAN + Style.BRIGHT + header).center(W + 9) + Fore.WHITE + "┃")
     print(Fore.WHITE + "┣" + "━" * W + "┫")
     
-    # Chia cột linh hoạt dựa trên chiều rộng màn hình
     u_w = int(W * 0.25)
     p_w = int(W * 0.30)
     s_w = W - u_w - p_w - 6
@@ -190,7 +181,6 @@ def status_box():
         user = str(data.get('user', "Unknown"))[:u_w]
         p_name = str(pkg.split('.')[-1])[:p_w]
         st = data['status']
-        # Fix lỗi tràn dòng khi status quá dài
         print(Fore.WHITE + f"┃ {Fore.YELLOW}{user:^{u_w}}{Fore.WHITE} ┃ {Fore.GREEN}{p_name:^{p_w}}{Fore.WHITE} ┃ {st:^{s_w+8}}{Fore.WHITE} ┃")
     
     print(Fore.WHITE + "┗" + "━" * W + "┛")
