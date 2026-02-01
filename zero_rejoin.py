@@ -21,7 +21,7 @@ rejoin_interval = None
 auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {} 
-W = 120 # Chiều rộng chuẩn để tránh vỡ khung trên mobile
+W = 120 # Độ rộng cố định để khung luôn thẳng hàng
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -107,63 +107,67 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- CẬP NHẬT GIAO DIỆN ---
+# --- CẬP NHẬT GIAO DIỆN THEO YÊU CẦU ---
 def draw_logo():
-    # Logo Zero Manager màu Đỏ
+    # Logo Zero Manager Font to rõ nét
     art = [
-        r"  ________  _______ .______       ______     .___  ___.      ___      .__   __.      ___       _______  _______ .______      ",
-        r" |       / |   ____||   _  \     /  __  \    |   \/   |     /   \     |  \ |  |     /   \     /  _____||   ____||   _  \     ",
-        r" `---/  /  |  |__   |  |_)  |   |  |  |  |   |  \  /  |    /  ^  \    |   \|  |    /  ^  \   |  |  __  |  |__   |  |_)  |    ",
-        r"    /  /   |   __|  |      /    |  |  |  |   |  |\/|  |   /  /_\  \   |  . `  |   /  /_\  \  |  | |_ | |   __|  |      /     ",
-        r"   /  /---.|  |____ |  |\  \----|  `--'  |   |  |  |  |  /  _____  \  |  |\   |  /  _____  \ |  |__| | |  |____ |  |\  \----.",
-        r"  /________|_______|| _| `._____|\______/    |__|  |__| /__/     \__\ |__| \__| /__/     \__\ \______| |_______|| _| `._____|"
+        r" ███████╗███████╗██████╗  ██████╗     ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
+        r" ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗    ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
+        r"   ███╔╝ █████╗  ██████╔╝██║   ██║    ██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗  ██████╔╝",
+        r"  ███╔╝  ██╔══╝  ██╔══██╗██║   ██║    ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  ██╔══██╗",
+        r" ███████╗███████╗██║  ██║╚██████╔╝    ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║",
+        r" ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝     ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝"
     ]
     for line in art:
-        print(Fore.RED + line.center(W))
+        # Căn giữa logo và bao bọc bởi đường kẻ dọc để khớp khung
+        padding_total = (W - 2) - len(line)
+        left_pad = padding_total // 2
+        right_pad = padding_total - left_pad
+        print(Fore.WHITE + "┃" + (" " * left_pad) + Fore.RED + line + (" " * right_pad) + Fore.WHITE + "┃")
 
 def banner():
     clear()
-    print(Fore.WHITE + "┏" + "━" * (W-2) + "┓")
+    print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo()
     credit_str = "By ZeroNokami | High-Performance Engine"
-    print(Fore.WHITE + "┃" + Fore.WHITE + credit_str.center(W-2) + "┃")
-    print(Fore.WHITE + "┣" + "━" * (W-2) + "┫")
+    print(Fore.WHITE + "┃" + credit_str.center(W - 2) + "┃")
+    print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
     title = "[ TERMINAL CONTROL INTERFACE ]"
-    print(Fore.WHITE + "┃" + Fore.YELLOW + Style.BRIGHT + title.center(W-2) + "┃")
-    print(Fore.WHITE + "┣" + "━" * (W-2) + "┫")
+    print(Fore.WHITE + "┃" + Fore.YELLOW + Style.BRIGHT + title.center(W - 2) + "┃")
+    print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
-    # 1, 2, 3 Màu Vàng - 4 Màu Đỏ
     opts = [
         ("1", "EXECUTE ENGINE : Start Auto-Rejoin", Fore.YELLOW),
-        ("2", "CONFIGURATION  : Assign Game ID     ", Fore.YELLOW),
-        ("3", "SYSTEM SETUP   : Set Package Prefix ", Fore.YELLOW),
-        ("4", "TERMINATE      : Exit Safely        ", Fore.RED)
+        ("2", "CONFIGURATION  : Assign Game ID", Fore.YELLOW),
+        ("3", "SYSTEM SETUP   : Set Package Prefix", Fore.YELLOW),
+        ("4", "TERMINATE      : Exit Safely", Fore.RED)
     ]
     
-    for num, txt, color in opts:
-        line_content = f"    [{num}] {txt}"
-        padding = " " * (W - len(line_content) - 4)
-        print(Fore.WHITE + "┃" + color + line_content + padding + Fore.WHITE + "┃")
-    print(Fore.WHITE + "┗" + "━" * (W-2) + "┛")
+    for num, txt, col in opts:
+        content = f"    [{num}] {txt}"
+        padding = " " * (W - len(content) - 2)
+        print(Fore.WHITE + "┃" + col + content + padding + Fore.WHITE + "┃")
+        
+    print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
 def status_box():
     cpu, ram = get_system_info()
     clear()
-    print(Fore.WHITE + "┏" + "━" * (W-2) + "┓")
+    print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo() 
-    print(Fore.WHITE + "┣" + "━" * (W-2) + "┫")
+    print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
     header = f" MONITOR: CPU {cpu:.1f}% | RAM {ram:.1f}% "
-    print(Fore.WHITE + "┃" + Fore.CYAN + Style.BRIGHT + header.center(W-2) + "┃")
-    print(Fore.WHITE + "┣" + "━" * (W-2) + "┫")
+    print(Fore.WHITE + "┃" + Fore.CYAN + Style.BRIGHT + header.center(W - 2) + "┃")
+    print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
     u_w, p_w = 25, 35
     s_w = W - u_w - p_w - 6
     
     label = f"  {'USER':<{u_w}}{'PACKAGE':<{p_w}}{'STATUS':<{s_w}}  "
     print(Fore.WHITE + "┃" + Fore.WHITE + label + "┃")
-    print(Fore.WHITE + "┣" + "━" * (W-2) + "┫")
+    print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
@@ -177,7 +181,7 @@ def status_box():
         row = f"  {user:<{u_w}}{p_name:<{p_w}}{st_color}{st_padding}  "
         print(Fore.WHITE + "┃" + Fore.WHITE + row + Fore.WHITE + "┃")
     
-    print(Fore.WHITE + "┗" + "━" * (W-2) + "┛")
+    print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
 # --- MAIN LOOP ---
 while True:
@@ -193,8 +197,8 @@ while True:
 
     banner()
     try:
-        # Nhãn input đổi thành màu vàng
-        prefix_label = f"{Fore.WHITE}[ {Fore.RED}Zero Manager{Fore.WHITE} ] - {Fore.YELLOW}"
+        # [ Zero Manager ] màu Vàng
+        prefix_label = f"{Fore.WHITE}[ {Fore.YELLOW}Zero Manager{Fore.WHITE} ] - {Fore.GREEN}"
         ch = input(prefix_label + "Command Line: ")
         
         if ch == "3":
@@ -221,11 +225,9 @@ while True:
                     "9": ("Anime Adventure", "8304191830"),
                     "10": ("King Legacy", "4520749081"),
                 }
-                # Danh sách game màu trắng hoàn toàn
                 for k, v in game_list.items():
                     print(f"{Fore.WHITE} [{k}] {v[0]}")
                 print(Fore.WHITE + " [11] Other Game / Private Server Link")
-                
                 game_choice = input(f"\n{prefix_label}Select Option: ")
                 if game_choice in game_list:
                     game_id = game_list[game_choice][1]
