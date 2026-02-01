@@ -296,4 +296,4 @@ while True:
         if not auto_running:
             input(f"\n{Fore.GREEN}Press Enter to go back...")
     except Exception:
-        pass
+        Pass
