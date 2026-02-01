@@ -27,7 +27,6 @@ def clear():
 
 def get_installed_packages(prefix):
     try:
-        # Chặn các lỗi package không tồn tại hiển thị ra màn hình
         output = subprocess.check_output(["pm", "list", "packages", prefix], stderr=subprocess.DEVNULL).decode()
         pkgs = [line.split(':')[-1].strip() for line in output.splitlines() if line.strip()]
         return pkgs
@@ -35,7 +34,12 @@ def get_installed_packages(prefix):
         return []
 
 def start_app(pkg):
-    deep_link = f"roblox://placeID={game_id}"
+    # logic xử lý: nếu game_id chứa "http" thì coi đó là link, ngược lại là ID
+    if "http" in str(game_id):
+        deep_link = game_id
+    else:
+        deep_link = f"roblox://placeID={game_id}"
+        
     subprocess.call([
         "am", "start", "--user", "0", 
         "-a", "android.intent.action.VIEW", 
@@ -100,7 +104,6 @@ def status_box():
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        # Lấy phần định danh sau dấu chấm cuối cùng để giả lập @Username chuẩn
         raw_name = pkg.split('.')[-1]
         roblox_user = f"@{raw_name.upper()}"
         st = data['status']
@@ -110,7 +113,6 @@ def status_box():
 
 def banner():
     clear()
-    # Logo màu Cyan rực rỡ
     logo = f"""{Fore.CYAN}{Style.BRIGHT}
     ███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗
     ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║
@@ -131,7 +133,7 @@ def banner():
         print(Fore.BLUE + "║" + line + Fore.BLUE + " ║")
         
     print_item("[1]", "Start Auto-Rejoin Engine")
-    print_item("[2]", "Assign Game ID")
+    print_item("[2]", "Assign Game ID / Private Link")
     print_item("[3]", "Set Package Prefix")
     print_item("[4]", "Exit System", color=Fore.RED)
     print(Fore.BLUE + "╚" + "═" * (W-2) + "╝\n")
@@ -163,16 +165,51 @@ while True:
             if not current_package_prefix:
                 print(Fore.RED + ">> Error: Please set package prefix first!")
             else:
-                print(Fore.CYAN + " [1] Blox Fruit")
-                if input(prefix_label + "Select Option: ") == "1":
-                    game_id = "2753915549"
-                    print(f"{Fore.GREEN}>> Game ID successfully linked.")
+                print(Fore.CYAN + "\n --- SELECT GAME ---")
+                print(Fore.WHITE + " [1] Blox Fruit")
+                print(Fore.WHITE + " [2] 99 Night In The Forest")
+                print(Fore.WHITE + " [3] Deals Rails")
+                print(Fore.WHITE + " [4] Fisch")
+                print(Fore.WHITE + " [5] Anime Defenders")
+                print(Fore.WHITE + " [6] Bee Swarm Simulator")
+                print(Fore.WHITE + " [7] Steal A Brainrot")
+                print(Fore.WHITE + " [8] Escape Tsunami For Brainrot")
+                print(Fore.WHITE + " [9] Anime Adventure")
+                print(Fore.WHITE + " [10] King Legacy")
+                print(Fore.YELLOW + " [11] Other Game / Private Server Link")
+                
+                game_choice = input(f"\n{prefix_label}Select Option: ")
+                
+                games = {
+                    "1": "2753915549",
+                    "2": "79546208627805",
+                    "3": "116495829188952",
+                    "4": "16732694052",
+                    "5": "17017769292",
+                    "6": "1537690962",
+                    "7": "109983668079237",
+                    "8": "131623223084840",
+                    "9": "8304191830",
+                    "10": "4520749081"
+                }
+
+                if game_choice in games:
+                    game_id = games[game_choice]
+                    print(f"{Fore.GREEN}>> Game ID {game_id} linked.")
+                elif game_choice == "11":
+                    link = input(prefix_label + "Paste Link (VIP/Server): ")
+                    if link:
+                        game_id = link
+                        print(f"{Fore.GREEN}>> Custom link linked.")
+                else:
+                    print(Fore.RED + ">> Invalid selection.")
         
         elif ch == "1":
             if not current_package_prefix or not game_id:
                 print(f"{Fore.RED}>> Error: Missing configuration (Prefix/GameID)!")
             else:
-                rejoin_interval = float(input(prefix_label + "Interval (Minutes): "))
+                interval_input = input(prefix_label + "Interval (Minutes): ")
+                rejoin_interval = float(interval_input)
                 auto_running = True
                 all_pkgs = get_installed_packages(current_package_prefix)
                 
@@ -192,5 +229,4 @@ while True:
         if not auto_running:
             input(f"\n{Fore.GREEN}Press Enter to go back...")
     except Exception as e:
-        # Không in lỗi ra màn hình chính để giữ bảng sạch
         pass
