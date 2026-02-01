@@ -102,7 +102,6 @@ def auto_rejoin_logic(pkg):
 
 def get_system_info():
     try:
-        # Không dùng os.get_terminal_size cho viền để tránh lỗi vỡ khi zoom
         mem = subprocess.check_output(["free", "-m"], stderr=subprocess.DEVNULL).decode().splitlines()
         parts = mem[1].split()
         ram_percent = (int(parts[2]) / int(parts[1])) * 100
@@ -112,52 +111,72 @@ def get_system_info():
 
 def status_box():
     cpu, ram = get_system_info()
-    W = 80 # Cố định độ rộng để chống vỡ khung
+    W = 60
     clear()
     
-    print(Fore.CYAN + "╔" + "═"*(W-2) + "╗")
-    print(Fore.CYAN + "║" + f"{Fore.WHITE}{Style.BRIGHT} MONITORING SYSTEM - CPU: {cpu:.1f}% | RAM: {ram:.1f}% ".center(W-2) + Fore.CYAN + "║")
-    
-    w1, w2 = 24, 24
-    w3 = W - w1 - w2 - 4
-    
-    print(Fore.CYAN + "╠" + "═"*w1 + "╦" + "═"*w2 + "╦" + "═"*w3 + "╣")
-    print(Fore.CYAN + "║" + f" Name ".center(w1) + "║" + f" Package ".center(w2) + "║" + f" Status ".center(w3) + "║")
-    print(Fore.CYAN + "╠" + "═"*w1 + "╬" + "═"*w2 + "╬" + "═"*w3 + "╣")
+    print(Fore.CYAN + "┌" + "─"*(W-2) + "┐")
+    header = f" MONITORING: CPU {cpu:.1f}% | RAM {ram:.1f}% "
+    print(Fore.CYAN + "│" + Fore.WHITE + Style.BRIGHT + header.center(W-2) + Fore.CYAN + "│")
+    print(Fore.CYAN + "├" + "─"*15 + "┬" + "─"*20 + "┬" + "─"*21 + "┤")
+    print(Fore.CYAN + "│" + " USER".ljust(15) + "│" + " PACKAGE".ljust(20) + "│" + " STATUS".ljust(21) + "│")
+    print(Fore.CYAN + "├" + "─"*15 + "┼" + "─"*20 + "┼" + "─"*21 + "┤")
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        roblox_user = data.get('user', "**********")
+        user = (data.get('user', "Unknown")[:13])
+        p_display = (pkg.split('.')[-1][:18])
         st = data['status']
-        # Cắt bớt pkg nếu quá dài để không làm vỡ viền
-        p_display = (pkg[:w2-3] + "..") if len(pkg) > w2 else pkg
-        print(Fore.CYAN + "║" + f"{Fore.WHITE}{roblox_user:^{w1}}".center(w1) + Fore.CYAN + "║" + f"{Fore.WHITE}{p_display:^{w2}}".center(w2) + Fore.CYAN + "║" + f" {st:^{w3-2}} " + Fore.CYAN + "║")
         
-    print(Fore.CYAN + "╚" + "═"*w1 + "╩" + "═"*w2 + "╩" + "═"*w3 + "╝")
+        line = Fore.CYAN + "│" + Fore.WHITE + f" {user.ljust(14)}" + Fore.CYAN + "│" + \
+               Fore.WHITE + f" {p_display.ljust(19)}" + Fore.CYAN + "│" + \
+               f" {st.ljust(20)}" + Fore.CYAN + "│"
+        print(line)
+        
+    print(Fore.CYAN + "└" + "─"*15 + "┴" + "─"*20 + "┴" + "─"*21 + "┘")
 
+# --- BANNER VỚI CHỮ ZERONOKAMI MÀU XÉO ---
 def banner():
     clear()
-    # In trực tiếp không center để tránh lỗi font khi zoom
-    print(Fore.CYAN + Style.BRIGHT + "███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗")
-    print(Fore.CYAN + Style.BRIGHT + "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║")
-    print(Fore.CYAN + Style.BRIGHT + "  ███╔╝ █████╗  ██████╔╝██║   ██║██╔██╗ ██║██║   ██║█████╔╝ ███████║██╔████╔██║██║")
-    print(Fore.CYAN + Style.BRIGHT + " ███╔╝  ██╔══╝  ██╔══██╗██║   ██║██║╚██╗██║██║   ██║██╔═██╗ ██╔══██║██║╚██╔╝██║██║")
-    print(Fore.CYAN + Style.BRIGHT + "███████╗███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝██║  ██╗██║  ██║██║ ╚═╝ ██║██║")
-    print(Fore.CYAN + Style.BRIGHT + "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝")
+    # Mảng màu để tạo hiệu ứng xéo
+    colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA, Fore.WHITE]
     
-    W = 65 # Độ rộng menu cố định
-    print("\n" + Fore.BLUE + "╔" + "═" * (W-2) + "╗")
-    print(Fore.BLUE + "║" + f"{Fore.WHITE}{Style.BRIGHT} {DISPLAY_NAME} - CONTROL PANEL ".center(W-2) + Fore.BLUE + "║")
-    print(Fore.BLUE + "╠" + "═" * (W-2) + "╣")
-    
-    # In thủ công các mục để đảm bảo khoảng cách chuẩn
-    print(Fore.BLUE + "║ " + Fore.YELLOW + "[1] " + Fore.GREEN + "Start Auto-Rejoin Engine".ljust(W-8) + Fore.BLUE + "║")
-    print(Fore.BLUE + "║ " + Fore.YELLOW + "[2] " + Fore.GREEN + "Assign Game ID / Private Link".ljust(W-8) + Fore.BLUE + "║")
-    print(Fore.BLUE + "║ " + Fore.YELLOW + "[3] " + Fore.GREEN + "Set Package Prefix".ljust(W-8) + Fore.BLUE + "║")
-    print(Fore.BLUE + "║ " + Fore.YELLOW + "[4] " + Fore.RED + "Exit System".ljust(W-8) + Fore.BLUE + "║")
-    print(Fore.BLUE + "╚" + "═" * (W-2) + "╝\n")
+    ascii_art = [
+        "  ______ _____  ____  _   _  ____  _  __          __  __ _____ ",
+        " |___  /|  ___||  _ \| \ | |/ __ \| |/ /    /\   |  \/  |_   _|",
+        "    / / | |__  | |_) |  \| | |  | | ' /    /  \  | \  / | | |  ",
+        "   / /  |  __| |  _ <| |\  | |  | |  <    / /\ \ | |\/| | | |  ",
+        "  / /__ | |____| | \ \ | \ | |__| | . \  / ____ \| |  | |_| |_ ",
+        " /_____||______|_|  \_\_| \_\____/|_|\_\/_/    \_\_|  |_|_____|"
+    ]
 
-# Main Loop
+    # In ASCII art với logic màu xéo (màu thay đổi theo hàng và cột)
+    for i, line in enumerate(ascii_art):
+        colored_line = ""
+        for j, char in enumerate(line):
+            # Tính toán chỉ số màu dựa trên vị trí hàng (i) và cột (j) để tạo góc xéo
+            color_idx = (i + (j // 8)) % len(colors)
+            colored_line += colors[color_idx] + char
+        print(Style.BRIGHT + colored_line)
+
+    W = 65 
+    print("\n" + Fore.WHITE + "╔" + "═" * (W-2) + "╗")
+    print(Fore.WHITE + "║" + f"{Fore.YELLOW}{Style.BRIGHT} {DISPLAY_NAME} - CONTROL PANEL ".center(W-2) + Fore.WHITE + "║")
+    print(Fore.WHITE + "╠" + "═" * (W-2) + "╣")
+    
+    options = [
+        ("[1]", "Start Auto-Rejoin Engine", Fore.GREEN),
+        ("[2]", "Assign Game ID / Link", Fore.CYAN),
+        ("[3]", "Set Package Prefix", Fore.YELLOW),
+        ("[4]", "Exit System", Fore.RED)
+    ]
+    
+    for opt in options:
+        text = f" {opt[0]} {opt[1]}"
+        print(Fore.WHITE + "║" + opt[2] + text.ljust(W-2) + Fore.WHITE + "║")
+        
+    print(Fore.WHITE + "╚" + "═" * (W-2) + "╝\n")
+
+# Main Loop (Giữ nguyên logic gốc)
 while True:
     if auto_running:
         status_box()
