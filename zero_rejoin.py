@@ -19,13 +19,13 @@ current_package_prefix = None
 game_id = None
 rejoin_interval = None
 auto_running = False
-DISPLAY_NAME = "ZeroNokami"
+DISPLAY_NAME = "Zero Manager"
 package_data = {} 
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-# --- LOGIC GỐC GIỮ NGUYÊN 100% ---
+# --- LOGIC GỐC GIỮ NGUYÊN ---
 def get_roblox_username(pkg):
     try:
         dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
@@ -77,18 +77,15 @@ def auto_rejoin_logic(pkg):
         package_data[pkg]['status'] = f"{Fore.YELLOW}Restarting App"
         start_app(pkg)
         time.sleep(12) 
-        
         real_name = get_roblox_username(pkg)
         if real_name:
             package_data[pkg]['user'] = real_name
-        
         if is_running(pkg):
             package_data[pkg]['status'] = f"{Fore.CYAN}Auto Join"
             time.sleep(8)
             package_data[pkg]['status'] = f"{Fore.MAGENTA}Executor Check"
             time.sleep(5)
             package_data[pkg]['status'] = f"{Fore.GREEN}Active Now"
-            
         start_time = time.time()
         while auto_running:
             if time.time() - start_time >= rejoin_interval * 60:
@@ -102,78 +99,64 @@ def auto_rejoin_logic(pkg):
 
 def get_system_info():
     try:
-        mem = subprocess.check_output(["free", "-m"], stderr=subprocess.NULL).decode().splitlines()
+        mem = subprocess.check_output(["free", "-m"], stderr=subprocess.DEVNULL).decode().splitlines()
         parts = mem[1].split()
         ram_percent = (int(parts[2]) / int(parts[1])) * 100
         return 2.5, ram_percent
     except:
         return 2.5, 45.0
 
-# --- MONITOR BOX: ĐÃ CĂN CHỈNH LẠI ---
-def status_box():
-    cpu, ram = get_system_info()
-    W = 74  # Độ rộng chuẩn để khớp với banner
-    clear()
-    
-    # Border Styles
-    line_dash = Fore.WHITE + ". " + "- " * ((W // 2) - 1) + "."
-    line_sep  = Fore.WHITE + ": " + "- " * ((W // 2) - 1) + ":"
-    
-    print(line_dash)
-    header = f" MONITORING: CPU {cpu:.1f}% | RAM {ram:.1f}% "
-    print(Fore.WHITE + "| " + Fore.CYAN + Style.BRIGHT + header.center(W-3) + Fore.WHITE + "|")
-    print(line_sep)
-    
-    # Căn chỉnh cột cho thẳng hàng
-    print(Fore.WHITE + f"| {'USER':^18} | {'PACKAGE':^20} | {'STATUS':^27} |")
-    print(line_sep)
-    
-    for pkg in sorted(package_data.keys()):
-        data = package_data[pkg]
-        user = (data.get('user', "Unknown")[:16])
-        p_display = (pkg.split('.')[-1][:18])
-        st = data['status']
-        # Sử dụng ljust/center với độ rộng cố định để không bị lệch
-        line = Fore.WHITE + f"| {Fore.YELLOW}{user:^18}{Fore.WHITE} | {Fore.GREEN}{p_display:^20}{Fore.WHITE} | {st:^27} {Fore.WHITE}|"
-        print(line)
-    
-    print(Fore.WHITE + "' " + "- " * ((W // 2) - 1) + "'")
+# --- CĂN CHỈNH GIAO DIỆN ---
+def get_border(width):
+    return Fore.WHITE + "+ " + "- " * ((width // 2) - 1) + "+"
 
-# --- BANNER MỚI: CHỮ TO & KHÔNG BỊ VỠ ---
 def banner():
     clear()
-    colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA]
+    W = 75 # Độ rộng khung cố định để chống vỡ hình
     
-    # ASCII Art mới: To hơn, đậm hơn (Font: Big)
+    # ASCII Art "Zero Manager" phong cách đứt khúc (Dashed)
+    # Tái tạo lại kiểu chữ rỗng/đứt đoạn như trong ảnh của bạn
     art = [
-        r" ______                  _   _       _                     _ ",
-        r"|___  /                 | \ | |     | |                   (_)",
-        r"   / /   ___ _ __  ___  |  \| | ___ | | __ __ _ _ __ ___   _ ",
-        r"  / /   / _ \ '__|/ _ \ | . ` |/ _ \| |/ // _` | '_ ` _ \ | |",
-        r" / /__ |  __/ |  | (_) || |\  | (_) |   <| (_| | | | | | || |",
-        r"/_____| \___|_|   \___/ \_| \_/\___/|_|\_\\__,_|_| |_| |_||_|"
+        r"  ____                      __  __                                   ",
+        r" /_  / ___  ____ ____      /  |/  /___ _ ___  ___ _ ___ _ ___  ____  ",
+        r"  / / / _ \/ __// __ \    / /|_/ // _ `// _ \/ _ `// _ `// _ \/ __/  ",
+        r" / /_/  __/ /  / /_/ /   / /  / // (_| // / / / (_| // (_| //  __/ /     ",
+        r"/___/\___/_/   \____/   /_/  /_/ \__,_//_/ /_/\__,_/ \__, / \___/_/      ",
+        r"                                                    /____/               "
     ]
 
-    # In ASCII Art với màu gradient
+    colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA]
+    
+    # Vẽ khung trên
+    print(get_border(W))
+    
+    # In ASCII Art với màu Gradient ngang
     for i, line in enumerate(art):
+        centered_line = line.center(W-2)
         colored_line = ""
-        for j, char in enumerate(line):
-            color_idx = (j // 5 + i) % len(colors) # Logic màu chạy ngang
+        for j, char in enumerate(centered_line):
+            # Tính toán màu dựa trên vị trí ký tự để tạo hiệu ứng cầu vồng như ảnh
+            color_idx = (j // 8) % len(colors)
             colored_line += colors[color_idx] + char
-        print(Style.BRIGHT + colored_line)
+        print(Fore.WHITE + "|" + colored_line + Fore.WHITE + "|")
+
+    # Dòng Credit: Thay thế Version/Copyright cũ bằng yêu cầu mới
+    # Cấu trúc: By ZeroNokami | Auto Rejoin Tool (Căn giữa)
+    credit_text = "By ZeroNokami | Auto Rejoin Tool"
+    # Chia màu: Xanh lá cho tên, Tím cho Tool (giống ảnh)
+    left_part = f"{Fore.GREEN}By ZeroNokami"
+    sep_part = f"{Fore.WHITE} | "
+    right_part = f"{Fore.MAGENTA}Auto Rejoin Tool"
     
-    # Độ rộng khung menu (W) phải bao trùm được chữ ASCII trên (khoảng 74 ký tự)
-    W = 74
+    # Tính toán khoảng cách để căn giữa dòng Credit có màu
+    padding = (W - 2 - len(credit_text)) // 2
+    print(Fore.WHITE + "|" + " " * padding + left_part + sep_part + right_part + " " * (W - 2 - padding - len(credit_text)) + Fore.WHITE + "|")
     
-    # Border Styles
-    line_top = Fore.WHITE + ". " + "- " * ((W // 2) - 1) + "."
-    line_mid = Fore.WHITE + ": " + "- " * ((W // 2) - 1) + ":"
-    line_bot = Fore.WHITE + "' " + "- " * ((W // 2) - 1) + "'"
-    
-    print("\n" + line_top)
-    title = f" {DISPLAY_NAME} - CONTROL PANEL "
-    print(Fore.WHITE + "| " + Fore.YELLOW + Style.BRIGHT + title.center(W-3) + Fore.WHITE + "|")
-    print(line_mid)
+    # Menu Options
+    print(get_border(W))
+    title = " CONTROL PANEL "
+    print(Fore.WHITE + "|" + Fore.YELLOW + Style.BRIGHT + title.center(W-2) + Fore.WHITE + "|")
+    print(get_border(W))
     
     opts = [("[1]", "Start Auto-Rejoin Engine", Fore.GREEN),
             ("[2]", "Assign Game ID / Link", Fore.CYAN),
@@ -181,17 +164,38 @@ def banner():
             ("[4]", "Exit System", Fore.RED)]
     
     for opt in opts:
-        # Căn chỉnh menu option
-        prefix_txt = f" {opt[0]} "
-        desc_txt = f"{opt[1]}"
-        # Tính toán khoảng trắng cần thiết để đóng khung
-        padding = W - 3 - len(prefix_txt) - len(desc_txt)
-        content = prefix_txt + desc_txt + " " * padding
-        print(Fore.WHITE + "| " + opt[2] + content + Fore.WHITE + "|")
+        content = f" {opt[0]} {opt[1]}"
+        padding = W - 2 - len(content)
+        print(Fore.WHITE + "|" + opt[2] + content + " " * padding + Fore.WHITE + "|")
         
-    print(line_bot)
+    print(get_border(W))
 
-# Main Loop (GIỮ NGUYÊN 100%)
+def status_box():
+    cpu, ram = get_system_info()
+    W = 75
+    clear()
+    
+    border = get_border(W)
+    print(border)
+    header = f" MONITORING: CPU {cpu:.1f}% | RAM {ram:.1f}% "
+    print(Fore.WHITE + "|" + Fore.CYAN + Style.BRIGHT + header.center(W-2) + Fore.WHITE + "|")
+    print(border)
+    
+    print(Fore.WHITE + f"| {'USER':^18} | {'PACKAGE':^20} | {'STATUS':^29} |")
+    print(border)
+    
+    for pkg in sorted(package_data.keys()):
+        data = package_data[pkg]
+        user = (data.get('user', "Unknown")[:16])
+        p_display = (pkg.split('.')[-1][:18])
+        st = data['status']
+        # Fix lỗi lệch dòng khi Status có mã màu
+        line = Fore.WHITE + f"| {Fore.YELLOW}{user:^18}{Fore.WHITE} | {Fore.GREEN}{p_display:^20}{Fore.WHITE} | {st:^38} {Fore.WHITE}|"
+        print(line)
+    
+    print(border)
+
+# Main Loop 
 while True:
     if auto_running:
         status_box()
@@ -205,7 +209,7 @@ while True:
 
     banner()
     try:
-        prefix_label = f"{Fore.WHITE}[ {Fore.CYAN}{DISPLAY_NAME}{Fore.WHITE} ] - {Fore.GREEN}"
+        prefix_label = f"{Fore.WHITE}[ {Fore.CYAN}Zero Manager{Fore.WHITE} ] - {Fore.GREEN}"
         ch = input(prefix_label + "Command Line: ")
         
         if ch == "3":
