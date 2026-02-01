@@ -106,17 +106,17 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- GIAO DIỆN NÂNG CẤP: FIX CHỮ Z & KHUNG SIÊU RỘNG ---
+# --- FIX LỖI BIẾN DẠNG: TỰ ĐỘNG THÍCH NGHI CHIỀU RỘNG ---
 def banner():
     clear()
     try:
-        # Lấy kích thước terminal, ép tối thiểu 135 để khung cực rộng
-        cols = os.get_terminal_size().columns
-        W = max(cols - 4, 135) 
+        # Lấy chiều rộng thực tế của terminal để khung luôn vừa vặn
+        W = os.get_terminal_size().columns - 2
+        if W < 110: W = 110 # Giới hạn tối thiểu để chữ ASCII không bị nát
     except:
-        W = 135
+        W = 110
 
-    # Chữ "Z" được vẽ lại với các đường chéo chuẩn nét (Blocky Sharp)
+    # Chữ "ZERO MANAGER" chuẩn nét
     art = [
         r"  ________  _______ .______       ______      .___  ___.      ___      .__   __.      ___       _______  _______ .______      ",
         r" |       / |   ____||   _  \     /  __  \     |   \/   |     /   \     |  \ |  |     /   \     /  _____||   ____||   _  \     ",
@@ -128,72 +128,74 @@ def banner():
 
     colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA]
     
-    # Vẽ khung trên
     print(Fore.WHITE + "┏" + "━" * W + "┓")
     
-    # In ASCII Art căn giữa
-    for i, line in enumerate(art):
-        content = line.center(W)
+    for line in art:
+        # Căn giữa chữ trong khung linh hoạt
+        padding = (W - len(line)) // 2
+        if padding < 0: padding = 0
+        
+        content = (" " * padding + line).ljust(W)
         colored_line = ""
         for j, char in enumerate(content):
-            # Hiệu ứng chuyển màu dải (Gradient)
-            color_idx = (j // (len(line)//len(colors) + 1)) % len(colors)
-            colored_line += colors[color_idx] + char
+            if char.strip(): # Chỉ tô màu ký tự chữ, không tô khoảng trắng để tránh lỗi hiển thị
+                color_idx = (j // 15) % len(colors)
+                colored_line += colors[color_idx] + char
+            else:
+                colored_line += char
         print(Fore.WHITE + "┃" + colored_line + Fore.WHITE + "┃")
 
-    # Thông tin Credit
-    credit_str = "By ZeroNokami | High-Performance Auto Rejoin Engine"
-    pad = (W - len(credit_str)) // 2
-    print(Fore.WHITE + "┃" + " " * pad + Fore.GREEN + Style.BRIGHT + "By ZeroNokami" + Fore.WHITE + " | " + Fore.MAGENTA + "High-Performance Auto Rejoin Engine" + " " * (W - pad - len(credit_str)) + Fore.WHITE + "┃")
-    
+    credit_str = "By ZeroNokami | High-Performance Engine"
+    print(Fore.WHITE + "┃" + credit_str.center(W) + Fore.WHITE + "┃")
     print(Fore.WHITE + "┣" + "━" * W + "┫")
     print(Fore.WHITE + "┃" + (Fore.YELLOW + Style.BRIGHT + " [ TERMINAL CONTROL INTERFACE ] ").center(W + 9) + Fore.WHITE + "┃")
     print(Fore.WHITE + "┣" + "━" * W + "┫")
     
     opts = [
-        (Fore.GREEN,  "  [1] EXECUTE ENGINE : Start Multi-Instance Auto-Rejoin"),
-        (Fore.CYAN,   "  [2] CONFIGURATION  : Assign Game ID or Private Link"),
-        (Fore.YELLOW, "  [3] SYSTEM SETUP   : Set Package Prefix for Detection"),
-        (Fore.RED,    "  [4] TERMINATE      : Exit System Safely")
+        (Fore.GREEN,  "  [1] EXECUTE ENGINE : Start Auto-Rejoin"),
+        (Fore.CYAN,   "  [2] CONFIGURATION  : Assign Game ID"),
+        (Fore.YELLOW, "  [3] SYSTEM SETUP   : Set Package Prefix"),
+        (Fore.RED,    "  [4] TERMINATE      : Exit Safely")
     ]
     
     for col, txt in opts:
         print(Fore.WHITE + "┃" + (col + txt).ljust(W + 9) + Fore.WHITE + "┃")
-        
     print(Fore.WHITE + "┗" + "━" * W + "┛")
 
 def status_box():
     cpu, ram = get_system_info()
     clear()
     try:
-        cols = os.get_terminal_size().columns
-        W = max(cols - 4, 135)
+        W = os.get_terminal_size().columns - 2
+        if W < 110: W = 110
     except:
-        W = 135
+        W = 110
 
     print(Fore.WHITE + "┏" + "━" * W + "┓")
-    header = f" SYSTEM MONITOR : CPU LOAD {cpu:.1f}% | RAM USAGE {ram:.1f}% "
+    header = f" MONITOR: CPU {cpu:.1f}% | RAM {ram:.1f}% "
     print(Fore.WHITE + "┃" + (Fore.CYAN + Style.BRIGHT + header).center(W + 9) + Fore.WHITE + "┃")
     print(Fore.WHITE + "┣" + "━" * W + "┫")
     
-    # Cân đối tỷ lệ cột cho khung rộng
+    # Chia cột linh hoạt dựa trên chiều rộng màn hình
     u_w = int(W * 0.25)
-    p_w = int(W * 0.35)
+    p_w = int(W * 0.30)
     s_w = W - u_w - p_w - 6
     
-    print(Fore.WHITE + f"┃ {Style.BRIGHT+'ACCOUNT/USER':^{u_w}} ┃ {Style.BRIGHT+'PACKAGE IDENTIFIER':^{p_w}} ┃ {Style.BRIGHT+'PROCESS STATUS':^{s_w}} ┃")
+    label = f"┃ {'USER':^{u_w}} ┃ {'PACKAGE':^{p_w}} ┃ {'STATUS':^{s_w}} ┃"
+    print(Fore.WHITE + label)
     print(Fore.WHITE + "┣" + "━" * W + "┫")
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        user = data.get('user', "Unknown")[:u_w-2]
-        p_name = pkg.split('.')[-1][:p_w-2]
+        user = str(data.get('user', "Unknown"))[:u_w]
+        p_name = str(pkg.split('.')[-1])[:p_w]
         st = data['status']
-        print(Fore.WHITE + "┃ " + Fore.YELLOW + f"{user:^{u_w-2}}" + Fore.WHITE + " ┃ " + Fore.GREEN + f"{p_name:^{p_w-2}}" + Fore.WHITE + " ┃ " + f"{st:^{s_w+8}}" + Fore.WHITE + " ┃")
+        # Fix lỗi tràn dòng khi status quá dài
+        print(Fore.WHITE + f"┃ {Fore.YELLOW}{user:^{u_w}}{Fore.WHITE} ┃ {Fore.GREEN}{p_name:^{p_w}}{Fore.WHITE} ┃ {st:^{s_w+8}}{Fore.WHITE} ┃")
     
     print(Fore.WHITE + "┗" + "━" * W + "┛")
 
-# --- MAIN LOOP (GIỮ NGUYÊN 100% LOGIC) ---
+# --- MAIN LOOP GIỮ NGUYÊN ---
 while True:
     if auto_running:
         status_box()
