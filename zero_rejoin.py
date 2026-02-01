@@ -37,7 +37,7 @@ def get_roblox_username(pkg):
                 return match.group(0)
     except:
         pass
-    return f"@{pkg.split('.')[-1].upper()}"
+    return None # Trả về None nếu chưa thấy tên thật
 
 def get_installed_packages(prefix):
     try:
@@ -79,7 +79,9 @@ def auto_rejoin_logic(pkg):
         time.sleep(12) 
         
         # Cập nhật Username thực tế
-        package_data[pkg]['user'] = get_roblox_username(pkg)
+        real_name = get_roblox_username(pkg)
+        if real_name:
+            package_data[pkg]['user'] = real_name
         
         if is_running(pkg):
             package_data[pkg]['status'] = f"{Fore.CYAN}Auto Join"
@@ -101,7 +103,6 @@ def auto_rejoin_logic(pkg):
 
 def get_system_info():
     try:
-        # Lấy kích thước terminal để tự động căn chỉnh
         columns, _ = os.get_terminal_size()
         mem = subprocess.check_output(["free", "-m"], stderr=subprocess.DEVNULL).decode().splitlines()
         parts = mem[1].split()
@@ -112,63 +113,66 @@ def get_system_info():
 
 def status_box():
     cpu, ram, W = get_system_info()
-    if W < 84: W = 84 # Đảm bảo chiều rộng tối thiểu
+    if W < 84: W = 84
     clear()
     
-    # Header giữ màu Cyan, Chữ trắng sáng
     print(Fore.CYAN + "╔" + "═"*(W-2) + "╗")
     print(Fore.CYAN + "║" + f"{Fore.WHITE}{Style.BRIGHT} MONITORING SYSTEM - CPU: {cpu:.1f}% | RAM: {ram:.1f}% ".center(W-2) + Fore.CYAN + "║")
     
-    # Chia cột linh hoạt để không bị vỡ khi zoom
+    # Cố định tỷ lệ cột để không bị nhảy khi tên dài
     w1, w2 = 28, 28
     w3 = W - w1 - w2 - 4
     
     print(Fore.CYAN + "╠" + "═"*w1 + "╦" + "═"*w2 + "╦" + "═"*w3 + "╣")
-    # Tên cột là "Name" màu Vàng
     print(Fore.CYAN + "║" + f"{Fore.YELLOW} Name ".center(w1) + "║" + f"{Fore.YELLOW} Package Identifier ".center(w2) + "║" + f"{Fore.YELLOW} Status ".center(w3) + "║")
     print(Fore.CYAN + "╠" + "═"*w1 + "╬" + "═"*w2 + "╬" + "═"*w3 + "╣")
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        roblox_user = data.get('user', "Scanning...")
+        # Nếu chưa lấy được tên thật, hiển thị thông báo đang chờ thay vì đuôi package
+        roblox_user = data.get('user', "Waiting for Scan...")
         st = data['status']
-        # Username hiển thị màu Trắng
         print(Fore.CYAN + "║" + f"{Fore.WHITE} {roblox_user:^{w1-2}} " + Fore.CYAN + "║" + f"{Fore.WHITE} {pkg:^{w2-2}} " + Fore.CYAN + "║" + f" {st:^{w3-2}} " + Fore.CYAN + "║")
         
     print(Fore.CYAN + "╚" + "═"*w1 + "╩" + "═"*w2 + "╩" + "═"*w3 + "╝")
 
 def banner():
     clear()
-    # Giữ nguyên Logo màu Cyan gốc của bạn
-    logo = f"""{Fore.CYAN}{Style.BRIGHT}
-    ███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗
-    ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║
-      ███╔╝ █████╗  ██████╔╝██║   ██║██╔██╗ ██║██║   ██║█████╔╝ ███████║██╔████╔██║██║
-     ███╔╝  ██╔══╝  ██╔══██╗██║   ██║██║╚██╗██║██║   ██║██╔═██╗ ██╔══██║██║╚██╔╝██║██║
-    ███████╗███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝██║  ██╗██║  ██║██║ ╚═╝ ██║██║
-    ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝
-    """
-    print(logo)
-    
     cols, _ = os.get_terminal_size()
-    W = 60 if cols > 60 else cols
     
-    print(Fore.BLUE + "╔" + "═" * (W-2) + "╗")
-    header = " MAIN CONTROL INTERFACE "
+    # Logo căn chỉnh động - Không dùng khoảng trắng cứng để tránh biến dạng khi zoom
+    logo_lines = [
+        "███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗",
+        "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║",
+        "  ███╔╝ █████╗  ██████╔╝██║   ██║██╔██╗ ██║██║   ██║█████╔╝ ███████║██╔████╔██║██║",
+        " ███╔╝  ██╔══╝  ██╔══██╗██║   ██║██║╚██╗██║██║   ██║██╔═██╗ ██╔══██║██║╚██╔╝██║██║",
+        "███████╗███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝██║  ██╗██║  ██║██║ ╚═╝ ██║██║",
+        "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝"
+    ]
+    
+    print(Fore.CYAN + Style.BRIGHT)
+    for line in logo_lines:
+        print(line.center(cols))
+    
+    W = 60 if cols > 60 else cols - 2
+    
+    print("\n" + Fore.BLUE + "╔" + "═" * (W-2) + "╗".center(cols - W if cols > W else 0))
+    header = f" {DISPLAY_NAME} - CONTROL PANEL "
     print(Fore.BLUE + "║" + Fore.WHITE + Style.BRIGHT + header.center(W-2) + Fore.BLUE + "║")
     print(Fore.BLUE + "╠" + "═" * (W-2) + "╣")
     
     def print_item(cmd_str, desc_str, color=Fore.GREEN):
-        line = f"  {Fore.YELLOW}{cmd_str}  {color}{desc_str}"
-        # Padding chuẩn để không bị nhảy chữ khi zoom
-        padding = W - 5
-        print(Fore.BLUE + "║" + line.ljust(padding + 14) + Fore.BLUE + "║")
+        # Fix lỗi hiển thị màu bằng cách tính toán độ dài thực tế của text
+        text_part = f"  {Fore.YELLOW}{cmd_str}  {color}{desc_str}"
+        padding = W - 4
+        # Sử dụng format string để đảm bảo khung bên phải luôn thẳng
+        print(Fore.BLUE + "║" + f"{text_part:<{padding+14}}" + Fore.BLUE + "║")
         
     print_item("[1]", "Start Auto-Rejoin Engine")
     print_item("[2]", "Assign Game ID / Private Link")
     print_item("[3]", "Set Package Prefix")
     print_item("[4]", "Exit System", color=Fore.RED)
-    print(Fore.BLUE + "╚" + "═" * (W-2) + "╝\n")
+    print(Fore.BLUE + "╚" + "═" * (W-2) + "╝")
 
 # Main Loop (GIỮ NGUYÊN 100% LOGIC GỐC)
 while True:
@@ -244,7 +248,7 @@ while True:
                     for p in all_pkgs:
                         package_data[p] = {
                             'status': 'Initializing...',
-                            'user': f"@{p.split('.')[-1].upper()}"
+                            'user': "Waiting for Scan..." # Mặc định không hiện đuôi package nữa
                         }
                         threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
                         time.sleep(2)
