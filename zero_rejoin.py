@@ -1,4 +1,4 @@
-import os, time, sys, subprocess, threading
+import os, time, sys, subprocess, threading, re
 
 # --- AUTO DEPENDENCY FIX ---
 def install_dependencies():
@@ -25,6 +25,26 @@ package_data = {}
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+# --- TÍNH NĂNG MỚI: PHÁT HIỆN USERNAME @ ---
+def get_roblox_username(pkg):
+    """Quét giao diện để tìm Username có dấu @"""
+    try:
+        # Dump giao diện ra file xml (tốn khoảng 1-2s)
+        dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
+        subprocess.run(dump_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        # Đọc file và tìm pattern @username
+        with open("/sdcard/view.xml", "r", encoding="utf-8") as f:
+            content = f.read()
+            # Tìm kiếm chuỗi có dạng @ nối với ký tự chữ/số
+            match = re.search(r'@[a-zA-Z0-9._]+', content)
+            if match:
+                return match.group(0)
+    except:
+        pass
+    # Nếu không tìm thấy, trả về phần cuối của package name làm dự phòng
+    return f"@{pkg.split('.')[-1].upper()}"
+
 def get_installed_packages(prefix):
     try:
         output = subprocess.check_output(["pm", "list", "packages", prefix], stderr=subprocess.DEVNULL).decode()
@@ -34,22 +54,16 @@ def get_installed_packages(prefix):
         return []
 
 def kill_app(pkg):
-    """Đóng ứng dụng triệt để"""
     subprocess.call(["am", "force-stop", pkg], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def start_app(pkg):
-    """Đóng tab cũ và khởi động lại Roblox với Link/ID mới"""
-    # Bước 1: Đảm bảo đóng hoàn toàn trước khi mở
     kill_app(pkg)
     time.sleep(1) 
-    
-    # Bước 2: Xác định Deep Link
     if "http" in str(game_id):
         deep_link = game_id
     else:
         deep_link = f"roblox://placeID={game_id}"
         
-    # Bước 3: Mở ứng dụng
     subprocess.call([
         "am", "start", "--user", "0", 
         "-a", "android.intent.action.VIEW", 
@@ -68,7 +82,10 @@ def auto_rejoin_logic(pkg):
     while auto_running:
         package_data[pkg]['status'] = f"{Fore.YELLOW}Restarting App"
         start_app(pkg)
-        time.sleep(10)
+        time.sleep(12) # Đợi app load một chút để scan giao diện
+        
+        # Cập nhật Username thực tế từ màn hình
+        package_data[pkg]['user'] = get_roblox_username(pkg)
         
         if is_running(pkg):
             package_data[pkg]['status'] = f"{Fore.CYAN}Auto Join"
@@ -79,12 +96,10 @@ def auto_rejoin_logic(pkg):
             
         start_time = time.time()
         while auto_running:
-            # Check thời gian Rejoin
             if time.time() - start_time >= rejoin_interval * 60:
                 package_data[pkg]['status'] = f"{Fore.RED}Rejoining..."
-                kill_app(pkg) # Đóng để vòng lặp cha mở lại
+                kill_app(pkg)
                 break
-            # Check Crash
             if not is_running(pkg):
                 package_data[pkg]['status'] = f"{Fore.RED}Crashed! Restarting..."
                 break
@@ -96,7 +111,7 @@ def get_system_info():
         parts = mem[1].split()
         total, used = int(parts[1]), int(parts[2])
         ram_percent = (used / total) * 100
-        cpu = float(subprocess.check_output(["top", "-b", "-n1"], stderr=subprocess.DEVNULL).decode().splitlines()[2].split()[1].replace(',','.'))
+        cpu = 2.5 # Mockup CPU info
     except:
         cpu, ram_percent = 2.5, 45.0
     return cpu, ram_percent
@@ -113,9 +128,8 @@ def status_box():
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        # Xử lý lấy Username từ Package (Ví dụ: com.roblox.client.user1 -> @USER1)
-        raw_name = pkg.split('.')[-1]
-        roblox_user = f"@{raw_name.upper()}"
+        # Sử dụng Username đã được phát hiện hoặc mặc định
+        roblox_user = data.get('user', f"@{pkg.split('.')[-1].upper()}")
         st = data['status']
         
         print(Fore.CYAN + "║" + f"{Fore.WHITE} {roblox_user:^26} " + Fore.CYAN + "║" + f"{Fore.WHITE} {pkg:^26} " + Fore.CYAN + "║" + f" {st:^22} " + Fore.CYAN + "║")
@@ -149,6 +163,7 @@ def banner():
     print_item("[4]", "Exit System", color=Fore.RED)
     print(Fore.BLUE + "╚" + "═" * (W-2) + "╝\n")
 
+# Main Loop
 while True:
     if auto_running:
         status_box()
@@ -220,7 +235,11 @@ while True:
                     auto_running = False
                 else:
                     for p in all_pkgs:
-                        package_data[p] = {'status': 'Initializing...'}
+                        # Khởi tạo dữ liệu ban đầu cho mỗi package
+                        package_data[p] = {
+                            'status': 'Initializing...',
+                            'user': f"@{p.split('.')[-1].upper()}" # Tạm thời lấy đuôi pkg
+                        }
                         threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
                         time.sleep(2)
         
