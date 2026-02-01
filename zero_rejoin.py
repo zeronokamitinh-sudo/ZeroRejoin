@@ -33,21 +33,28 @@ def get_installed_packages(prefix):
     except:
         return []
 
+def kill_app(pkg):
+    """Đóng ứng dụng triệt để"""
+    subprocess.call(["am", "force-stop", pkg], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
 def start_app(pkg):
-    # logic xử lý: nếu game_id chứa "http" thì coi đó là link, ngược lại là ID
+    """Đóng tab cũ và khởi động lại Roblox với Link/ID mới"""
+    # Bước 1: Đảm bảo đóng hoàn toàn trước khi mở
+    kill_app(pkg)
+    time.sleep(1) 
+    
+    # Bước 2: Xác định Deep Link
     if "http" in str(game_id):
         deep_link = game_id
     else:
         deep_link = f"roblox://placeID={game_id}"
         
+    # Bước 3: Mở ứng dụng
     subprocess.call([
         "am", "start", "--user", "0", 
         "-a", "android.intent.action.VIEW", 
         "-d", deep_link, pkg
     ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-def kill_app(pkg):
-    subprocess.call(["am", "force-stop", pkg], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def is_running(pkg):
     try:
@@ -59,7 +66,7 @@ def is_running(pkg):
 def auto_rejoin_logic(pkg):
     global auto_running
     while auto_running:
-        package_data[pkg]['status'] = f"{Fore.YELLOW}Opening Roblox"
+        package_data[pkg]['status'] = f"{Fore.YELLOW}Restarting App"
         start_app(pkg)
         time.sleep(10)
         
@@ -72,10 +79,12 @@ def auto_rejoin_logic(pkg):
             
         start_time = time.time()
         while auto_running:
+            # Check thời gian Rejoin
             if time.time() - start_time >= rejoin_interval * 60:
                 package_data[pkg]['status'] = f"{Fore.RED}Rejoining..."
-                kill_app(pkg)
+                kill_app(pkg) # Đóng để vòng lặp cha mở lại
                 break
+            # Check Crash
             if not is_running(pkg):
                 package_data[pkg]['status'] = f"{Fore.RED}Crashed! Restarting..."
                 break
@@ -93,23 +102,25 @@ def get_system_info():
     return cpu, ram_percent
 
 def status_box():
-    W = 80
+    W = 84
     cpu, ram = get_system_info()
     clear()
     print(Fore.CYAN + "╔" + "═"*(W-2) + "╗")
     print(Fore.CYAN + "║" + f"{Fore.WHITE}{Style.BRIGHT} MONITORING SYSTEM - CPU: {cpu:.1f}% | RAM: {ram:.1f}% ".center(W-2) + Fore.CYAN + "║")
-    print(Fore.CYAN + "╠" + "═"*26 + "╦" + "═"*26 + "╦" + "═"*24 + "╣")
-    print(Fore.CYAN + "║" + f"{Fore.YELLOW} Roblox @Username ".center(26) + "║" + f"{Fore.YELLOW} Package Identifier ".center(26) + "║" + f"{Fore.YELLOW} Status ".center(24) + "║")
-    print(Fore.CYAN + "╠" + "═"*26 + "╬" + "═"*26 + "╬" + "═"*24 + "╣")
+    print(Fore.CYAN + "╠" + "═"*28 + "╦" + "═"*28 + "╦" + "═"*24 + "╣")
+    print(Fore.CYAN + "║" + f"{Fore.YELLOW} Roblox @Username ".center(28) + "║" + f"{Fore.YELLOW} Package Identifier ".center(28) + "║" + f"{Fore.YELLOW} Status ".center(24) + "║")
+    print(Fore.CYAN + "╠" + "═"*28 + "╬" + "═"*28 + "╬" + "═"*24 + "╣")
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
+        # Xử lý lấy Username từ Package (Ví dụ: com.roblox.client.user1 -> @USER1)
         raw_name = pkg.split('.')[-1]
         roblox_user = f"@{raw_name.upper()}"
         st = data['status']
-        print(Fore.CYAN + "║" + f"{Fore.WHITE} {roblox_user[:24]:^24} " + Fore.CYAN + "║" + f"{Fore.WHITE} {pkg[:24]:^24} " + Fore.CYAN + "║" + f" {st:^22} " + Fore.CYAN + "║")
         
-    print(Fore.CYAN + "╚" + "═"*26 + "╩" + "═"*26 + "╩" + "═"*24 + "╝")
+        print(Fore.CYAN + "║" + f"{Fore.WHITE} {roblox_user:^26} " + Fore.CYAN + "║" + f"{Fore.WHITE} {pkg:^26} " + Fore.CYAN + "║" + f" {st:^22} " + Fore.CYAN + "║")
+        
+    print(Fore.CYAN + "╚" + "═"*28 + "╩" + "═"*28 + "╩" + "═"*24 + "╝")
 
 def banner():
     clear()
@@ -159,43 +170,34 @@ while True:
             if new_prefix:
                 current_package_prefix = new_prefix
                 found = get_installed_packages(new_prefix)
-                print(f"{Fore.GREEN}>> Detected {len(found)} matching packages in system.")
+                print(f"{Fore.GREEN}>> Detected {len(found)} matching packages.")
         
         elif ch == "2":
             if not current_package_prefix:
                 print(Fore.RED + ">> Error: Please set package prefix first!")
             else:
                 print(Fore.CYAN + "\n --- SELECT GAME ---")
-                print(Fore.WHITE + " [1] Blox Fruit")
-                print(Fore.WHITE + " [2] 99 Night In The Forest")
-                print(Fore.WHITE + " [3] Deals Rails")
-                print(Fore.WHITE + " [4] Fisch")
-                print(Fore.WHITE + " [5] Anime Defenders")
-                print(Fore.WHITE + " [6] Bee Swarm Simulator")
-                print(Fore.WHITE + " [7] Steal A Brainrot")
-                print(Fore.WHITE + " [8] Escape Tsunami For Brainrot")
-                print(Fore.WHITE + " [9] Anime Adventure")
-                print(Fore.WHITE + " [10] King Legacy")
+                game_list = {
+                    "1": ("Blox Fruit", "2753915549"),
+                    "2": ("99 Night In The Forest", "79546208627805"),
+                    "3": ("Deals Rails", "116495829188952"),
+                    "4": ("Fisch", "16732694052"),
+                    "5": ("Anime Defenders", "17017769292"),
+                    "6": ("Bee Swarm Simulator", "1537690962"),
+                    "7": ("Steal A Brainrot", "109983668079237"),
+                    "8": ("Escape Tsunami For Brainrot", "131623223084840"),
+                    "9": ("Anime Adventure", "8304191830"),
+                    "10": ("King Legacy", "4520749081"),
+                }
+                for k, v in game_list.items():
+                    print(f"{Fore.WHITE} [{k}] {v[0]}")
                 print(Fore.YELLOW + " [11] Other Game / Private Server Link")
                 
                 game_choice = input(f"\n{prefix_label}Select Option: ")
                 
-                games = {
-                    "1": "2753915549",
-                    "2": "79546208627805",
-                    "3": "116495829188952",
-                    "4": "16732694052",
-                    "5": "17017769292",
-                    "6": "1537690962",
-                    "7": "109983668079237",
-                    "8": "131623223084840",
-                    "9": "8304191830",
-                    "10": "4520749081"
-                }
-
-                if game_choice in games:
-                    game_id = games[game_choice]
-                    print(f"{Fore.GREEN}>> Game ID {game_id} linked.")
+                if game_choice in game_list:
+                    game_id = game_list[game_choice][1]
+                    print(f"{Fore.GREEN}>> Linked: {game_list[game_choice][0]}")
                 elif game_choice == "11":
                     link = input(prefix_label + "Paste Link (VIP/Server): ")
                     if link:
@@ -206,7 +208,7 @@ while True:
         
         elif ch == "1":
             if not current_package_prefix or not game_id:
-                print(f"{Fore.RED}>> Error: Missing configuration (Prefix/GameID)!")
+                print(f"{Fore.RED}>> Error: Missing configuration!")
             else:
                 interval_input = input(prefix_label + "Interval (Minutes): ")
                 rejoin_interval = float(interval_input)
@@ -228,5 +230,5 @@ while True:
             
         if not auto_running:
             input(f"\n{Fore.GREEN}Press Enter to go back...")
-    except Exception as e:
+    except Exception:
         pass
