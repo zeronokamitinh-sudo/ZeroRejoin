@@ -25,7 +25,7 @@ package_data = {}
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-# --- TÍNH NĂNG: PHÁT HIỆN USERNAME @ ---
+# --- TÍNH NĂNG GỐC GIỮ NGUYÊN ---
 def get_roblox_username(pkg):
     try:
         dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
@@ -109,17 +109,18 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
+# --- STATUS BOX: KHUNG NÉT ĐỨT TRẮNG ---
 def status_box():
     cpu, ram = get_system_info()
-    W = 60
+    W = 66
     clear()
     
-    print(Fore.CYAN + "┌" + "─"*(W-2) + "┐")
+    print(Fore.WHITE + ". " + "- " * ((W-4)//2) + " .")
     header = f" MONITORING: CPU {cpu:.1f}% | RAM {ram:.1f}% "
-    print(Fore.CYAN + "│" + Fore.WHITE + Style.BRIGHT + header.center(W-2) + Fore.CYAN + "│")
-    print(Fore.CYAN + "├" + "─"*15 + "┬" + "─"*20 + "┬" + "─"*21 + "┤")
-    print(Fore.CYAN + "│" + " USER".ljust(15) + "│" + " PACKAGE".ljust(20) + "│" + " STATUS".ljust(21) + "│")
-    print(Fore.CYAN + "├" + "─"*15 + "┼" + "─"*20 + "┼" + "─"*21 + "┤")
+    print(Fore.WHITE + "| " + Fore.CYAN + Style.BRIGHT + header.center(W-4) + Fore.WHITE + " |")
+    print(Fore.WHITE + ": " + "- " * 7 + "+ " + "- " * 10 + "+ " + "- " * 10 + " :")
+    print(Fore.WHITE + "| " + "USER".center(14) + "| " + "PACKAGE".center(20) + "| " + "STATUS".center(20) + " |")
+    print(Fore.WHITE + ": " + "- " * 7 + "+ " + "- " * 10 + "+ " + "- " * 10 + " :")
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
@@ -127,41 +128,41 @@ def status_box():
         p_display = (pkg.split('.')[-1][:18])
         st = data['status']
         
-        line = Fore.CYAN + "│" + Fore.WHITE + f" {user.ljust(14)}" + Fore.CYAN + "│" + \
-               Fore.WHITE + f" {p_display.ljust(19)}" + Fore.CYAN + "│" + \
-               f" {st.ljust(20)}" + Fore.CYAN + "│"
+        line = Fore.WHITE + "| " + Fore.YELLOW + f"{user.center(14)}" + Fore.WHITE + "| " + \
+               Fore.GREEN + f"{p_display.center(20)}" + Fore.WHITE + "| " + \
+               f"{st.center(20)}" + Fore.WHITE + " |"
         print(line)
         
-    print(Fore.CYAN + "└" + "─"*15 + "┴" + "─"*20 + "┴" + "─"*21 + "┘")
+    print(Fore.WHITE + "' " + "- " * ((W-4)//2) + " '")
 
-# --- BANNER VỚI CHỮ ZERONOKAMI MÀU XÉO ---
+# --- BANNER: CHỮ TO CỰC ĐẠI & KHUNG NÉT ĐỨT ---
 def banner():
     clear()
-    # Mảng màu để tạo hiệu ứng xéo
-    colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA, Fore.WHITE]
+    # Danh sách màu sắc cho hiệu ứng xéo đa sắc
+    colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA]
     
-    ascii_art = [
-        "  ______ _____  ____  _   _  ____  _  __          __  __ _____ ",
-        " |___  /|  ___||  _ \| \ | |/ __ \| |/ /    /\   |  \/  |_   _|",
-        "    / / | |__  | |_) |  \| | |  | | ' /    /  \  | \  / | | |  ",
-        "   / /  |  __| |  _ <| |\  | |  | |  <    / /\ \ | |\/| | | |  ",
-        "  / /__ | |____| | \ \ | \ | |__| | . \  / ____ \| |  | |_| |_ ",
-        " /_____||______|_|  \_\_| \_\____/|_|\_\/_/    \_\_|  |_|_____|"
+    # Chữ ZERONOKAMI phiên bản Big Block to hơn
+    big_art = [
+        "  ______  ______ _____   ____  _   _  ____  _  __            __  __ _____ ",
+        " |___  / |  ____|  __ \ / __ \| \ | |/ __ \| |/ /    /\     |  \/  |_   _|",
+        "    / /  | |__  | |__) | |  | |  \| | |  | | ' /    /  \    | \  / | | |  ",
+        "   / /   |  __| |  _  /| |  | | |\  | |  | |  <    / /\ \   | |\/| | | |  ",
+        "  / /__  | |____| | \ \| |__| | | \ | |__| | . \  / ____ \  | |  | |_| |_ ",
+        " /_____| |______|_|  \_\\____/|_|  \_\____/|_|\_\/_/    \_\ |_|  |_|_____|"
     ]
 
-    # In ASCII art với logic màu xéo (màu thay đổi theo hàng và cột)
-    for i, line in enumerate(ascii_art):
+    for i, line in enumerate(big_art):
         colored_line = ""
         for j, char in enumerate(line):
-            # Tính toán chỉ số màu dựa trên vị trí hàng (i) và cột (j) để tạo góc xéo
-            color_idx = (i + (j // 8)) % len(colors)
+            # Công thức tạo màu xéo từ trái sang phải, trên xuống dưới
+            color_idx = (i + (j // 6)) % len(colors)
             colored_line += colors[color_idx] + char
         print(Style.BRIGHT + colored_line)
 
-    W = 65 
-    print("\n" + Fore.WHITE + "╔" + "═" * (W-2) + "╗")
-    print(Fore.WHITE + "║" + f"{Fore.YELLOW}{Style.BRIGHT} {DISPLAY_NAME} - CONTROL PANEL ".center(W-2) + Fore.WHITE + "║")
-    print(Fore.WHITE + "╠" + "═" * (W-2) + "╣")
+    W = 75 
+    print("\n" + Fore.WHITE + ". " + "- " * ((W-4)//2) + " .")
+    print(Fore.WHITE + "| " + Fore.YELLOW + Style.BRIGHT + f" {DISPLAY_NAME} - CONTROL PANEL ".center(W-4) + Fore.WHITE + " |")
+    print(Fore.WHITE + ": " + "- " * ((W-4)//2) + " :")
     
     options = [
         ("[1]", "Start Auto-Rejoin Engine", Fore.GREEN),
@@ -171,10 +172,10 @@ def banner():
     ]
     
     for opt in options:
-        text = f" {opt[0]} {opt[1]}"
-        print(Fore.WHITE + "║" + opt[2] + text.ljust(W-2) + Fore.WHITE + "║")
+        content = f" {opt[0]} {opt[1]}"
+        print(Fore.WHITE + "| " + opt[2] + content.ljust(W-4) + Fore.WHITE + " |")
         
-    print(Fore.WHITE + "╚" + "═" * (W-2) + "╝\n")
+    print(Fore.WHITE + "' " + "- " * ((W-4)//2) + " '")
 
 # Main Loop (Giữ nguyên logic gốc)
 while True:
