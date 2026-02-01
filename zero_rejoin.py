@@ -102,60 +102,62 @@ def auto_rejoin_logic(pkg):
 
 def get_system_info():
     try:
-        columns, _ = os.get_terminal_size()
+        # Không dùng os.get_terminal_size cho viền để tránh lỗi vỡ khi zoom
         mem = subprocess.check_output(["free", "-m"], stderr=subprocess.DEVNULL).decode().splitlines()
         parts = mem[1].split()
         ram_percent = (int(parts[2]) / int(parts[1])) * 100
-        return 2.5, ram_percent, columns
+        return 2.5, ram_percent
     except:
-        return 2.5, 45.0, 84
+        return 2.5, 45.0
 
 def status_box():
-    cpu, ram, W = get_system_info()
-    if W < 84: W = 84
+    cpu, ram = get_system_info()
+    W = 80 # Cố định độ rộng để chống vỡ khung
     clear()
     
     print(Fore.CYAN + "╔" + "═"*(W-2) + "╗")
     print(Fore.CYAN + "║" + f"{Fore.WHITE}{Style.BRIGHT} MONITORING SYSTEM - CPU: {cpu:.1f}% | RAM: {ram:.1f}% ".center(W-2) + Fore.CYAN + "║")
     
-    w1, w2 = 28, 28
+    w1, w2 = 24, 24
     w3 = W - w1 - w2 - 4
     
     print(Fore.CYAN + "╠" + "═"*w1 + "╦" + "═"*w2 + "╦" + "═"*w3 + "╣")
-    print(Fore.CYAN + "║" + f"{Fore.YELLOW} Name ".center(w1) + "║" + f"{Fore.YELLOW} Package Identifier ".center(w2) + "║" + f"{Fore.YELLOW} Status ".center(w3) + "║")
+    print(Fore.CYAN + "║" + f" Name ".center(w1) + "║" + f" Package ".center(w2) + "║" + f" Status ".center(w3) + "║")
     print(Fore.CYAN + "╠" + "═"*w1 + "╬" + "═"*w2 + "╬" + "═"*w3 + "╣")
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        # HIỆN DẤU ********** CHO ĐẾN KHI CÓ USERNAME THẬT
         roblox_user = data.get('user', "**********")
         st = data['status']
-        print(Fore.CYAN + "║" + f"{Fore.WHITE} {roblox_user:^{w1-2}} " + Fore.CYAN + "║" + f"{Fore.WHITE} {pkg:^{w2-2}} " + Fore.CYAN + "║" + f" {st:^{w3-2}} " + Fore.CYAN + "║")
+        # Cắt bớt pkg nếu quá dài để không làm vỡ viền
+        p_display = (pkg[:w2-3] + "..") if len(pkg) > w2 else pkg
+        print(Fore.CYAN + "║" + f"{Fore.WHITE}{roblox_user:^{w1}}".center(w1) + Fore.CYAN + "║" + f"{Fore.WHITE}{p_display:^{w2}}".center(w2) + Fore.CYAN + "║" + f" {st:^{w3-2}} " + Fore.CYAN + "║")
         
     print(Fore.CYAN + "╚" + "═"*w1 + "╩" + "═"*w2 + "╩" + "═"*w3 + "╝")
 
 def banner():
     clear()
-    # TRẢ LẠI MÀU CYAN CHO LOGO VÀ FIX LỖI BIẾN DẠNG
-    print(f"""{Fore.CYAN}{Style.BRIGHT}
-    ███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗
-    ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║
-      ███╔╝ █████╗  ██████╔╝██║   ██║██╔██╗ ██║██║   ██║█████╔╝ ███████║██╔████╔██║██║
-     ███╔╝  ██╔══╝  ██╔══██╗██║   ██║██║╚██╗██║██║   ██║██╔═██╗ ██╔══██║██║╚██╔╝██║██║
-    ███████╗███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝██║  ██╗██║  ██║██║ ╚═╝ ██║██║
-    ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝""")
+    # In trực tiếp không center để tránh lỗi font khi zoom
+    print(Fore.CYAN + Style.BRIGHT + "███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗")
+    print(Fore.CYAN + Style.BRIGHT + "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║")
+    print(Fore.CYAN + Style.BRIGHT + "  ███╔╝ █████╗  ██████╔╝██║   ██║██╔██╗ ██║██║   ██║█████╔╝ ███████║██╔████╔██║██║")
+    print(Fore.CYAN + Style.BRIGHT + " ███╔╝  ██╔══╝  ██╔══██╗██║   ██║██║╚██╗██║██║   ██║██╔═██╗ ██╔══██║██║╚██╔╝██║██║")
+    print(Fore.CYAN + Style.BRIGHT + "███████╗███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝██║  ██╗██║  ██║██║ ╚═╝ ██║██║")
+    print(Fore.CYAN + Style.BRIGHT + "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝")
     
-    W = 60 
-    print(Fore.BLUE + "╔" + "═" * (W-2) + "╗")
+    W = 65 # Độ rộng menu cố định
+    print("\n" + Fore.BLUE + "╔" + "═" * (W-2) + "╗")
     print(Fore.BLUE + "║" + f"{Fore.WHITE}{Style.BRIGHT} {DISPLAY_NAME} - CONTROL PANEL ".center(W-2) + Fore.BLUE + "║")
     print(Fore.BLUE + "╠" + "═" * (W-2) + "╣")
-    print(Fore.BLUE + "║" + f"  {Fore.YELLOW}[1]{Fore.GREEN} Start Auto-Rejoin Engine".ljust(W+9) + Fore.BLUE + "║")
-    print(Fore.BLUE + "║" + f"  {Fore.YELLOW}[2]{Fore.GREEN} Assign Game ID / Private Link".ljust(W+9) + Fore.BLUE + "║")
-    print(Fore.BLUE + "║" + f"  {Fore.YELLOW}[3]{Fore.GREEN} Set Package Prefix".ljust(W+9) + Fore.BLUE + "║")
-    print(Fore.BLUE + "║" + f"  {Fore.YELLOW}[4]{Fore.RED} Exit System".ljust(W+9) + Fore.BLUE + "║")
+    
+    # In thủ công các mục để đảm bảo khoảng cách chuẩn
+    print(Fore.BLUE + "║ " + Fore.YELLOW + "[1] " + Fore.GREEN + "Start Auto-Rejoin Engine".ljust(W-8) + Fore.BLUE + "║")
+    print(Fore.BLUE + "║ " + Fore.YELLOW + "[2] " + Fore.GREEN + "Assign Game ID / Private Link".ljust(W-8) + Fore.BLUE + "║")
+    print(Fore.BLUE + "║ " + Fore.YELLOW + "[3] " + Fore.GREEN + "Set Package Prefix".ljust(W-8) + Fore.BLUE + "║")
+    print(Fore.BLUE + "║ " + Fore.YELLOW + "[4] " + Fore.RED + "Exit System".ljust(W-8) + Fore.BLUE + "║")
     print(Fore.BLUE + "╚" + "═" * (W-2) + "╝\n")
 
-# Main Loop (GIỮ NGUYÊN 100% LOGIC GỐC)
+# Main Loop
 while True:
     if auto_running:
         status_box()
