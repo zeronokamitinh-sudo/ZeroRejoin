@@ -21,7 +21,7 @@ rejoin_interval = None
 auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {} 
-W = 126 # Chiều rộng cố định cho toàn bộ giao diện để không bị lệch khung
+W = 126 # Chiều rộng cố định cho toàn bộ giao diện
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -107,27 +107,34 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- PHẦN FIX HIỂN THỊ: VẼ LOGO CỐ ĐỊNH CHIỀU RỘNG ---
+# --- PHẦN FIX HIỂN THỊ LOGO ---
 def draw_logo():
+    # Sử dụng font chữ ASCII gọn gàng hơn để không bị tràn khung W=126
     art = [
-        r"  ________  _______ .______       ______      .___  ___.      ___      .__   __.      ___       _______  _______ .______      ",
-        r" |       / |   ____||   _  \     /  __  \     |   \/   |     /   \     |  \ |  |     /   \     /  _____||   ____||   _  \     ",
-        r" `---/  /  |  |__   |  |_)  |   |  |  |  |    |  \  /  |    /  ^  \    |   \|  |    /  ^  \   |  |  __  |  |__   |  |_)  |    ",
-        r"    /  /   |   __|  |      /    |  |  |  |    |  |\/|  |   /  /_\  \   |  . `  |   /  /_\  \  |  | |_ | |   __|  |      /     ",
-        r"   /  /---.|  |____ |  |\  \----|  `--'  |    |  |  |  |  /  _____  \  |  |\   |  /  _____  \ |  |__| | |  |____ |  |\  \----.",
-        r"  /________|_______|| _| `._____|\______/     |__|  |__| /__/     \__\ |__| \__| /__/     \__\ \______| |_______|| _| `._____|"
+        r"  ________  _______ .______       ______     .___  ___.      ___      .__   __.      ___       _______  _______ .______      ",
+        r" |       / |   ____||   _  \     /  __  \    |   \/   |     /   \     |  \ |  |     /   \     /  _____||   ____||   _  \     ",
+        r" `---/  /  |  |__   |  |_)  |   |  |  |  |   |  \  /  |    /  ^  \    |   \|  |    /  ^  \   |  |  __  |  |__   |  |_)  |    ",
+        r"    /  /   |   __|  |      /    |  |  |  |   |  |\/|  |   /  /_\  \   |  . `  |   /  /_\  \  |  | |_ | |   __|  |      /     ",
+        r"   /  /---.|  |____ |  |\  \----|  `--'  |   |  |  |  |  /  _____  \  |  |\   |  /  _____  \ |  |__| | |  |____ |  |\  \----.",
+        r"  /________|_______|| _| `._____|\______/    |__|  |__| /__/     \__\ |__| \__| /__/     \__\ \______| |_______|| _| `._____|"
     ]
+    
+    # Mảng màu Gradient từ Trái sang Phải
     colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA]
+    
     for line in art:
-        content = line.center(W)
+        # Căn giữa dòng art trong phạm vi W ký tự
+        padding_total = W - len(line)
+        left_pad = padding_total // 2
+        right_pad = padding_total - left_pad
+        
         colored_line = ""
-        for j, char in enumerate(content):
-            if char.strip(): 
-                color_idx = (j // 15) % len(colors)
-                colored_line += colors[color_idx] + char
-            else:
-                colored_line += char
-        print(Fore.WHITE + "┃" + colored_line + Fore.WHITE + "┃")
+        # Áp dụng màu gradient theo từng phân đoạn của dòng
+        for i, char in enumerate(line):
+            color_idx = int((i / len(line)) * len(colors))
+            colored_line += colors[color_idx] + char
+            
+        print(Fore.WHITE + "┃" + (" " * left_pad) + colored_line + (" " * right_pad) + Fore.WHITE + "┃")
 
 def banner():
     clear()
@@ -159,14 +166,13 @@ def status_box():
     cpu, ram = get_system_info()
     clear()
     print(Fore.WHITE + "┏" + "━" * W + "┓")
-    draw_logo() # Đưa logo vào trong khung Status
+    draw_logo() 
     print(Fore.WHITE + "┣" + "━" * W + "┫")
     
     header = f" MONITOR: CPU {cpu:.1f}% | RAM {ram:.1f}% "
     print(Fore.WHITE + "┃" + Fore.CYAN + Style.BRIGHT + header.center(W) + Fore.WHITE + "┃")
     print(Fore.WHITE + "┣" + "━" * W + "┫")
     
-    # Căn chỉnh cột: User (30), Package (40), Status (còn lại)
     u_w, p_w = 30, 40
     s_w = W - u_w - p_w - 4
     
@@ -180,7 +186,6 @@ def status_box():
         p_name = str(pkg.split('.')[-1])[:p_w-2]
         st_color = data['status']
         
-        # Xử lý độ dài thực tế không tính mã màu để tránh lệch khung
         clean_st = re.sub(r'\x1b\[[0-9;]*m', '', st_color)
         st_padding = " " * (s_w - len(clean_st) - 2)
         
@@ -218,7 +223,6 @@ while True:
                 print(Fore.RED + ">> Error: Please set package prefix first!")
             else:
                 print(Fore.CYAN + "\n --- SELECT GAME ---")
-                # ĐÃ KHÔI PHỤC ĐẦY ĐỦ DANH SÁCH GAME CỦA BẠN
                 game_list = {
                     "1": ("Blox Fruit", "2753915549"),
                     "2": ("99 Night In The Forest", "79546208627805"),
