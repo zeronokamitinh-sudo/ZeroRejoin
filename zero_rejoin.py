@@ -109,54 +109,71 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- MONITOR BOX: NÉT ĐỨT KHÚC ---
+# --- MONITOR BOX: ĐÃ CĂN CHỈNH LẠI ---
 def status_box():
     cpu, ram = get_system_info()
-    W = 60
+    W = 74  # Độ rộng chuẩn để khớp với banner
     clear()
-    print(Fore.WHITE + ". " + "- " * (W // 2 - 1) + ".")
+    
+    # Border Styles
+    line_dash = Fore.WHITE + ". " + "- " * ((W // 2) - 1) + "."
+    line_sep  = Fore.WHITE + ": " + "- " * ((W // 2) - 1) + ":"
+    
+    print(line_dash)
     header = f" MONITORING: CPU {cpu:.1f}% | RAM {ram:.1f}% "
     print(Fore.WHITE + "| " + Fore.CYAN + Style.BRIGHT + header.center(W-3) + Fore.WHITE + "|")
-    print(Fore.WHITE + ": " + "- " * (W // 2 - 1) + ":")
-    print(Fore.WHITE + f"| {'USER':^15} | {'PACKAGE':^18} | {'STATUS':^17} |")
-    print(Fore.WHITE + ": " + "- " * (W // 2 - 1) + ":")
+    print(line_sep)
+    
+    # Căn chỉnh cột cho thẳng hàng
+    print(Fore.WHITE + f"| {'USER':^18} | {'PACKAGE':^20} | {'STATUS':^27} |")
+    print(line_sep)
+    
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        user = (data.get('user', "Unknown")[:13])
-        p_display = (pkg.split('.')[-1][:16])
+        user = (data.get('user', "Unknown")[:16])
+        p_display = (pkg.split('.')[-1][:18])
         st = data['status']
-        line = Fore.WHITE + f"| {Fore.YELLOW}{user:^13}{Fore.WHITE} | {Fore.GREEN}{p_display:^16}{Fore.WHITE} | {st:^15} {Fore.WHITE}|"
+        # Sử dụng ljust/center với độ rộng cố định để không bị lệch
+        line = Fore.WHITE + f"| {Fore.YELLOW}{user:^18}{Fore.WHITE} | {Fore.GREEN}{p_display:^20}{Fore.WHITE} | {st:^27} {Fore.WHITE}|"
         print(line)
-    print(Fore.WHITE + "' " + "- " * (W // 2 - 1) + "'")
+    
+    print(Fore.WHITE + "' " + "- " * ((W // 2) - 1) + "'")
 
-# --- BANNER X7 NÉT ĐỨT (1 DÒNG DUY NHẤT) ---
+# --- BANNER MỚI: CHỮ TO & KHÔNG BỊ VỠ ---
 def banner():
     clear()
     colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA]
     
-    # Chữ ZERONOKAMI kiểu nét đứt khúc cao x7 trên 1 dòng
+    # ASCII Art mới: To hơn, đậm hơn (Font: Big)
     art = [
-        " .---. .---. .---.  .---. .-. .-. .---. .-. .-. .---. .-. .-. .---. ",
-        "     / |     |   |  |   | |  \| | |   | | |/ /  |   | |  \| |   |   ",
-        "    /  |---  |---'  |   | |   | | |   | | | /   |---| |   | |   |   ",
-        "   /   |     | \    |   | | |\  | |   | | | \   |   | | |\  |   |   ",
-        "  /    |     |  \   |   | | | \ | |   | | |  \  |   | | | \ |   |   ",
-        " /     |     |   \  |   | | |  \| |   | | |   \ |   | | |  \|   |   ",
-        "'---'  '---' '    ' '---' '-'  '-' '---' '-'    ''---' '-'  '-' '---' "
+        r" ______                  _   _       _                     _ ",
+        r"|___  /                 | \ | |     | |                   (_)",
+        r"   / /   ___ _ __  ___  |  \| | ___ | | __ __ _ _ __ ___   _ ",
+        r"  / /   / _ \ '__|/ _ \ | . ` |/ _ \| |/ // _` | '_ ` _ \ | |",
+        r" / /__ |  __/ |  | (_) || |\  | (_) |   <| (_| | | | | | || |",
+        r"/_____| \___|_|   \___/ \_| \_/\___/|_|\_\\__,_|_| |_| |_||_|"
     ]
 
+    # In ASCII Art với màu gradient
     for i, line in enumerate(art):
         colored_line = ""
         for j, char in enumerate(line):
-            # Hiệu ứng màu chạy theo chữ
-            color_idx = (i + (j // 6)) % len(colors)
+            color_idx = (j // 5 + i) % len(colors) # Logic màu chạy ngang
             colored_line += colors[color_idx] + char
         print(Style.BRIGHT + colored_line)
     
-    W = 70
-    print("\n" + Fore.WHITE + ". " + "- " * (W // 2 - 1) + ".")
-    print(Fore.WHITE + "| " + Fore.YELLOW + Style.BRIGHT + f" {DISPLAY_NAME} - CONTROL PANEL ".center(W-3) + Fore.WHITE + "|")
-    print(Fore.WHITE + ": " + "- " * (W // 2 - 1) + ":")
+    # Độ rộng khung menu (W) phải bao trùm được chữ ASCII trên (khoảng 74 ký tự)
+    W = 74
+    
+    # Border Styles
+    line_top = Fore.WHITE + ". " + "- " * ((W // 2) - 1) + "."
+    line_mid = Fore.WHITE + ": " + "- " * ((W // 2) - 1) + ":"
+    line_bot = Fore.WHITE + "' " + "- " * ((W // 2) - 1) + "'"
+    
+    print("\n" + line_top)
+    title = f" {DISPLAY_NAME} - CONTROL PANEL "
+    print(Fore.WHITE + "| " + Fore.YELLOW + Style.BRIGHT + title.center(W-3) + Fore.WHITE + "|")
+    print(line_mid)
     
     opts = [("[1]", "Start Auto-Rejoin Engine", Fore.GREEN),
             ("[2]", "Assign Game ID / Link", Fore.CYAN),
@@ -164,9 +181,15 @@ def banner():
             ("[4]", "Exit System", Fore.RED)]
     
     for opt in opts:
-        content = f" {opt[0]} {opt[1]}"
-        print(Fore.WHITE + "| " + opt[2] + content.ljust(W-3) + Fore.WHITE + "|")
-    print(Fore.WHITE + "' " + "- " * (W // 2 - 1) + "'")
+        # Căn chỉnh menu option
+        prefix_txt = f" {opt[0]} "
+        desc_txt = f"{opt[1]}"
+        # Tính toán khoảng trắng cần thiết để đóng khung
+        padding = W - 3 - len(prefix_txt) - len(desc_txt)
+        content = prefix_txt + desc_txt + " " * padding
+        print(Fore.WHITE + "| " + opt[2] + content + Fore.WHITE + "|")
+        
+    print(line_bot)
 
 # Main Loop (GIỮ NGUYÊN 100%)
 while True:
@@ -240,7 +263,7 @@ while True:
                         time.sleep(2)
         
         elif ch == "4":
-            sys.exit()
+            sys.exit() 
             
         if not auto_running:
             input(f"\n{Fore.GREEN}Press Enter to go back...")
