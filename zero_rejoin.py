@@ -25,25 +25,23 @@ package_data = {}
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-# --- TÍNH NĂNG MỚI: PHÁT HIỆN USERNAME @ ---
 def get_roblox_username(pkg):
-    """Quét giao diện để tìm Username có dấu @"""
+    """Quét giao diện để tìm Username thực tế"""
     try:
-        # Dump giao diện ra file xml (tốn khoảng 1-2s)
-        dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
-        subprocess.run(dump_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        # Dump giao diện ra file xml
+        subprocess.run(["uiautomator", "dump", "/sdcard/view.xml"], 
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         
-        # Đọc file và tìm pattern @username
         with open("/sdcard/view.xml", "r", encoding="utf-8") as f:
             content = f.read()
-            # Tìm kiếm chuỗi có dạng @ nối với ký tự chữ/số
+            # Tìm pattern @username (thường thấy trong Roblox mobile)
             match = re.search(r'@[a-zA-Z0-9._]+', content)
             if match:
                 return match.group(0)
     except:
         pass
-    # Nếu không tìm thấy, trả về phần cuối của package name làm dự phòng
-    return f"@{pkg.split('.')[-1].upper()}"
+    # Nếu chưa quét được, trả về placeholder chờ cập nhật
+    return "Scanning..."
 
 def get_installed_packages(prefix):
     try:
@@ -59,11 +57,7 @@ def kill_app(pkg):
 def start_app(pkg):
     kill_app(pkg)
     time.sleep(1) 
-    if "http" in str(game_id):
-        deep_link = game_id
-    else:
-        deep_link = f"roblox://placeID={game_id}"
-        
+    deep_link = game_id if "http" in str(game_id) else f"roblox://placeID={game_id}"
     subprocess.call([
         "am", "start", "--user", "0", 
         "-a", "android.intent.action.VIEW", 
@@ -80,64 +74,77 @@ def is_running(pkg):
 def auto_rejoin_logic(pkg):
     global auto_running
     while auto_running:
-        package_data[pkg]['status'] = f"{Fore.YELLOW}Restarting App"
+        package_data[pkg]['status'] = f"{Fore.YELLOW}Restarting..."
         start_app(pkg)
-        time.sleep(12) # Đợi app load một chút để scan giao diện
         
-        # Cập nhật Username thực tế từ màn hình
-        package_data[pkg]['user'] = get_roblox_username(pkg)
+        # Đợi app load để lấy username thật
+        time.sleep(15) 
+        real_user = get_roblox_username(pkg)
+        if real_user != "Scanning...":
+            package_data[pkg]['user'] = real_user
         
         if is_running(pkg):
             package_data[pkg]['status'] = f"{Fore.CYAN}Auto Join"
             time.sleep(8)
-            package_data[pkg]['status'] = f"{Fore.MAGENTA}Executor Check"
+            package_data[pkg]['status'] = f"{Fore.MAGENTA}Executor"
             time.sleep(5)
             package_data[pkg]['status'] = f"{Fore.GREEN}Active Now"
             
         start_time = time.time()
         while auto_running:
             if time.time() - start_time >= rejoin_interval * 60:
-                package_data[pkg]['status'] = f"{Fore.RED}Rejoining..."
-                kill_app(pkg)
                 break
             if not is_running(pkg):
-                package_data[pkg]['status'] = f"{Fore.RED}Crashed! Restarting..."
+                package_data[pkg]['status'] = f"{Fore.RED}Crashed!"
                 break
             time.sleep(5)
 
 def get_system_info():
     try:
+        # Lấy kích thước terminal hiện tại để chống biến dạng
+        columns, rows = os.get_terminal_size()
         mem = subprocess.check_output(["free", "-m"], stderr=subprocess.DEVNULL).decode().splitlines()
         parts = mem[1].split()
-        total, used = int(parts[1]), int(parts[2])
-        ram_percent = (used / total) * 100
-        cpu = 2.5 # Mockup CPU info
+        ram_percent = (int(parts[2]) / int(parts[1])) * 100
+        return 2.5, ram_percent, columns
     except:
-        cpu, ram_percent = 2.5, 45.0
-    return cpu, ram_percent
+        return 2.5, 45.0, 80
 
 def status_box():
-    W = 84
-    cpu, ram = get_system_info()
+    cpu, ram, W = get_system_info()
+    # Giới hạn chiều rộng tối thiểu để không bị vỡ chữ
+    if W < 80: W = 80
+    
     clear()
+    # Header linh hoạt theo chiều rộng màn hình
     print(Fore.CYAN + "╔" + "═"*(W-2) + "╗")
-    print(Fore.CYAN + "║" + f"{Fore.WHITE}{Style.BRIGHT} MONITORING SYSTEM - CPU: {cpu:.1f}% | RAM: {ram:.1f}% ".center(W-2) + Fore.CYAN + "║")
-    print(Fore.CYAN + "╠" + "═"*28 + "╦" + "═"*28 + "╦" + "═"*24 + "╣")
-    print(Fore.CYAN + "║" + f"{Fore.YELLOW} Roblox @Username ".center(28) + "║" + f"{Fore.YELLOW} Package Identifier ".center(28) + "║" + f"{Fore.YELLOW} Status ".center(24) + "║")
-    print(Fore.CYAN + "╠" + "═"*28 + "╬" + "═"*28 + "╬" + "═"*24 + "╣")
+    title = f" MONITORING SYSTEM - CPU: {cpu:.1f}% | RAM: {ram:.1f}% "
+    print(Fore.CYAN + "║" + Fore.WHITE + Style.BRIGHT + title.center(W-2) + Fore.CYAN + "║")
+    
+    # Chia cột tỉ lệ: 30% - 40% - 30%
+    w1, w2, w3 = int(W*0.3), int(W*0.35), (W - int(W*0.3) - int(W*0.35) - 4)
+    
+    print(Fore.CYAN + "╠" + "═"*w1 + "╦" + "═"*w2 + "╦" + "═"*w3 + "╣")
+    print(Fore.CYAN + "║" + f"{Fore.YELLOW} Name ".center(w1) + "║" + f"{Fore.YELLOW} Package ID ".center(w2) + "║" + f"{Fore.YELLOW} Status ".center(w3) + "║")
+    print(Fore.CYAN + "╠" + "═"*w1 + "╬" + "═"*w2 + "╬" + "═"*w3 + "╣")
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        # Sử dụng Username đã được phát hiện hoặc mặc định
-        roblox_user = data.get('user', f"@{pkg.split('.')[-1].upper()}")
+        user = data.get('user', "Scanning...")
         st = data['status']
         
-        print(Fore.CYAN + "║" + f"{Fore.WHITE} {roblox_user:^26} " + Fore.CYAN + "║" + f"{Fore.WHITE} {pkg:^26} " + Fore.CYAN + "║" + f" {st:^22} " + Fore.CYAN + "║")
+        # Cắt bớt package name nếu màn hình quá nhỏ
+        display_pkg = (pkg[:w2-2] + "..") if len(pkg) > w2-2 else pkg
         
-    print(Fore.CYAN + "╚" + "═"*28 + "╩" + "═"*28 + "╩" + "═"*24 + "╝")
+        print(Fore.CYAN + "║" + f"{Fore.WHITE} {user:^{w1-2}} " + Fore.CYAN + "║" + 
+              f"{Fore.WHITE} {display_pkg:^{w2-2}} " + Fore.CYAN + "║" + 
+              f" {st:^{w3-2}} " + Fore.CYAN + "║")
+        
+    print(Fore.CYAN + "╚" + "═"*w1 + "╩" + "═"*w2 + "╩" + "═"*w3 + "╝")
 
 def banner():
     clear()
+    columns, _ = os.get_terminal_size()
     logo = f"""{Fore.CYAN}{Style.BRIGHT}
     ███████╗███████╗██████╗  ██████╗ ███╗   ██╗ ██████╗ ██╗  ██╗ █████╗ ███╗   ███╗██╗
     ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗████╗  ██║██╔═══██╗██║ ██╔╝██╔══██╗████╗ ████║██║
@@ -146,24 +153,29 @@ def banner():
     ███████╗███████╗██║  ██║╚██████╔╝██║ ╚████║╚██████╔╝██║  ██╗██║  ██║██║ ╚═╝ ██║██║
     ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝
     """
-    print(logo)
-    W = 60 
+    # Căn giữa logo theo chiều rộng màn hình
+    for line in logo.split('\n'):
+        print(line.center(columns))
+
+    W = 60 if columns > 60 else columns
     print(Fore.BLUE + "╔" + "═" * (W-2) + "╗")
-    header = " MAIN CONTROL INTERFACE "
+    header = f" {DISPLAY_NAME} - CONTROL PANEL "
     print(Fore.BLUE + "║" + Fore.WHITE + Style.BRIGHT + header.center(W-2) + Fore.BLUE + "║")
     print(Fore.BLUE + "╠" + "═" * (W-2) + "╣")
     
-    def print_item(cmd_str, desc_str, color=Fore.GREEN):
-        line = f"  {Fore.YELLOW}{cmd_str}  {color}{desc_str}".ljust(W+7)
-        print(Fore.BLUE + "║" + line + Fore.BLUE + " ║")
+    def print_item(cmd, desc, color=Fore.GREEN):
+        content = f"  {Fore.YELLOW}{cmd}  {color}{desc}"
+        # Tính toán padding để không bị tràn khung
+        padding = (W - 4)
+        print(Fore.BLUE + "║" + content.ljust(padding + 14) + Fore.BLUE + "║")
         
     print_item("[1]", "Start Auto-Rejoin Engine")
-    print_item("[2]", "Assign Game ID / Private Link")
+    print_item("[2]", "Assign Game ID / Link")
     print_item("[3]", "Set Package Prefix")
     print_item("[4]", "Exit System", color=Fore.RED)
     print(Fore.BLUE + "╚" + "═" * (W-2) + "╝\n")
 
-# Main Loop
+# Main Loop (giữ nguyên logic gốc)
 while True:
     if auto_running:
         status_box()
@@ -198,28 +210,15 @@ while True:
                     "3": ("Deals Rails", "116495829188952"),
                     "4": ("Fisch", "16732694052"),
                     "5": ("Anime Defenders", "17017769292"),
-                    "6": ("Bee Swarm Simulator", "1537690962"),
-                    "7": ("Steal A Brainrot", "109983668079237"),
-                    "8": ("Escape Tsunami For Brainrot", "131623223084840"),
-                    "9": ("Anime Adventure", "8304191830"),
                     "10": ("King Legacy", "4520749081"),
                 }
                 for k, v in game_list.items():
                     print(f"{Fore.WHITE} [{k}] {v[0]}")
-                print(Fore.YELLOW + " [11] Other Game / Private Server Link")
                 
                 game_choice = input(f"\n{prefix_label}Select Option: ")
-                
                 if game_choice in game_list:
                     game_id = game_list[game_choice][1]
                     print(f"{Fore.GREEN}>> Linked: {game_list[game_choice][0]}")
-                elif game_choice == "11":
-                    link = input(prefix_label + "Paste Link (VIP/Server): ")
-                    if link:
-                        game_id = link
-                        print(f"{Fore.GREEN}>> Custom link linked.")
-                else:
-                    print(Fore.RED + ">> Invalid selection.")
         
         elif ch == "1":
             if not current_package_prefix or not game_id:
@@ -230,21 +229,16 @@ while True:
                 auto_running = True
                 all_pkgs = get_installed_packages(current_package_prefix)
                 
-                if not all_pkgs:
-                    print(Fore.RED + ">> No packages found!")
-                    auto_running = False
-                else:
+                if all_pkgs:
                     for p in all_pkgs:
-                        # Khởi tạo dữ liệu ban đầu cho mỗi package
                         package_data[p] = {
-                            'status': 'Initializing...',
-                            'user': f"@{p.split('.')[-1].upper()}" # Tạm thời lấy đuôi pkg
+                            'status': 'Starting...',
+                            'user': 'Waiting...' 
                         }
                         threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
-                        time.sleep(2)
+                        time.sleep(1)
         
         elif ch == "4":
-            print(Fore.RED + "Terminating system...")
             sys.exit()
             
         if not auto_running:
