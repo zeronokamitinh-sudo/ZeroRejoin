@@ -24,8 +24,7 @@ package_data = {}
 account_scripts = {}
 
 # --- CẤU HÌNH GIAO DIỆN (ĐÃ FIX LỖI CO GIÃN) ---
-def get_width():
-    # Tự động lấy độ rộng terminal, nếu lỗi thì mặc định 120
+def get_current_width():
     try:
         return os.get_terminal_size().columns
     except:
@@ -38,7 +37,7 @@ def get_len_visual(text):
     ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
     return len(ansi_escape.sub('', str(text)))
 
-# --- LOGIC GỐC (GIỮ NGUYÊN) ---
+# --- LOGIC GỐC (GIỮ NGUYÊN HOÀN TOÀN) ---
 def get_roblox_username(pkg):
     try:
         dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
@@ -127,9 +126,9 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- GIAO DIỆN (ĐÃ FIX TỰ CĂN CHỈNH) ---
+# --- GIAO DIỆN (FIX CO GIÃN THEO MÀN HÌNH) ---
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
-    W = get_width()
+    W = get_current_width()
     visual_len = get_len_visual(content_str)
     padding = W - 2 - visual_len
     if padding < 0: padding = 0
@@ -156,7 +155,7 @@ def draw_logo():
         draw_line_content(line, Fore.RED, align='center')
 
 def banner():
-    W = get_width()
+    W = get_current_width()
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo()
@@ -174,15 +173,13 @@ def banner():
     
     for num, txt, col in opts:
         content = f"    [{num}] {txt}"
-        # Tính toán padding linh hoạt để không bao giờ vỡ khung
-        visual_len = get_len_visual(content)
-        padding_right = W - 2 - visual_len
+        padding_right = W - 2 - len(content)
         if padding_right < 0: padding_right = 0
         print(Fore.WHITE + "┃" + col + content + " " * padding_right + Fore.WHITE + "┃")
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
 def status_box():
-    W = get_width()
+    W = get_current_width()
     cpu, ram = get_system_info()
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
@@ -193,7 +190,6 @@ def status_box():
     draw_line_content(header, Fore.CYAN + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
-    # Chia tỷ lệ cột dựa trên chiều rộng màn hình thực tế
     u_w = int(W * 0.25)
     p_w = int(W * 0.35)
     rem_s = W - 2 - u_w - 1 - p_w - 1
@@ -217,7 +213,7 @@ def status_box():
         print(Fore.WHITE + "┃" + col1 + "│" + col2 + "│" + col3 + Fore.WHITE + "┃")
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
-# --- MAIN LOOP ---
+# --- MAIN LOOP (GIỮ NGUYÊN HOÀN TOÀN) ---
 while True:
     if auto_running:
         status_box()
@@ -247,11 +243,16 @@ while True:
             else:
                 print(Fore.CYAN + "\n --- SELECT GAME ---")
                 game_list = {
-                    "1": ("Blox Fruit", "2753915549"), "2": ("99 Night In The Forest", "79546208627805"),
-                    "3": ("Deals Rails", "116495829188952"), "4": ("Fisch", "16732694052"),
-                    "5": ("Anime Defenders", "17017769292"), "6": ("Bee Swarm Simulator", "1537690962"),
-                    "7": ("Steal A Brainrot", "109983668079237"), "8": ("Escape Tsunami For Brainrot", "131623223084840"),
-                    "9": ("Anime Adventure", "8304191830"), "10": ("King Legacy", "4520749081"),
+                    "1": ("Blox Fruit", "2753915549"),
+                    "2": ("99 Night In The Forest", "79546208627805"),
+                    "3": ("Deals Rails", "116495829188952"),
+                    "4": ("Fisch", "16732694052"),
+                    "5": ("Anime Defenders", "17017769292"),
+                    "6": ("Bee Swarm Simulator", "1537690962"),
+                    "7": ("Steal A Brainrot", "109983668079237"),
+                    "8": ("Escape Tsunami For Brainrot", "131623223084840"),
+                    "9": ("Anime Adventure", "8304191830"),
+                    "10": ("King Legacy", "4520749081"),
                 }
                 for k, v in game_list.items():
                     print(f"{Fore.WHITE} [{k}] {v[0]}")
