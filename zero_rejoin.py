@@ -21,15 +21,15 @@ rejoin_interval = None
 auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {} 
-account_scripts = {} 
 
-# --- CẤU HÌNH GIAO DIỆN (ĐÃ FIX PHÓNG TO/THU NHỎ) ---
+# --- CẤU HÌNH GIAO DIỆN (ĐÃ FIX LỖI PHÓNG TO/THU NHỎ) ---
 def get_terminal_width():
+    """Lấy chiều rộng thực tế của terminal để chống biến dạng khung"""
     try:
-        # Tự động lấy chiều rộng terminal, mặc định là 120 nếu không lấy được
+        # Tự động lấy chiều rộng hiện tại của cửa sổ
         return os.get_terminal_size().columns
     except:
-        return 120
+        return 120 # Mặc định nếu không lấy được thông tin hệ thống
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -98,14 +98,7 @@ def auto_rejoin_logic(pkg):
         if is_running(pkg):
             package_data[pkg]['status'] = f"{Fore.CYAN}Auto Join"
             time.sleep(8)
-            
-            if pkg in account_scripts:
-                 package_data[pkg]['status'] = f"{Fore.MAGENTA}Run Script..."
-            else:
-                 package_data[pkg]['status'] = f"{Fore.MAGENTA}Executor Check"
-            
-            time.sleep(5)
-            package_data[pkg]['status'] = f"{Fore.GREEN}Active Now"
+            package_data[pkg]['status'] = f"{Fore.MAGENTA}Active Now"
         
         start_time = time.time()
         while auto_running:
@@ -134,7 +127,7 @@ def get_system_info():
 
 # --- GIAO DIỆN (CẬP NHẬT TÍNH TOÁN THEO CHIỀU RỘNG THỰC) ---
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
-    W = get_terminal_width()
+    W = get_terminal_width() # Lấy chiều rộng hiện tại
     visual_len = get_len_visual(content_str)
     padding = W - 2 - visual_len
     if padding < 0: padding = 0
@@ -161,7 +154,7 @@ def draw_logo():
         draw_line_content(line, Fore.RED, align='center')
 
 def banner():
-    W = get_terminal_width()
+    W = get_terminal_width() # Lấy chiều rộng hiện tại
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo()
@@ -189,7 +182,7 @@ def banner():
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
 def status_box():
-    W = get_terminal_width()
+    W = get_terminal_width() # Lấy chiều rộng hiện tại
     cpu, ram = get_system_info()
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
@@ -200,14 +193,15 @@ def status_box():
     draw_line_content(header, Fore.CYAN + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
-    # Chia tỷ lệ cột linh hoạt theo chiều rộng màn hình
+    # Chia tỷ lệ cột dựa trên chiều rộng hiện tại
     u_w = int(W * 0.25)
     p_w = int(W * 0.35)
-    rem_s = W - 2 - u_w - 1 - p_w - 1 
-    
     h1 = " USER"
     h2 = " PACKAGE"
     h3 = " STATUS"
+    
+    rem_s = W - 2 - u_w - 1 - p_w - 1
+    if rem_s < 10: rem_s = 10
     
     print(Fore.WHITE + "┃" + f"{h1:<{u_w}}│{h2:<{p_w}}│{h3:<{rem_s}}" + "┃")
     print(Fore.WHITE + "┣" + "━" * u_w + "┿" + "━" * p_w + "┿" + "━" * rem_s + "┫")
@@ -215,7 +209,6 @@ def status_box():
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
         user_display = data.get('user', "Scanning...")
-        
         user_str = str(user_display)[:u_w-1]
         p_name = str(pkg.split('.')[-1])[:p_w-1]
         st_color = data['status']
@@ -223,7 +216,6 @@ def status_box():
         
         col1 = f" {Fore.GREEN}{user_str:<{u_w-1}}{Fore.WHITE}"
         col2 = f" {p_name:<{p_w-1}}"
-        
         space_needed = rem_s - 1 - clean_st
         if space_needed < 0: space_needed = 0
         col3 = f" {st_color}" + " " * space_needed
@@ -292,46 +284,19 @@ while True:
                 print(f"{Fore.RED}>> Error: Missing configuration!")
             else:
                 interval_input = input(prefix_label + "Interval (Minutes): ")
-                try:
-                    rejoin_interval = float(interval_input)
-                    auto_running = True
-                    all_pkgs = get_installed_packages(current_package_prefix)
-                    if not all_pkgs:
-                        print(Fore.RED + ">> No packages found!")
-                        auto_running = False
-                    else:
-                        for p in all_pkgs:
-                            package_data[p] = {'status': 'Initializing...', 'user': "Scanning..."}
-                            threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
-                            time.sleep(2)
-                except:
-                    print(Fore.RED + ">> Invalid interval!")
+                rejoin_interval = float(interval_input)
+                auto_running = True
+                all_pkgs = get_installed_packages(current_package_prefix)
+                if not all_pkgs:
+                    print(Fore.RED + ">> No packages found!")
+                    auto_running = False
+                else:
+                    for p in all_pkgs:
+                        package_data[p] = {'status': 'Initializing...', 'user': "Scanning..."}
+                        threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
+                        time.sleep(2)
         
         elif ch == "4":
-            if not current_package_prefix:
-                print(Fore.RED + ">> Error: Please set Package Prefix first!")
-            else:
-                pkgs = get_installed_packages(current_package_prefix)
-                if not pkgs:
-                    print(Fore.RED + ">> No packages found!")
-                else:
-                    print(f"\n{Fore.CYAN}--- SCRIPT CONFIGURATION ---")
-                    print(f"{Fore.WHITE}[1] Individual Account Script")
-                    print(f"{Fore.WHITE}[2] Multiple Accounts Using A Single Script")
-                    
-                    sub_ch = input(f"{prefix_label}Select Mode: ")
-                    if sub_ch == "1":
-                        for p in pkgs:
-                            u_name = get_roblox_username(p)
-                            display_name = u_name if u_name else p
-                            scr = input(f"Enter Script for [{Fore.GREEN}{display_name}{Fore.WHITE}]: ")
-                            account_scripts[p] = scr
-                    elif sub_ch == "2":
-                        common_scr = input(f"{Fore.YELLOW}Enter Script for ALL ACCOUNTS: ")
-                        for p in pkgs:
-                            account_scripts[p] = common_scr
-        
-        elif ch == "5":
             sys.exit() 
             
         if not auto_running:
