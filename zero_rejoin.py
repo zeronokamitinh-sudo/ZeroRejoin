@@ -24,7 +24,7 @@ package_data = {}
 
 # --- CẤU HÌNH GIAO DIỆN ---
 def get_W():
-    # Lấy chiều rộng màn hình, mặc định 80 nếu không lấy được
+    # Lấy chiều rộng màn hình thực tế mỗi lần gọi
     return shutil.get_terminal_size((80, 24)).columns
 
 def clear():
@@ -121,7 +121,7 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- GIAO DIỆN MỚI (UPDATE LOGO & FRAME) ---
+# --- GIAO DIỆN ĐÃ FIX LỖI ZOOM VÀ CĂN CHỈNH ---
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
     W = get_W()
     visual_len = get_len_visual(content_str)
@@ -138,8 +138,7 @@ def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
     print(Fore.WHITE + "┃" + " " * pad_left + text_color + content_str + " " * pad_right + Fore.WHITE + "┃")
 
 def draw_logo():
-    # ASCII Art "ZERO MANAGER" cùng 1 dòng, font đồng bộ
-    # Chia làm 2 phần màu để dễ xử lý: ZERO (Đỏ) và MANAGER (Cyan) nhưng nối liền
+    # Logo Zero Manager trên 1 dòng duy nhất
     lines_raw = [
         "███████╗███████╗██████╗  ██████╗     ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗    ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -149,39 +148,45 @@ def draw_logo():
         "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝     ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝"
     ]
     
-    # Tính toán kích thước
     W = get_W()
-    logo_width = len(lines_raw[0])
+    # Lấy chiều dài thực của logo (dòng đầu tiên)
+    logo_content_width = len(lines_raw[0])
     
-    # Tính padding để căn giữa LOGO trong màn hình
-    total_padding = W - logo_width
-    if total_padding < 0: total_padding = 0
-    pad_left_len = total_padding // 2
-    pad_left = " " * pad_left_len
+    # Tính toán khung bao quanh: +2 ký tự cho '║ ' và +2 cho ' ║'
+    box_width = logo_content_width + 4
     
-    # Vẽ khung bao quanh Logo (Box riêng cho logo)
-    # Khung trên
-    print(pad_left + Fore.WHITE + "╔" + "═" * (logo_width + 2) + "╗")
+    # Tính khoảng cách lề trái để căn giữa khung vào màn hình
+    margin_left_len = (W - box_width) // 2
     
-    # Nội dung Logo
+    # Nếu màn hình quá nhỏ so với logo, ép lề trái về 0 để tránh lỗi
+    if margin_left_len < 0: margin_left_len = 0
+    
+    margin_left = " " * margin_left_len
+
+    # --- VẼ KHUNG TRÊN ---
+    # margin + ╔ + ═ (bằng chiều dài chữ + 2 khoảng trắng) + ╗
+    print(margin_left + Fore.WHITE + "╔" + "═" * (logo_content_width + 2) + "╗")
+    
+    # --- VẼ NỘI DUNG LOGO ---
     for line in lines_raw:
-        # Tách chuỗi để tô màu: 38 ký tự đầu là ZERO, phần còn lại là MANAGER
-        # Cắt thủ công dựa trên khoảng cách visual
-        part1 = line[:41] # Phần Zero
-        part2 = line[41:] # Phần Manager
+        # Tách màu: 41 ký tự đầu là ZERO, phần sau là MANAGER
+        # Số 41 được chọn vì nó nằm ở khoảng trắng giữa chữ O và M
+        part1 = line[:41] 
+        part2 = line[41:]
         
-        # In ra: Lề màn hình + Cạnh khung + Zero (Đỏ) + Manager (Cyan) + Cạnh khung
-        print(pad_left + Fore.WHITE + "║ " + Fore.RED + part1 + Fore.CYAN + part2 + Fore.WHITE + " ║")
+        # In ra: Lề màn hình + Cạnh trái + (Cách 1) + Chữ + (Cách 1) + Cạnh phải
+        # Lưu ý: '║ ' và ' ║' tạo ra khoảng cách 1 space giữa viền và chữ
+        print(margin_left + Fore.WHITE + "║ " + Fore.RED + part1 + Fore.CYAN + part2 + Fore.WHITE + " ║")
         
-    # Khung dưới
-    print(pad_left + Fore.WHITE + "╚" + "═" * (logo_width + 2) + "╝")
+    # --- VẼ KHUNG DƯỚI ---
+    print(margin_left + Fore.WHITE + "╚" + "═" * (logo_content_width + 2) + "╝")
 
 def banner():
     clear()
     W = get_W()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     
-    # Gọi hàm vẽ logo mới
+    # Logo tự động căn giữa
     draw_logo()
     
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
@@ -203,7 +208,6 @@ def banner():
         content = f" [{num}] {txt}"
         visual_len = len(content)
         padding_right = W - 2 - visual_len
-        # Đảm bảo padding không bị âm
         if padding_right < 0: padding_right = 0
         print(Fore.WHITE + "┃" + col + content + " " * padding_right + Fore.WHITE + "┃")
         
@@ -214,18 +218,20 @@ def status_box():
     clear()
     W = get_W()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
+    
+    # Logo cũng hiển thị trong màn hình status
     draw_logo()
+    
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
     header = f" MONITOR: CPU {cpu:.1f}% | RAM {ram:.1f}% "
     draw_line_content(header, Fore.CYAN + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
-    # Tính toán độ rộng cột động dựa trên màn hình
     u_w = int(W * 0.35) 
     p_w = int(W * 0.35)
     rem_s = W - 2 - u_w - 1 - p_w - 1
-    if rem_s < 10: # Fallback nếu màn hình quá nhỏ
+    if rem_s < 10: 
         u_w = 20
         p_w = 20
         rem_s = W - 2 - u_w - 1 - p_w - 1
@@ -234,7 +240,6 @@ def status_box():
     h2 = " PACKAGE"
     h3 = " STATUS"
     
-    # Cắt tiêu đề nếu quá dài
     h1 = h1[:u_w]
     h2 = h2[:p_w]
     
