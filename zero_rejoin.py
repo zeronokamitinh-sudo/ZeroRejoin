@@ -1,5 +1,4 @@
 import os, time, sys, subprocess, threading, re
-
 # --- AUTO DEPENDENCY FIX ---
 def install_dependencies():
     try:
@@ -8,12 +7,9 @@ def install_dependencies():
         subprocess.check_call([sys.executable, "-m", "pip", "install", "colorama"], 
                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         os.execv(sys.executable, ['python'] + sys.argv)
-
 install_dependencies()
 from colorama import init, Fore, Style
-
 init(autoreset=True)
-
 # Global Variables
 current_package_prefix = None 
 game_id = None
@@ -22,34 +18,26 @@ auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {} 
 account_scripts = {} # Biến lưu script cho từng acc
-
 # --- CẤU HÌNH GIAO DIỆN ---
 # W = 120 theo yêu cầu để khung to hơn
 W = 120 
-
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
-
 def get_len_visual(text):
     ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
     return len(ansi_escape.sub('', str(text)))
-
 # --- LOGIC GỐC GIỮ NGUYÊN (Có cập nhật phần check user) ---
 def get_roblox_username(pkg):
     try:
-        # Cố gắng dump view để tìm tên
-        dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
-        subprocess.run(dump_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        with open("/sdcard/view.xml", "r", encoding="utf-8") as f:
-            content = f.read()
-            # Regex tìm username bắt đầu bằng @
-            match = re.search(r'@[a-zA-Z0-9._]+', content)
-            if match:
-                return match.group(0)
+        # Sử dụng root để grep tìm @username trong shared_prefs mà không cần mở app
+        cmd = ["su", "-c", f"grep -rE '@[a-zA-Z0-9._]+' /data/data/{pkg}/shared_prefs/"]
+        output = subprocess.check_output(cmd, stderr=subprocess.DEVNULL).decode()
+        match = re.search(r'@[a-zA-Z0-9._]+', output)
+        if match:
+            return match.group(0)
     except:
         pass
     return None 
-
 def get_installed_packages(prefix):
     try:
         output = subprocess.check_output(["pm", "list", "packages", prefix], stderr=subprocess.DEVNULL).decode()
@@ -57,10 +45,8 @@ def get_installed_packages(prefix):
         return pkgs
     except:
         return []
-
 def kill_app(pkg):
     subprocess.call(["am", "force-stop", pkg], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
 def start_app(pkg):
     kill_app(pkg)
     time.sleep(1) 
@@ -74,14 +60,12 @@ def start_app(pkg):
         "-a", "android.intent.action.VIEW", 
         "-d", deep_link, pkg
     ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
 def is_running(pkg):
     try:
         output = subprocess.check_output(["ps", "-A"], stderr=subprocess.DEVNULL).decode()
         return pkg in output
     except:
         return False
-
 def auto_rejoin_logic(pkg):
     global auto_running
     while auto_running:
@@ -125,7 +109,6 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
                  
             time.sleep(5)
-
 def get_system_info():
     try:
         mem = subprocess.check_output(["free", "-m"], stderr=subprocess.DEVNULL).decode().splitlines()
@@ -134,7 +117,6 @@ def get_system_info():
         return 2.5, ram_percent
     except:
         return 2.5, 45.0
-
 # --- GIAO DIỆN ---
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
     visual_len = get_len_visual(content_str)
@@ -149,7 +131,6 @@ def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
         pad_right = padding
         
     print(Fore.WHITE + "┃" + " " * pad_left + text_color + content_str + " " * pad_right + Fore.WHITE + "┃")
-
 def draw_logo():
     art = [
         r" ███████╗███████╗██████╗  ██████╗     ███╗    ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
@@ -161,7 +142,6 @@ def draw_logo():
     ]
     for line in art:
         draw_line_content(line, Fore.RED, align='center')
-
 def banner():
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
@@ -188,7 +168,6 @@ def banner():
         print(Fore.WHITE + "┃" + col + content + " " * padding_right + Fore.WHITE + "┃")
         
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
-
 def status_box():
     cpu, ram = get_system_info()
     clear()
@@ -249,7 +228,6 @@ def status_box():
         print(Fore.WHITE + "┃" + col1 + "│" + col2 + "│" + col3 + Fore.WHITE + "┃")
     
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
-
 # --- MAIN LOOP ---
 while True:
     if auto_running:
@@ -261,7 +239,6 @@ while True:
             package_data.clear()
             continue
         continue
-
     banner()
     try:
         prefix_label = f"{Fore.WHITE}[ {Fore.YELLOW}Zero Manager{Fore.WHITE} ] - {Fore.GREEN}"
@@ -358,7 +335,6 @@ while True:
                         print(f"{Fore.GREEN}>> Common script applied to {len(pkgs)} accounts!")
                     else:
                         print(Fore.RED + "Invalid Option")
-
         elif ch == "5":
             sys.exit() 
             
