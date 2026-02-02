@@ -121,7 +121,7 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- GIAO DIỆN (ĐÃ SỬA LOGO) ---
+# --- GIAO DIỆN MỚI (UPDATE LOGO & FRAME) ---
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
     W = get_W()
     visual_len = get_len_visual(content_str)
@@ -138,33 +138,53 @@ def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
     print(Fore.WHITE + "┃" + " " * pad_left + text_color + content_str + " " * pad_right + Fore.WHITE + "┃")
 
 def draw_logo():
-    # Logo Zero Manager mới, rõ ràng và canh giữa tốt hơn
-    art = [
-        r" ",
-        r" ███████╗███████╗██████╗  ██████╗ ",
-        r" ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗",
-        r"   ███╔╝ █████╗  ██████╔╝██║   ██║",
-        r"  ███╔╝  ██╔══╝  ██╔══██╗██║   ██║",
-        r" ███████╗███████╗██║  ██║╚██████╔╝",
-        r" ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ",
-        r" ",
-        r" __  __    _    _   _    _    ____  _____ ____ ",
-        r"|  \/  |  / \  | \ | |  / \  / ___|| ____|  _ \ ",
-        r"| |\/| | / _ \ |  \| | / _ \| |  _ |  _| | |_) |",
-        r"| |  | |/ ___ \| |\  |/ ___ \ |_| || |___|  _ < ",
-        r"|_|  |_/_/   \_\_| \_/_/   \_\____||_____|_| \_\ ",
-        r" "
+    # ASCII Art "ZERO MANAGER" cùng 1 dòng, font đồng bộ
+    # Chia làm 2 phần màu để dễ xử lý: ZERO (Đỏ) và MANAGER (Cyan) nhưng nối liền
+    lines_raw = [
+        "███████╗███████╗██████╗  ██████╗     ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
+        "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗    ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
+        "  ███╔╝ █████╗  ██████╔╝██║   ██║    ██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗  ██████╔╝",
+        " ███╔╝  ██╔══╝  ██╔══██╗██║   ██║    ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  ██╔══██╗",
+        "███████╗███████╗██║  ██║╚██████╔╝    ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║",
+        "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝     ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝"
     ]
-    for line in art:
-        # Dùng màu Đỏ cho chữ ZERO và Xanh Cyan cho MANAGER để nổi bật
-        color = Fore.RED if "█" in line else Fore.CYAN
-        draw_line_content(line, color + Style.BRIGHT, align='center')
+    
+    # Tính toán kích thước
+    W = get_W()
+    logo_width = len(lines_raw[0])
+    
+    # Tính padding để căn giữa LOGO trong màn hình
+    total_padding = W - logo_width
+    if total_padding < 0: total_padding = 0
+    pad_left_len = total_padding // 2
+    pad_left = " " * pad_left_len
+    
+    # Vẽ khung bao quanh Logo (Box riêng cho logo)
+    # Khung trên
+    print(pad_left + Fore.WHITE + "╔" + "═" * (logo_width + 2) + "╗")
+    
+    # Nội dung Logo
+    for line in lines_raw:
+        # Tách chuỗi để tô màu: 38 ký tự đầu là ZERO, phần còn lại là MANAGER
+        # Cắt thủ công dựa trên khoảng cách visual
+        part1 = line[:41] # Phần Zero
+        part2 = line[41:] # Phần Manager
+        
+        # In ra: Lề màn hình + Cạnh khung + Zero (Đỏ) + Manager (Cyan) + Cạnh khung
+        print(pad_left + Fore.WHITE + "║ " + Fore.RED + part1 + Fore.CYAN + part2 + Fore.WHITE + " ║")
+        
+    # Khung dưới
+    print(pad_left + Fore.WHITE + "╚" + "═" * (logo_width + 2) + "╝")
 
 def banner():
     clear()
     W = get_W()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
+    
+    # Gọi hàm vẽ logo mới
     draw_logo()
+    
+    print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
     draw_line_content("By ZeroNokami | High-Performance Engine", Fore.WHITE, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
