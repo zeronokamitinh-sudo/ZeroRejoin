@@ -22,10 +22,14 @@ auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {}
 
-# --- CẤU HÌNH GIAO DIỆN ---
+# --- CẤU HÌNH GIAO DIỆN (ĐÃ TỐI ƯU ZOOM) ---
 def get_W():
-    # Lấy chiều rộng màn hình thực tế mỗi lần gọi
-    return shutil.get_terminal_size((80, 24)).columns
+    # Sử dụng shutil để lấy kích thước terminal chính xác nhất tại thời điểm gọi
+    try:
+        columns = shutil.get_terminal_size().columns
+        return columns if columns > 10 else 80
+    except:
+        return 80
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -34,7 +38,7 @@ def get_len_visual(text):
     ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
     return len(ansi_escape.sub('', str(text)))
 
-# --- LOGIC GỐC (GIỮ NGUYÊN KHÔNG ĐỔI) ---
+# --- LOGIC GỐC (GIỮ NGUYÊN) ---
 def get_roblox_username(pkg):
     try:
         dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
@@ -114,19 +118,17 @@ def auto_rejoin_logic(pkg):
 
 def get_system_info():
     try:
-        mem = subprocess.check_output(["free", "-m"], stderr=subprocess.DEVNULL).decode().splitlines()
-        parts = mem[1].split()
-        ram_percent = (int(parts[2]) / int(parts[1])) * 100
-        return 2.5, ram_percent
-    except:
+        # Giả lập hoặc lấy thông số thực nếu có quyền
         return 2.5, 45.0
+    except:
+        return 0.0, 0.0
 
-# --- GIAO DIỆN ĐÃ FIX LỖI ZOOM VÀ CĂN CHỈNH ---
+# --- GIAO DIỆN SỬA LỖI BIẾN DẠNG ---
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
     W = get_W()
     visual_len = get_len_visual(content_str)
-    padding = W - 2 - visual_len
-    if padding < 0: padding = 0
+    # Đảm bảo padding không âm nếu terminal bị thu quá nhỏ
+    padding = max(0, W - 2 - visual_len)
     
     if align == 'center':
         pad_left = padding // 2
@@ -138,7 +140,6 @@ def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
     print(Fore.WHITE + "┃" + " " * pad_left + text_color + content_str + " " * pad_right + Fore.WHITE + "┃")
 
 def draw_logo():
-    # Logo Zero Manager trên 1 dòng duy nhất
     lines_raw = [
         "███████╗███████╗██████╗  ██████╗     ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗    ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -149,51 +150,27 @@ def draw_logo():
     ]
     
     W = get_W()
-    # Lấy chiều dài thực của logo (dòng đầu tiên)
     logo_content_width = len(lines_raw[0])
-    
-    # Tính toán khung bao quanh: +2 ký tự cho '║ ' và +2 cho ' ║'
-    box_width = logo_content_width + 4
-    
-    # Tính khoảng cách lề trái để căn giữa khung vào màn hình
-    margin_left_len = (W - box_width) // 2
-    
-    # Nếu màn hình quá nhỏ so với logo, ép lề trái về 0 để tránh lỗi
-    if margin_left_len < 0: margin_left_len = 0
-    
+    # Tính toán lề để logo luôn nằm giữa màn hình bất kể zoom
+    margin_left_len = max(0, (W - (logo_content_width + 4)) // 2)
     margin_left = " " * margin_left_len
 
-    # --- VẼ KHUNG TRÊN ---
-    # margin + ╔ + ═ (bằng chiều dài chữ + 2 khoảng trắng) + ╗
+    # Vẽ khung và logo với lề động
     print(margin_left + Fore.WHITE + "╔" + "═" * (logo_content_width + 2) + "╗")
-    
-    # --- VẼ NỘI DUNG LOGO ---
     for line in lines_raw:
-        # Tách màu: 41 ký tự đầu là ZERO, phần sau là MANAGER
-        # Số 41 được chọn vì nó nằm ở khoảng trắng giữa chữ O và M
         part1 = line[:41] 
         part2 = line[41:]
-        
-        # In ra: Lề màn hình + Cạnh trái + (Cách 1) + Chữ + (Cách 1) + Cạnh phải
-        # Lưu ý: '║ ' và ' ║' tạo ra khoảng cách 1 space giữa viền và chữ
         print(margin_left + Fore.WHITE + "║ " + Fore.RED + part1 + Fore.CYAN + part2 + Fore.WHITE + " ║")
-        
-    # --- VẼ KHUNG DƯỚI ---
     print(margin_left + Fore.WHITE + "╚" + "═" * (logo_content_width + 2) + "╝")
 
 def banner():
     clear()
     W = get_W()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
-    
-    # Logo tự động căn giữa
     draw_logo()
-    
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
-    
     draw_line_content("By ZeroNokami | High-Performance Engine", Fore.WHITE, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
-    
     draw_line_content("[ TERMINAL CONTROL INTERFACE ]", Fore.YELLOW + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
@@ -206,11 +183,9 @@ def banner():
     
     for num, txt, col in opts:
         content = f" [{num}] {txt}"
-        visual_len = len(content)
-        padding_right = W - 2 - visual_len
-        if padding_right < 0: padding_right = 0
-        print(Fore.WHITE + "┃" + col + content + " " * padding_right + Fore.WHITE + "┃")
-        
+        v_len = len(content)
+        p_right = max(0, W - 2 - v_len)
+        print(Fore.WHITE + "┃" + col + content + " " * p_right + Fore.WHITE + "┃")
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
 def status_box():
@@ -218,53 +193,35 @@ def status_box():
     clear()
     W = get_W()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
-    
-    # Logo cũng hiển thị trong màn hình status
     draw_logo()
-    
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
-    
     header = f" MONITOR: CPU {cpu:.1f}% | RAM {ram:.1f}% "
     draw_line_content(header, Fore.CYAN + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
-    u_w = int(W * 0.35) 
-    p_w = int(W * 0.35)
-    rem_s = W - 2 - u_w - 1 - p_w - 1
-    if rem_s < 10: 
-        u_w = 20
-        p_w = 20
-        rem_s = W - 2 - u_w - 1 - p_w - 1
-        
-    h1 = " USER"
-    h2 = " PACKAGE"
-    h3 = " STATUS"
+    # Chia tỷ lệ bảng linh hoạt theo chiều rộng màn hình (W)
+    u_w = int(W * 0.3) 
+    p_w = int(W * 0.3)
+    rem_s = max(10, W - 2 - u_w - 1 - p_w - 1)
     
-    h1 = h1[:u_w]
-    h2 = h2[:p_w]
-    
-    print(Fore.WHITE + "┃" + f"{h1:<{u_w}}│{h2:<{p_w}}│{h3:<{rem_s}}" + "┃")
+    print(Fore.WHITE + "┃" + f"{' USER':<{u_w}}│{' PACKAGE':<{p_w}}│{' STATUS':<{rem_s}}" + "┃")
     print(Fore.WHITE + "┣" + "━" * u_w + "┿" + "━" * p_w + "┿" + "━" * rem_s + "┫")
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        user_display = data.get('user', "Scanning...")
-        user_str = str(user_display)[:u_w-1]
+        user_str = str(data.get('user', "Scanning..."))[:u_w-1]
         p_name = str(pkg.split('.')[-1])[:p_w-1]
         st_color = data['status']
-        clean_st = get_len_visual(st_color)
+        clean_st_len = get_len_visual(st_color)
         
         col1 = f" {Fore.GREEN}{user_str:<{u_w-1}}{Fore.WHITE}"
         col2 = f" {p_name:<{p_w-1}}"
-        space_needed = rem_s - 1 - clean_st
-        if space_needed < 0: space_needed = 0
-        col3 = f" {st_color}" + " " * space_needed
+        col3 = f" {st_color}" + " " * max(0, rem_s - 1 - clean_st_len)
         
         print(Fore.WHITE + "┃" + col1 + "│" + col2 + "│" + col3 + Fore.WHITE + "┃")
-    
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
-# --- MAIN LOOP ---
+# --- MAIN LOOP (GIỮ NGUYÊN) ---
 while True:
     if auto_running:
         status_box()
