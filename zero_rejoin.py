@@ -5,12 +5,13 @@ def install_dependencies():
     try:
         from colorama import init, Fore, Style
     except ImportError:
-        subprocess.run([sys.executable, "-m", "pip", "install", "colorama"], 
-                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "colorama"], 
+                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         os.execv(sys.executable, ['python'] + sys.argv)
 
 install_dependencies()
 from colorama import init, Fore, Style
+
 init(autoreset=True)
 
 # Global Variables
@@ -20,14 +21,10 @@ rejoin_interval = None
 auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {} 
+account_scripts = {} # Biến lưu script cho từng acc
 
-# --- HÀM LẤY CHIỀU RỘNG MÀN HÌNH ĐỂ CHỐNG BIẾN DẠNG ---
-def get_width():
-    try:
-        # Tự động lấy chiều rộng terminal hiện tại
-        return os.get_terminal_size().columns
-    except:
-        return 120 # Mặc định nếu không lấy được
+# --- CẤU HÌNH GIAO DIỆN ---
+W = 120 
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -36,22 +33,27 @@ def get_len_visual(text):
     ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
     return len(ansi_escape.sub('', str(text)))
 
-# --- LOGIC GỐC ---
+# --- LOGIC GỐC GIỮ NGUYÊN ---
 def get_roblox_username(pkg):
     try:
-        subprocess.run(["uiautomator", "dump", "/sdcard/view.xml"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
+        subprocess.run(dump_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         with open("/sdcard/view.xml", "r", encoding="utf-8") as f:
             content = f.read()
             match = re.search(r'@[a-zA-Z0-9._]+', content)
-            if match: return match.group(0)
-    except: pass
+            if match:
+                return match.group(0)
+    except:
+        pass
     return None 
 
 def get_installed_packages(prefix):
     try:
         output = subprocess.check_output(["pm", "list", "packages", prefix], stderr=subprocess.DEVNULL).decode()
-        return [line.split(':')[-1].strip() for line in output.splitlines() if line.strip()]
-    except: return []
+        pkgs = [line.split(':')[-1].strip() for line in output.splitlines() if line.strip()]
+        return pkgs
+    except:
+        return []
 
 def kill_app(pkg):
     subprocess.call(["am", "force-stop", pkg], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -59,15 +61,23 @@ def kill_app(pkg):
 def start_app(pkg):
     kill_app(pkg)
     time.sleep(1) 
-    deep_link = game_id if "http" in str(game_id) else f"roblox://placeID={game_id}"
-    subprocess.call(["am", "start", "--user", "0", "-a", "android.intent.action.VIEW", "-d", deep_link, pkg], 
-                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if "http" in str(game_id):
+        deep_link = game_id
+    else:
+        deep_link = f"roblox://placeID={game_id}"
+        
+    subprocess.call([
+        "am", "start", "--user", "0", 
+        "-a", "android.intent.action.VIEW", 
+        "-d", deep_link, pkg
+    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def is_running(pkg):
     try:
         output = subprocess.check_output(["ps", "-A"], stderr=subprocess.DEVNULL).decode()
         return pkg in output
-    except: return False
+    except:
+        return False
 
 def auto_rejoin_logic(pkg):
     global auto_running
@@ -75,12 +85,20 @@ def auto_rejoin_logic(pkg):
         package_data[pkg]['status'] = f"{Fore.YELLOW}Restarting App"
         start_app(pkg)
         time.sleep(12) 
+        
         real_name = get_roblox_username(pkg)
-        if real_name: package_data[pkg]['user'] = real_name
+        if real_name:
+            package_data[pkg]['user'] = real_name
+        
         if is_running(pkg):
             package_data[pkg]['status'] = f"{Fore.CYAN}Auto Join"
             time.sleep(8)
-            package_data[pkg]['status'] = f"{Fore.MAGENTA}Executor Check"
+            
+            if pkg in account_scripts:
+                 package_data[pkg]['status'] = f"{Fore.MAGENTA}Run Script..."
+            else:
+                 package_data[pkg]['status'] = f"{Fore.MAGENTA}Executor Check"
+            
             time.sleep(5)
             package_data[pkg]['status'] = f"{Fore.GREEN}Active Now"
         
@@ -93,34 +111,38 @@ def auto_rejoin_logic(pkg):
             if not is_running(pkg):
                 package_data[pkg]['status'] = f"{Fore.RED}Crashed! Restarting..."
                 break
+            
             if package_data[pkg]['user'] == "Scanning...":
                  r_name = get_roblox_username(pkg)
                  if r_name: package_data[pkg]['user'] = r_name
+                 
             time.sleep(5)
 
 def get_system_info():
     try:
         mem = subprocess.check_output(["free", "-m"], stderr=subprocess.DEVNULL).decode().splitlines()
         parts = mem[1].split()
-        return 2.5, (int(parts[2]) / int(parts[1])) * 100
-    except: return 2.5, 45.0
+        ram_percent = (int(parts[2]) / int(parts[1])) * 100
+        return 2.5, ram_percent
+    except:
+        return 2.5, 45.0
 
-# --- GIAO DIỆN GIỮ NGUYÊN KHUNG GỐC ---
+# --- GIAO DIỆN ---
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
-    W = get_width()
     visual_len = get_len_visual(content_str)
     padding = W - 2 - visual_len
     if padding < 0: padding = 0
+    
     if align == 'center':
         pad_left = padding // 2
         pad_right = padding - pad_left
     else: 
         pad_left = 0
         pad_right = padding
+        
     print(Fore.WHITE + "┃" + " " * pad_left + text_color + content_str + " " * pad_right + Fore.WHITE + "┃")
 
 def draw_logo():
-    # Logo giữ nguyên như cũ
     art = [
         r" ███████╗███████╗██████╗  ██████╗     ███╗    ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         r" ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗    ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -133,12 +155,13 @@ def draw_logo():
         draw_line_content(line, Fore.RED, align='center')
 
 def banner():
-    W = get_width()
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo()
-    draw_line_content("By Hữu Tình | High-Performance Engine", Fore.WHITE, 'center')
+    
+    draw_line_content("By ZeroNokami | High-Performance Engine", Fore.WHITE, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
+    
     draw_line_content("[ TERMINAL CONTROL INTERFACE ]", Fore.YELLOW + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
@@ -148,47 +171,63 @@ def banner():
         ("3", "SYSTEM SETUP   : Set Package Prefix", Fore.YELLOW),
         ("4", "TERMINATE      : Exit Safely", Fore.RED)
     ]
+    
     for num, txt, col in opts:
         content = f"    [{num}] {txt}"
-        padding_right = W - 2 - len(content)
-        print(Fore.WHITE + "┃" + col + content + " " * max(0, padding_right) + Fore.WHITE + "┃")
+        visual_len = len(content)
+        padding_right = W - 2 - visual_len
+        print(Fore.WHITE + "┃" + col + content + " " * padding_right + Fore.WHITE + "┃")
+        
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
 def status_box():
-    W = get_width()
     cpu, ram = get_system_info()
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo() 
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
-    draw_line_content(f" MONITOR: CPU {cpu:.1f}% | RAM {ram:.1f}% ", Fore.CYAN + Style.BRIGHT, 'center')
+    
+    header = f" MONITOR: CPU {cpu:.1f}% | RAM {ram:.1f}% "
+    draw_line_content(header, Fore.CYAN + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
-    u_w = int(W * 0.25)
-    p_w = int(W * 0.35)
-    rem_s = W - 2 - u_w - 1 - p_w - 1
+    u_w = 30
+    p_w = 40
+    rem_s = W - 2 - u_w - 1 - p_w - 1 
     
-    print(Fore.WHITE + "┃" + f"{' USER':<{u_w}}│{' PACKAGE':<{p_w}}│{' STATUS':<{rem_s}}" + "┃")
+    h1 = " USER"
+    h2 = " PACKAGE"
+    h3 = " STATUS"
+    
+    print(Fore.WHITE + "┃" + f"{h1:<{u_w}}│{h2:<{p_w}}│{h3:<{rem_s}}" + "┃")
     print(Fore.WHITE + "┣" + "━" * u_w + "┿" + "━" * p_w + "┿" + "━" * rem_s + "┫")
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        user_str = str(data.get('user', "Scanning..."))[:u_w-1]
+        user_display = data.get('user', "Scanning...")
+        
+        user_str = str(user_display)[:u_w-1]
         p_name = str(pkg.split('.')[-1])[:p_w-1]
         st_color = data['status']
         clean_st = get_len_visual(st_color)
         
         col1 = f" {Fore.GREEN}{user_str:<{u_w-1}}{Fore.WHITE}"
         col2 = f" {p_name:<{p_w-1}}"
-        col3 = f" {st_color}" + " " * max(0, (rem_s - 1 - clean_st))
+        
+        space_needed = rem_s - 1 - clean_st
+        if space_needed < 0: space_needed = 0
+        col3 = f" {st_color}" + " " * space_needed
+        
         print(Fore.WHITE + "┃" + col1 + "│" + col2 + "│" + col3 + Fore.WHITE + "┃")
+    
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
 # --- MAIN LOOP ---
 while True:
     if auto_running:
         status_box()
-        try: time.sleep(10)
+        try:
+            time.sleep(10)
         except KeyboardInterrupt:
             auto_running = False
             package_data.clear()
@@ -227,13 +266,16 @@ while True:
                 for k, v in game_list.items():
                     print(f"{Fore.WHITE} [{k}] {v[0]}")
                 print(Fore.WHITE + " [11] Other Game / Private Server Link")
+                
                 game_choice = input(f"\n{prefix_label}Select Option: ")
                 if game_choice in game_list:
                     game_id = game_list[game_choice][1]
                     print(f"{Fore.GREEN}>> Linked: {game_list[game_choice][0]}")
                 elif game_choice == "11":
                     link = input(prefix_label + "Paste Link (VIP/Server): ")
-                    if link: game_id = link
+                    if link:
+                        game_id = link
+                        print(f"{Fore.GREEN}>> Custom link linked.")
         
         elif ch == "1":
             if not current_package_prefix or not game_id:
@@ -243,15 +285,44 @@ while True:
                 rejoin_interval = float(interval_input)
                 auto_running = True
                 all_pkgs = get_installed_packages(current_package_prefix)
-                if all_pkgs:
+                if not all_pkgs:
+                    print(Fore.RED + ">> No packages found!")
+                    auto_running = False
+                else:
                     for p in all_pkgs:
                         package_data[p] = {'status': 'Initializing...', 'user': "Scanning..."}
                         threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
-                        time.sleep(1)
-                else: auto_running = False
+                        time.sleep(2)
         
-        elif ch == "4": sys.exit() 
-        if not auto_running: input(f"\n{Fore.GREEN}Press Enter to go back...")
+        elif ch == "4":
+            if not current_package_prefix:
+                print(Fore.RED + ">> Error: Please set Package Prefix first!")
+            else:
+                pkgs = get_installed_packages(current_package_prefix)
+                if not pkgs:
+                    print(Fore.RED + ">> No packages found!")
+                else:
+                    print(f"\n{Fore.CYAN}--- SCRIPT CONFIGURATION ---")
+                    print(f"{Fore.WHITE}[1] Individual Account Script")
+                    print(f"{Fore.WHITE}[2] Multiple Accounts Using A Single Script")
+                    
+                    sub_ch = input(f"{prefix_label}Select Mode: ")
+                    if sub_ch == "1":
+                        for p in pkgs:
+                            u_name = get_roblox_username(p)
+                            display_name = u_name if u_name else p
+                            scr = input(f"Enter Script for [{Fore.GREEN}{display_name}{Fore.WHITE}]: ")
+                            account_scripts[p] = scr
+                    elif sub_ch == "2":
+                        common_scr = input(f"{Fore.YELLOW}Enter Script for ALL ACCOUNTS: ")
+                        for p in pkgs:
+                            account_scripts[p] = common_scr
+        
+        elif ch == "5":
+            sys.exit() 
+            
+        if not auto_running:
+            input(f"\n{Fore.GREEN}Press Enter to go back...")
     except Exception as e:
         print(f"Error: {e}")
         input()
