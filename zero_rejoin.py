@@ -153,7 +153,7 @@ def banner():
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo()
-    draw_line_content("By ZeroNokami | High-Performance Engine", Fore.WHITE, 'center')
+    draw_line_content("By Hữu Tình | High-Performance Engine", Fore.WHITE, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     draw_line_content("[ TERMINAL CONTROL INTERFACE ]", Fore.YELLOW + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
