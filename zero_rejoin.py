@@ -21,14 +21,9 @@ rejoin_interval = None
 auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {} 
-account_scripts = {}
 
-# --- CẤU HÌNH GIAO DIỆN (ĐÃ FIX LỖI CO GIÃN) ---
-def get_current_width():
-    try:
-        return os.get_terminal_size().columns
-    except:
-        return 120
+# --- CẤU HÌNH GIAO DIỆN ---
+W = 120 
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -37,7 +32,7 @@ def get_len_visual(text):
     ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
     return len(ansi_escape.sub('', str(text)))
 
-# --- LOGIC GỐC (GIỮ NGUYÊN HOÀN TOÀN) ---
+# --- LOGIC GỐC ---
 def get_roblox_username(pkg):
     try:
         dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
@@ -97,9 +92,7 @@ def auto_rejoin_logic(pkg):
         if is_running(pkg):
             package_data[pkg]['status'] = f"{Fore.CYAN}Auto Join"
             time.sleep(8)
-            package_data[pkg]['status'] = f"{Fore.MAGENTA}Executor Check"
-            time.sleep(5)
-            package_data[pkg]['status'] = f"{Fore.GREEN}Active Now"
+            package_data[pkg]['status'] = f"{Fore.MAGENTA}Active Now"
         
         start_time = time.time()
         while auto_running:
@@ -126,9 +119,8 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- GIAO DIỆN (FIX CO GIÃN THEO MÀN HÌNH) ---
+# --- GIAO DIỆN ---
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
-    W = get_current_width()
     visual_len = get_len_visual(content_str)
     padding = W - 2 - visual_len
     if padding < 0: padding = 0
@@ -155,12 +147,13 @@ def draw_logo():
         draw_line_content(line, Fore.RED, align='center')
 
 def banner():
-    W = get_current_width()
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo()
-    draw_line_content("By Hữu Tình | High-Performance Engine", Fore.WHITE, 'center')
+    
+    draw_line_content("By ZeroNokami | High-Performance Engine", Fore.WHITE, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
+    
     draw_line_content("[ TERMINAL CONTROL INTERFACE ]", Fore.YELLOW + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
@@ -173,13 +166,13 @@ def banner():
     
     for num, txt, col in opts:
         content = f"    [{num}] {txt}"
-        padding_right = W - 2 - len(content)
-        if padding_right < 0: padding_right = 0
+        visual_len = len(content)
+        padding_right = W - 2 - visual_len
         print(Fore.WHITE + "┃" + col + content + " " * padding_right + Fore.WHITE + "┃")
+        
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
 def status_box():
-    W = get_current_width()
     cpu, ram = get_system_info()
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
@@ -190,11 +183,15 @@ def status_box():
     draw_line_content(header, Fore.CYAN + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
-    u_w = int(W * 0.25)
-    p_w = int(W * 0.35)
+    u_w = 30
+    p_w = 40
+    h1 = " USER"
+    h2 = " PACKAGE"
+    h3 = " STATUS"
+    
     rem_s = W - 2 - u_w - 1 - p_w - 1
     
-    print(Fore.WHITE + "┃" + f"{' USER':<{u_w}}│{' PACKAGE':<{p_w}}│{' STATUS':<{rem_s}}" + "┃")
+    print(Fore.WHITE + "┃" + f"{h1:<{u_w}}│{h2:<{p_w}}│{h3:<{rem_s}}" + "┃")
     print(Fore.WHITE + "┣" + "━" * u_w + "┿" + "━" * p_w + "┿" + "━" * rem_s + "┫")
     
     for pkg in sorted(package_data.keys()):
@@ -208,12 +205,14 @@ def status_box():
         col1 = f" {Fore.GREEN}{user_str:<{u_w-1}}{Fore.WHITE}"
         col2 = f" {p_name:<{p_w-1}}"
         space_needed = rem_s - 1 - clean_st
-        col3 = f" {st_color}" + " " * max(0, space_needed)
+        if space_needed < 0: space_needed = 0
+        col3 = f" {st_color}" + " " * space_needed
         
         print(Fore.WHITE + "┃" + col1 + "│" + col2 + "│" + col3 + Fore.WHITE + "┃")
+    
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
-# --- MAIN LOOP (GIỮ NGUYÊN HOÀN TOÀN) ---
+# --- MAIN LOOP ---
 while True:
     if auto_running:
         status_box()
@@ -257,13 +256,16 @@ while True:
                 for k, v in game_list.items():
                     print(f"{Fore.WHITE} [{k}] {v[0]}")
                 print(Fore.WHITE + " [11] Other Game / Private Server Link")
+                
                 game_choice = input(f"\n{prefix_label}Select Option: ")
                 if game_choice in game_list:
                     game_id = game_list[game_choice][1]
                     print(f"{Fore.GREEN}>> Linked: {game_list[game_choice][0]}")
                 elif game_choice == "11":
                     link = input(prefix_label + "Paste Link (VIP/Server): ")
-                    if link: game_id = link
+                    if link:
+                        game_id = link
+                        print(f"{Fore.GREEN}>> Custom link linked.")
         
         elif ch == "1":
             if not current_package_prefix or not game_id:
@@ -274,12 +276,13 @@ while True:
                 auto_running = True
                 all_pkgs = get_installed_packages(current_package_prefix)
                 if not all_pkgs:
+                    print(Fore.RED + ">> No packages found!")
                     auto_running = False
                 else:
                     for p in all_pkgs:
                         package_data[p] = {'status': 'Initializing...', 'user': "Scanning..."}
                         threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
-                        time.sleep(1)
+                        time.sleep(2)
         
         elif ch == "4":
             sys.exit() 
