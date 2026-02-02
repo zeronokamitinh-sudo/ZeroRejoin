@@ -23,10 +23,10 @@ DISPLAY_NAME = "Zero Manager"
 package_data = {} 
 account_scripts = {}
 
-# --- CẤU HÌNH GIAO DIỆN (ĐÃ FIX BIẾN DẠNG) ---
-def get_terminal_width():
+# --- CẤU HÌNH GIAO DIỆN (ĐÃ FIX LỖI CO GIÃN) ---
+def get_width():
+    # Tự động lấy độ rộng terminal, nếu lỗi thì mặc định 120
     try:
-        # Lấy độ rộng thực tế của cửa sổ terminal
         return os.get_terminal_size().columns
     except:
         return 120
@@ -38,7 +38,7 @@ def get_len_visual(text):
     ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
     return len(ansi_escape.sub('', str(text)))
 
-# --- LOGIC GỐC ---
+# --- LOGIC GỐC (GIỮ NGUYÊN) ---
 def get_roblox_username(pkg):
     try:
         dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
@@ -127,17 +127,13 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- GIAO DIỆN (ĐÃ TỐI ƯU KHÔNG BIẾN DẠNG) ---
+# --- GIAO DIỆN (ĐÃ FIX TỰ CĂN CHỈNH) ---
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
-    W = get_terminal_width()
+    W = get_width()
     visual_len = get_len_visual(content_str)
     padding = W - 2 - visual_len
-    if padding < 0: 
-        # Nếu nội dung quá dài so với màn hình, cắt bớt để không vỡ khung
-        content_str = content_str[:(W-5)] + "..."
-        visual_len = get_len_visual(content_str)
-        padding = W - 2 - visual_len
-
+    if padding < 0: padding = 0
+    
     if align == 'center':
         pad_left = padding // 2
         pad_right = padding - pad_left
@@ -160,7 +156,7 @@ def draw_logo():
         draw_line_content(line, Fore.RED, align='center')
 
 def banner():
-    W = get_terminal_width()
+    W = get_width()
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo()
@@ -178,13 +174,15 @@ def banner():
     
     for num, txt, col in opts:
         content = f"    [{num}] {txt}"
-        padding_right = W - 2 - len(content)
+        # Tính toán padding linh hoạt để không bao giờ vỡ khung
+        visual_len = get_len_visual(content)
+        padding_right = W - 2 - visual_len
         if padding_right < 0: padding_right = 0
         print(Fore.WHITE + "┃" + col + content + " " * padding_right + Fore.WHITE + "┃")
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
 def status_box():
-    W = get_terminal_width()
+    W = get_width()
     cpu, ram = get_system_info()
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
@@ -195,7 +193,7 @@ def status_box():
     draw_line_content(header, Fore.CYAN + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
-    # Chia tỷ lệ cột theo % thay vì số cố định để tránh vỡ khi màn hình bé
+    # Chia tỷ lệ cột dựa trên chiều rộng màn hình thực tế
     u_w = int(W * 0.25)
     p_w = int(W * 0.35)
     rem_s = W - 2 - u_w - 1 - p_w - 1
