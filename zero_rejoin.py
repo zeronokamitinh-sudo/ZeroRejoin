@@ -22,13 +22,8 @@ auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {} 
 
-# --- HÀM LẤY CHIỀU RỘNG THỰC TẾ (FIX LỖI BIẾN DẠNG) ---
-def get_terminal_width():
-    try:
-        # Lấy chiều rộng thực tế của màn hình ngay lúc gọi hàm
-        return os.get_terminal_size().columns
-    except:
-        return 120
+# --- CẤU HÌNH GIAO DIỆN ---
+W = 300 
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -37,7 +32,7 @@ def get_len_visual(text):
     ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
     return len(ansi_escape.sub('', str(text)))
 
-# --- LOGIC GỐC (GIỮ NGUYÊN) ---
+# --- LOGIC GỐC ---
 def get_roblox_username(pkg):
     try:
         dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
@@ -124,9 +119,8 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- GIAO DIỆN (ĐÃ FIX TỰ ĐỘNG CĂN THEO MÀN HÌNH) ---
+# --- GIAO DIỆN ---
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
-    W = get_terminal_width() # Cập nhật chiều rộng liên tục
     visual_len = get_len_visual(content_str)
     padding = W - 2 - visual_len
     if padding < 0: padding = 0
@@ -153,7 +147,6 @@ def draw_logo():
         draw_line_content(line, Fore.RED, align='center')
 
 def banner():
-    W = get_terminal_width() # Cập nhật chiều rộng liên tục
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo()
@@ -175,13 +168,11 @@ def banner():
         content = f"    [{num}] {txt}"
         visual_len = len(content)
         padding_right = W - 2 - visual_len
-        # Giữ nguyên cấu trúc in của bạn nhưng dùng W thực tế
         print(Fore.WHITE + "┃" + col + content + " " * padding_right + Fore.WHITE + "┃")
         
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
 def status_box():
-    W = get_terminal_width() # Cập nhật chiều rộng liên tục
     cpu, ram = get_system_info()
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
@@ -221,7 +212,7 @@ def status_box():
     
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
-# --- MAIN LOOP (GIỮ NGUYÊN) ---
+# --- MAIN LOOP ---
 while True:
     if auto_running:
         status_box()
