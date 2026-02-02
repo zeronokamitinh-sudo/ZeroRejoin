@@ -23,8 +23,13 @@ DISPLAY_NAME = "Zero Manager"
 package_data = {} 
 account_scripts = {}
 
-# --- CẤU HÌNH GIAO DIỆN ---
-W = 120 
+# --- CẤU HÌNH GIAO DIỆN (ĐÃ FIX BIẾN DẠNG) ---
+def get_terminal_width():
+    try:
+        # Lấy độ rộng thực tế của cửa sổ terminal
+        return os.get_terminal_size().columns
+    except:
+        return 120
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -122,12 +127,17 @@ def get_system_info():
     except:
         return 2.5, 45.0
 
-# --- GIAO DIỆN ---
+# --- GIAO DIỆN (ĐÃ TỐI ƯU KHÔNG BIẾN DẠNG) ---
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
+    W = get_terminal_width()
     visual_len = get_len_visual(content_str)
     padding = W - 2 - visual_len
-    if padding < 0: padding = 0
-    
+    if padding < 0: 
+        # Nếu nội dung quá dài so với màn hình, cắt bớt để không vỡ khung
+        content_str = content_str[:(W-5)] + "..."
+        visual_len = get_len_visual(content_str)
+        padding = W - 2 - visual_len
+
     if align == 'center':
         pad_left = padding // 2
         pad_right = padding - pad_left
@@ -150,6 +160,7 @@ def draw_logo():
         draw_line_content(line, Fore.RED, align='center')
 
 def banner():
+    W = get_terminal_width()
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo()
@@ -168,10 +179,12 @@ def banner():
     for num, txt, col in opts:
         content = f"    [{num}] {txt}"
         padding_right = W - 2 - len(content)
+        if padding_right < 0: padding_right = 0
         print(Fore.WHITE + "┃" + col + content + " " * padding_right + Fore.WHITE + "┃")
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
 def status_box():
+    W = get_terminal_width()
     cpu, ram = get_system_info()
     clear()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
@@ -182,7 +195,9 @@ def status_box():
     draw_line_content(header, Fore.CYAN + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
-    u_w, p_w = 30, 40
+    # Chia tỷ lệ cột theo % thay vì số cố định để tránh vỡ khi màn hình bé
+    u_w = int(W * 0.25)
+    p_w = int(W * 0.35)
     rem_s = W - 2 - u_w - 1 - p_w - 1
     
     print(Fore.WHITE + "┃" + f"{' USER':<{u_w}}│{' PACKAGE':<{p_w}}│{' STATUS':<{rem_s}}" + "┃")
