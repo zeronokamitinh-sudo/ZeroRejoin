@@ -27,17 +27,39 @@ def get_len_visual(text):
     ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
     return len(ansi_escape.sub('', str(text)))
 # --- LOGIC GỐC GIỮ NGUYÊN (Có cập nhật phần check user) ---
+def start_home(pkg):
+    kill_app(pkg)
+    time.sleep(1)
+    subprocess.call([
+        "am", "start", "-n", f"{pkg}/.ActivitySplash"
+    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
 def get_roblox_username(pkg):
+    was_running = is_running(pkg)
+    if not was_running:
+        start_home(pkg)
+        time.sleep(10)  # Chờ app load home screen để hiển thị username
+
     try:
-        # Sử dụng root để grep tìm @username trong shared_prefs mà không cần mở app
-        cmd = ["su", "-c", f"grep -rE '@[a-zA-Z0-9._]+' /data/data/{pkg}/shared_prefs/"]
-        output = subprocess.check_output(cmd, stderr=subprocess.DEVNULL).decode()
-        match = re.search(r'@[a-zA-Z0-9._]+', output)
-        if match:
-            return match.group(0)
+        # Cố gắng dump view để tìm tên
+        dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
+        subprocess.run(dump_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        with open("/sdcard/view.xml", "r", encoding="utf-8") as f:
+            content = f.read()
+            # Regex tìm username bắt đầu bằng @
+            match = re.search(r'@[a-zA-Z0-9._]+', content)
+            if match:
+                username = match.group(0)
+                if not was_running:
+                    kill_app(pkg)
+                return username
     except:
         pass
+
+    if not was_running:
+        kill_app(pkg)
     return None 
+
 def get_installed_packages(prefix):
     try:
         output = subprocess.check_output(["pm", "list", "packages", prefix], stderr=subprocess.DEVNULL).decode()
@@ -320,7 +342,7 @@ while True:
                         print(f"{Fore.YELLOW}>> Entering Individual Mode...")
                         for p in pkgs:
                             # Thử lấy tên user, nếu không được thì hiện tên gói
-                            # Không ép mở app để tránh giật lag
+                            # Tự động mở nhanh app để dump view và lấy user, sau đó kill
                             u_name = get_roblox_username(p)
                             display_name = u_name if u_name else p
                             
