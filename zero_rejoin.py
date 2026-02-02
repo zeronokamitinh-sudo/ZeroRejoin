@@ -1,5 +1,6 @@
 import os, time, sys, subprocess, threading, re
 import shutil
+
 # --- AUTO DEPENDENCY FIX ---
 def install_dependencies():
     try:
@@ -9,8 +10,10 @@ def install_dependencies():
                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         os.execv(sys.executable, ['python'] + sys.argv)
 install_dependencies()
+
 from colorama import init, Fore, Style
 init(autoreset=True)
+
 # Global Variables
 current_package_prefix = None
 game_id = None
@@ -18,15 +21,20 @@ rejoin_interval = None
 auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {}
+
 # --- CẤU HÌNH GIAO DIỆN ---
 def get_W():
-    return shutil.get_terminal_size().columns
+    # Lấy chiều rộng màn hình, mặc định 80 nếu không lấy được
+    return shutil.get_terminal_size((80, 24)).columns
+
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
+
 def get_len_visual(text):
     ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
     return len(ansi_escape.sub('', str(text)))
-# --- LOGIC GỐC ---
+
+# --- LOGIC GỐC (GIỮ NGUYÊN KHÔNG ĐỔI) ---
 def get_roblox_username(pkg):
     try:
         dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
@@ -39,6 +47,7 @@ def get_roblox_username(pkg):
     except:
         pass
     return None
+
 def get_installed_packages(prefix):
     try:
         output = subprocess.check_output(["pm", "list", "packages", prefix], stderr=subprocess.DEVNULL).decode()
@@ -46,8 +55,10 @@ def get_installed_packages(prefix):
         return pkgs
     except:
         return []
+
 def kill_app(pkg):
     subprocess.call(["am", "force-stop", pkg], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
 def start_app(pkg):
     kill_app(pkg)
     time.sleep(1)
@@ -55,34 +66,36 @@ def start_app(pkg):
         deep_link = game_id
     else:
         deep_link = f"roblox://placeID={game_id}"
-       
+        
     subprocess.call([
         "am", "start", "--user", "0",
         "-a", "android.intent.action.VIEW",
         "-d", deep_link, pkg
     ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
 def is_running(pkg):
     try:
         output = subprocess.check_output(["ps", "-A"], stderr=subprocess.DEVNULL).decode()
         return pkg in output
     except:
         return False
+
 def auto_rejoin_logic(pkg):
     global auto_running
     while auto_running:
         package_data[pkg]['status'] = f"{Fore.YELLOW}Restarting App"
         start_app(pkg)
         time.sleep(12)
-       
+        
         real_name = get_roblox_username(pkg)
         if real_name:
             package_data[pkg]['user'] = real_name
-       
+        
         if is_running(pkg):
             package_data[pkg]['status'] = f"{Fore.CYAN}Auto Join"
             time.sleep(8)
             package_data[pkg]['status'] = f"{Fore.MAGENTA}Active Now"
-       
+        
         start_time = time.time()
         while auto_running:
             if time.time() - start_time >= rejoin_interval * 60:
@@ -92,12 +105,13 @@ def auto_rejoin_logic(pkg):
             if not is_running(pkg):
                 package_data[pkg]['status'] = f"{Fore.RED}Crashed! Restarting..."
                 break
-           
+            
             if package_data[pkg]['user'] == "Scanning...":
                  r_name = get_roblox_username(pkg)
                  if r_name: package_data[pkg]['user'] = r_name
                 
             time.sleep(5)
+
 def get_system_info():
     try:
         mem = subprocess.check_output(["free", "-m"], stderr=subprocess.DEVNULL).decode().splitlines()
@@ -106,67 +120,75 @@ def get_system_info():
         return 2.5, ram_percent
     except:
         return 2.5, 45.0
-# --- GIAO DIỆN ---
+
+# --- GIAO DIỆN (ĐÃ SỬA LOGO) ---
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
     W = get_W()
     visual_len = get_len_visual(content_str)
-    if visual_len > W - 2:
-        content_str = content_str[:W - 2]
-        visual_len = get_len_visual(content_str)
     padding = W - 2 - visual_len
     if padding < 0: padding = 0
-   
+    
     if align == 'center':
         pad_left = padding // 2
         pad_right = padding - pad_left
     else:
         pad_left = 0
         pad_right = padding
-       
+        
     print(Fore.WHITE + "┃" + " " * pad_left + text_color + content_str + " " * pad_right + Fore.WHITE + "┃")
+
 def draw_logo():
-    W = get_W()
-    if W < 95:
-        art = [
-            r"Zero Manager"
-        ]
-    else:
-        art = [
-            r" ███████╗███████╗██████╗ ██████╗ ███╗ ███╗ █████╗ ███╗ ██╗ █████╗ ██████╗ ███████╗██████╗ ",
-            r" ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗ ████╗ ████║██╔══██╗████╗ ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
-            r" ███╔╝ █████╗ ██████╔╝██║ ██║ ██╔████╔██║███████║██╔██╗ ██║███████║██║ ███╗█████╗ ██████╔╝",
-            r" ███╔╝ ██╔══╝ ██╔══██╗██║ ██║ ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║ ██║██╔══╝ ██╔══██╗",
-            r" ███████╗███████╗██║ ██║╚██████╔╝ ██║ ╚═╝ ██║██║ ██║██║ ╚████║██║ ██║╚██████╔╝███████╗██║ ██║",
-            r" ╚══════╝╚══════╝╚═╝ ╚═╝ ╚═════╝ ╚═╝ ╚═╝╚═╝ ╚═╝╚═╝ ╚═══╝╚═╝ ╚═╝ ╚═════╝ ╚══════╝╚═╝ ╚═╝"
-        ]
+    # Logo Zero Manager mới, rõ ràng và canh giữa tốt hơn
+    art = [
+        r" ",
+        r" ███████╗███████╗██████╗  ██████╗ ",
+        r" ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗",
+        r"   ███╔╝ █████╗  ██████╔╝██║   ██║",
+        r"  ███╔╝  ██╔══╝  ██╔══██╗██║   ██║",
+        r" ███████╗███████╗██║  ██║╚██████╔╝",
+        r" ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ",
+        r" ",
+        r" __  __    _    _   _    _    ____  _____ ____ ",
+        r"|  \/  |  / \  | \ | |  / \  / ___|| ____|  _ \ ",
+        r"| |\/| | / _ \ |  \| | / _ \| |  _ |  _| | |_) |",
+        r"| |  | |/ ___ \| |\  |/ ___ \ |_| || |___|  _ < ",
+        r"|_|  |_/_/   \_\_| \_/_/   \_\____||_____|_| \_\ ",
+        r" "
+    ]
     for line in art:
-        draw_line_content(line, Fore.RED, align='center')
+        # Dùng màu Đỏ cho chữ ZERO và Xanh Cyan cho MANAGER để nổi bật
+        color = Fore.RED if "█" in line else Fore.CYAN
+        draw_line_content(line, color + Style.BRIGHT, align='center')
+
 def banner():
     clear()
     W = get_W()
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo()
-   
+    
     draw_line_content("By ZeroNokami | High-Performance Engine", Fore.WHITE, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
-   
+    
     draw_line_content("[ TERMINAL CONTROL INTERFACE ]", Fore.YELLOW + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
-   
+    
     opts = [
         ("1", "EXECUTE ENGINE : Start Auto-Rejoin", Fore.YELLOW),
         ("2", "CONFIGURATION : Assign Game ID", Fore.YELLOW),
         ("3", "SYSTEM SETUP : Set Package Prefix", Fore.YELLOW),
         ("4", "TERMINATE : Exit Safely", Fore.RED)
     ]
-   
+    
     for num, txt, col in opts:
         content = f" [{num}] {txt}"
         visual_len = len(content)
         padding_right = W - 2 - visual_len
+        # Đảm bảo padding không bị âm
+        if padding_right < 0: padding_right = 0
         print(Fore.WHITE + "┃" + col + content + " " * padding_right + Fore.WHITE + "┃")
-       
+        
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
+
 def status_box():
     cpu, ram = get_system_info()
     clear()
@@ -174,27 +196,31 @@ def status_box():
     print(Fore.WHITE + "┏" + "━" * (W - 2) + "┓")
     draw_logo()
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
-   
+    
     header = f" MONITOR: CPU {cpu:.1f}% | RAM {ram:.1f}% "
     draw_line_content(header, Fore.CYAN + Style.BRIGHT, 'center')
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
-   
-    u_w = 30
-    p_w = 40
-    if W < 80:
+    
+    # Tính toán độ rộng cột động dựa trên màn hình
+    u_w = int(W * 0.35) 
+    p_w = int(W * 0.35)
+    rem_s = W - 2 - u_w - 1 - p_w - 1
+    if rem_s < 10: # Fallback nếu màn hình quá nhỏ
         u_w = 20
-        p_w = 30
+        p_w = 20
+        rem_s = W - 2 - u_w - 1 - p_w - 1
+        
     h1 = " USER"
     h2 = " PACKAGE"
     h3 = " STATUS"
-   
-    rem_s = W - 2 - u_w - 1 - p_w - 1
-    if rem_s < 0:
-        rem_s = 0
-   
+    
+    # Cắt tiêu đề nếu quá dài
+    h1 = h1[:u_w]
+    h2 = h2[:p_w]
+    
     print(Fore.WHITE + "┃" + f"{h1:<{u_w}}│{h2:<{p_w}}│{h3:<{rem_s}}" + "┃")
     print(Fore.WHITE + "┣" + "━" * u_w + "┿" + "━" * p_w + "┿" + "━" * rem_s + "┫")
-   
+    
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
         user_display = data.get('user', "Scanning...")
@@ -202,16 +228,17 @@ def status_box():
         p_name = str(pkg.split('.')[-1])[:p_w-1]
         st_color = data['status']
         clean_st = get_len_visual(st_color)
-       
+        
         col1 = f" {Fore.GREEN}{user_str:<{u_w-1}}{Fore.WHITE}"
         col2 = f" {p_name:<{p_w-1}}"
         space_needed = rem_s - 1 - clean_st
         if space_needed < 0: space_needed = 0
         col3 = f" {st_color}" + " " * space_needed
-       
+        
         print(Fore.WHITE + "┃" + col1 + "│" + col2 + "│" + col3 + Fore.WHITE + "┃")
-   
+    
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
+
 # --- MAIN LOOP ---
 while True:
     if auto_running:
@@ -223,18 +250,19 @@ while True:
             package_data.clear()
             continue
         continue
+
     banner()
     try:
         prefix_label = f"{Fore.WHITE}[ {Fore.YELLOW}Zero Manager{Fore.WHITE} ] - {Fore.GREEN}"
         ch = input(prefix_label + "Command Line: ")
-       
+        
         if ch == "3":
             new_prefix = input(prefix_label + "Enter Package Prefix: ")
             if new_prefix:
                 current_package_prefix = new_prefix
                 found = get_installed_packages(new_prefix)
                 print(f"{Fore.GREEN}>> Detected {len(found)} matching packages.")
-       
+        
         elif ch == "2":
             if not current_package_prefix:
                 print(Fore.RED + ">> Error: Please set package prefix first!")
@@ -255,7 +283,7 @@ while True:
                 for k, v in game_list.items():
                     print(f"{Fore.WHITE} [{k}] {v[0]}")
                 print(Fore.WHITE + " [11] Other Game / Private Server Link")
-               
+                
                 game_choice = input(f"\n{prefix_label}Select Option: ")
                 if game_choice in game_list:
                     game_id = game_list[game_choice][1]
@@ -265,27 +293,30 @@ while True:
                     if link:
                         game_id = link
                         print(f"{Fore.GREEN}>> Custom link linked.")
-       
+        
         elif ch == "1":
             if not current_package_prefix or not game_id:
                 print(f"{Fore.RED}>> Error: Missing configuration!")
             else:
                 interval_input = input(prefix_label + "Interval (Minutes): ")
-                rejoin_interval = float(interval_input)
-                auto_running = True
-                all_pkgs = get_installed_packages(current_package_prefix)
-                if not all_pkgs:
-                    print(Fore.RED + ">> No packages found!")
-                    auto_running = False
-                else:
-                    for p in all_pkgs:
-                        package_data[p] = {'status': 'Initializing...', 'user': "Scanning..."}
-                        threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
-                        time.sleep(2)
-       
+                try:
+                    rejoin_interval = float(interval_input)
+                    auto_running = True
+                    all_pkgs = get_installed_packages(current_package_prefix)
+                    if not all_pkgs:
+                        print(Fore.RED + ">> No packages found!")
+                        auto_running = False
+                    else:
+                        for p in all_pkgs:
+                            package_data[p] = {'status': 'Initializing...', 'user': "Scanning..."}
+                            threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
+                            time.sleep(2)
+                except ValueError:
+                     print(Fore.RED + ">> Invalid Number!")
+        
         elif ch == "4":
             sys.exit()
-           
+            
         if not auto_running:
             input(f"\n{Fore.GREEN}Press Enter to go back...")
     except Exception as e:
