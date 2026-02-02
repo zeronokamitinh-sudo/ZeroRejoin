@@ -91,15 +91,6 @@ def auto_rejoin_logic(pkg):
             package_data[pkg]['user'] = real_name
         
         if is_running(pkg):
-            package_data[pkg]['status'] = f"{Fore.CYAN}Auto Join"
-            time.sleep(8)
-            
-            if pkg in account_scripts:
-                 package_data[pkg]['status'] = f"{Fore.MAGENTA}Run Script..."
-            else:
-                 package_data[pkg]['status'] = f"{Fore.MAGENTA}Executor Check"
-            
-            time.sleep(5)
             package_data[pkg]['status'] = f"{Fore.GREEN}Active Now"
         
         start_time = time.time()
@@ -295,30 +286,6 @@ while True:
                         time.sleep(2)
         
         elif ch == "4":
-            if not current_package_prefix:
-                print(Fore.RED + ">> Error: Please set Package Prefix first!")
-            else:
-                pkgs = get_installed_packages(current_package_prefix)
-                if not pkgs:
-                    print(Fore.RED + ">> No packages found!")
-                else:
-                    print(f"\n{Fore.CYAN}--- SCRIPT CONFIGURATION ---")
-                    print(f"{Fore.WHITE}[1] Individual Account Script")
-                    print(f"{Fore.WHITE}[2] Multiple Accounts Using A Single Script")
-                    
-                    sub_ch = input(f"{prefix_label}Select Mode: ")
-                    if sub_ch == "1":
-                        for p in pkgs:
-                            u_name = get_roblox_username(p)
-                            display_name = u_name if u_name else p
-                            scr = input(f"Enter Script for [{Fore.GREEN}{display_name}{Fore.WHITE}]: ")
-                            account_scripts[p] = scr
-                    elif sub_ch == "2":
-                        common_scr = input(f"{Fore.YELLOW}Enter Script for ALL ACCOUNTS: ")
-                        for p in pkgs:
-                            account_scripts[p] = common_scr
-        
-        elif ch == "5":
             sys.exit() 
             
         if not auto_running:
