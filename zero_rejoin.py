@@ -14,7 +14,7 @@ install_dependencies()
 from colorama import init, Fore, Style
 init(autoreset=True)
 
-# Global Variables (GIỮ NGUYÊN LOGIC)
+# Global Variables (GIỮ NGUYÊN LOGIC GỐC)
 current_package_prefix = None
 game_id = None
 rejoin_interval = None
@@ -22,13 +22,14 @@ auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {}
 
-# --- CẤU HÌNH GIAO DIỆN (ĐÃ FIX ZOOM & MỞ RỘNG KHUNG) ---
+# --- CẤU HÌNH GIAO DIỆN (TỐI ƯU KHUNG LỚN & CHỐNG BIẾN DẠNG) ---
 def get_W():
     try:
         columns = shutil.get_terminal_size().columns
-        return max(95, columns) # Ép chiều rộng tối thiểu để không vỡ Logo
+        # Tăng lên 110 để khung rộng rãi, ôm trọn Logo ASCII
+        return max(110, columns) 
     except:
-        return 95
+        return 110
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -45,9 +46,10 @@ def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
     if align == 'center':
         pad_left = total_space // 2
     else:
-        pad_left = 4 # Thụt vào 4 khoảng trắng cho menu đẹp hơn
+        pad_left = 6 # Thụt lề sâu hơn cho menu nhìn thoáng
         
     pad_right = total_space - pad_left
+    # Công thức chống biến dạng: pad_right luôn bù đủ phần còn lại của W
     print(Fore.WHITE + "┃" + " " * pad_left + text_color + content_str + " " * pad_right + Fore.WHITE + "┃")
 
 def draw_empty_line():
@@ -55,7 +57,7 @@ def draw_empty_line():
     print(Fore.WHITE + "┃" + " " * (W - 2) + "┃")
 
 def draw_logo():
-    # GIỮ NGUYÊN KIỂU CHỮ LOGO CỦA BẠN
+    # GIỮ NGUYÊN KIỂU CHỮ ZERO MANAGER CỦA BẠN
     lines_raw = [
         "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗     ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -72,6 +74,7 @@ def draw_logo():
     for line in lines_raw:
         part1 = line[:41] 
         part2 = line[41:]
+        # Logo nằm chắc chắn bên trong viền ┃
         print(Fore.WHITE + "┃" + " " * pad_l + Fore.RED + part1 + Fore.CYAN + part2 + " " * pad_r + Fore.WHITE + "┃")
 
 def banner():
@@ -90,13 +93,14 @@ def banner():
     
     opts = [
         ("1", "EXECUTE ENGINE : Start Auto-Rejoin", Fore.YELLOW),
-        ("2", "CONFIGURATION : Assign Game ID", Fore.YELLOW),
-        ("3", "SYSTEM SETUP : Set Package Prefix", Fore.YELLOW),
-        ("4", "TERMINATE : Exit Safely", Fore.RED)
+        ("2", "CONFIGURATION  : Assign Game ID", Fore.YELLOW),
+        ("3", "SYSTEM SETUP   : Set Package Prefix", Fore.YELLOW),
+        ("4", "TERMINATE      : Exit Safely", Fore.RED)
     ]
     draw_empty_line()
     for num, txt, col in opts:
         draw_line_content(f" [{num}] {txt}", col, 'left')
+    draw_empty_line()
     draw_empty_line()
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
@@ -114,6 +118,7 @@ def status_box():
     draw_empty_line()
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
+    # Chia tỷ lệ cột cho khung to
     u_w = int(W * 0.25) 
     p_w = int(W * 0.35)
     rem_s = max(10, W - 2 - u_w - 1 - p_w - 1)
@@ -132,9 +137,11 @@ def status_box():
         col2 = f" {p_name:<{p_w-1}}"
         col3 = f" {st_color}" + " " * max(0, rem_s - 1 - clean_st_len)
         print(Fore.WHITE + "┃" + col1 + "│" + col2 + "│" + col3 + Fore.WHITE + "┃")
+    
+    draw_empty_line()
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
-# --- LOGIC GỐC (GIỮ NGUYÊN 100%) ---
+# --- LOGIC GỐC (GIỮ NGUYÊN 100% NHƯ YÊU CẦU) ---
 def get_roblox_username(pkg):
     try:
         dump_cmd = ["uiautomator", "dump", "/sdcard/view.xml"]
@@ -142,8 +149,7 @@ def get_roblox_username(pkg):
         with open("/sdcard/view.xml", "r", encoding="utf-8") as f:
             content = f.read()
             match = re.search(r'@[a-zA-Z0-9._]+', content)
-            if match:
-                return match.group(0)
+            if match: return match.group(0)
     except: pass
     return None
 
@@ -197,7 +203,8 @@ def auto_rejoin_logic(pkg):
             time.sleep(5)
 
 def get_system_info():
-    return 2.5, 45.0 # Giả lập hệ thống
+    # Giả lập thông số, bạn có thể thay bằng logic lấy CPU thực nếu muốn
+    return 3.2, 48.5
 
 # --- MAIN LOOP (GIỮ NGUYÊN) ---
 while True:
