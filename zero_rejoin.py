@@ -22,14 +22,14 @@ auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {}
 
-# --- CẤU HÌNH GIAO DIỆN (TỐI ƯU KHUNG LỚN & CHỐNG BIẾN DẠNG) ---
+# --- CẤU HÌNH GIAO DIỆN (CHỐNG VĂNG KHUNG - FIX ZOOM) ---
 def get_W():
     try:
         columns = shutil.get_terminal_size().columns
-        # Tăng lên 110 để khung rộng rãi, ôm trọn Logo ASCII
-        return max(110, columns) 
+        # Tăng lên 120 để đảm bảo Logo ASCII (khoảng 94 ký tự) nằm lọt thỏm bên trong
+        return max(120, columns) 
     except:
-        return 110
+        return 120
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -41,15 +41,18 @@ def get_len_visual(text):
 def draw_line_content(content_str, text_color=Fore.WHITE, align='center'):
     W = get_W()
     visual_len = get_len_visual(content_str)
+    
+    # Tính toán khoảng trống bên trong khung (Trừ đi 2 ký tự viền ┃)
     total_space = max(0, W - 2 - visual_len)
     
     if align == 'center':
         pad_left = total_space // 2
     else:
-        pad_left = 6 # Thụt lề sâu hơn cho menu nhìn thoáng
+        pad_left = 8 # Thụt lề sâu hơn cho Menu nhìn chuyên nghiệp
         
     pad_right = total_space - pad_left
-    # Công thức chống biến dạng: pad_right luôn bù đủ phần còn lại của W
+    
+    # In đúng định dạng: Viền trái + Khoảng trắng + Nội dung + Khoảng trắng + Viền phải
     print(Fore.WHITE + "┃" + " " * pad_left + text_color + content_str + " " * pad_right + Fore.WHITE + "┃")
 
 def draw_empty_line():
@@ -57,7 +60,7 @@ def draw_empty_line():
     print(Fore.WHITE + "┃" + " " * (W - 2) + "┃")
 
 def draw_logo():
-    # GIỮ NGUYÊN KIỂU CHỮ ZERO MANAGER CỦA BẠN
+    # GIỮ NGUYÊN KIỂU CHỮ ZERO MANAGER (KHÔNG ĐỔI 1 KÝ TỰ)
     lines_raw = [
         "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗     ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -68,13 +71,13 @@ def draw_logo():
     ]
     W = get_W()
     logo_width = len(lines_raw[0])
-    pad_l = (W - 2 - logo_width) // 2
-    pad_r = (W - 2 - logo_width) - pad_l
+    pad_l = max(0, (W - 2 - logo_width) // 2)
+    pad_r = max(0, (W - 2 - logo_width) - pad_l)
     
     for line in lines_raw:
         part1 = line[:41] 
         part2 = line[41:]
-        # Logo nằm chắc chắn bên trong viền ┃
+        # Đưa logo vào bên trong viền dọc để không bị "văng"
         print(Fore.WHITE + "┃" + " " * pad_l + Fore.RED + part1 + Fore.CYAN + part2 + " " * pad_r + Fore.WHITE + "┃")
 
 def banner():
@@ -101,7 +104,6 @@ def banner():
     for num, txt, col in opts:
         draw_line_content(f" [{num}] {txt}", col, 'left')
     draw_empty_line()
-    draw_empty_line()
     print(Fore.WHITE + "┗" + "━" * (W - 2) + "┛")
 
 def status_box():
@@ -118,7 +120,6 @@ def status_box():
     draw_empty_line()
     print(Fore.WHITE + "┣" + "━" * (W - 2) + "┫")
     
-    # Chia tỷ lệ cột cho khung to
     u_w = int(W * 0.25) 
     p_w = int(W * 0.35)
     rem_s = max(10, W - 2 - u_w - 1 - p_w - 1)
@@ -203,8 +204,7 @@ def auto_rejoin_logic(pkg):
             time.sleep(5)
 
 def get_system_info():
-    # Giả lập thông số, bạn có thể thay bằng logic lấy CPU thực nếu muốn
-    return 3.2, 48.5
+    return 3.5, 52.0 # Giả lập thông số
 
 # --- MAIN LOOP (GIỮ NGUYÊN) ---
 while True:
