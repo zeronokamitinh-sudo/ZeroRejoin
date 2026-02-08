@@ -22,12 +22,13 @@ auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {}
 
+# Cố định độ rộng để chống vỡ khung khi zoom
+FIXED_WIDTH = 80
+FIXED_MARGIN = "      " # Tạo khoảng cách lề trái để đẩy khung vào trong
+
 def get_W():
-    try:
-        columns = shutil.get_terminal_size().columns
-        return columns if columns > 20 else 80
-    except:
-        return 80
+    # Sử dụng độ rộng cố định để giao diện không bị nhảy khi zoom màn hình
+    return FIXED_WIDTH
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -93,12 +94,11 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
 
-# --- GIAO DIỆN (FIX CỨNG KHOẢNG CÁCH ĐỂ KHÔNG BỊ BIẾN DẠNG) ---
-# Margin cố định để đẩy toàn bộ vào trong, không phụ thuộc vào zoom
-FIXED_MARGIN = "          " 
+# --- GIAO DIỆN (KHÔI PHỤC LOGO GỐC & FIX LỖI ZOOM) ---
 
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
+    # Đã khôi phục đúng định dạng chữ của bạn
     lines = [
         "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗      ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -118,7 +118,7 @@ def banner():
     print(f"\n{FIXED_MARGIN}{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
     print(f"{FIXED_MARGIN}{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
 
-    # Khung menu cố định chiều rộng để không bị vỡ khi zoom
+    # Khung menu sử dụng chiều rộng cố định để không bị vỡ khi zoom
     print(FIXED_MARGIN + Y + "╭──────┬──────────────────────────────────────────╮")
     print(FIXED_MARGIN + Y + "│  No  │ Service Name                             │")
     print(FIXED_MARGIN + Y + "├──────┼──────────────────────────────────────────┤")
@@ -144,17 +144,20 @@ def status_box():
     draw_logo()
     print(f"\n{FIXED_MARGIN}{Fore.CYAN + Style.BRIGHT} MONITOR: SYSTEM ACTIVE\n")
     
-    u_w, p_w = int(W * 0.25), int(W * 0.35)
-    rem_s = max(10, W - u_w - p_w - 5)
+    # Cân đối tỷ lệ cột dựa trên FIXED_WIDTH
+    u_w = 20
+    p_w = 25
+    rem_s = 25
     
     print(FIXED_MARGIN + Fore.WHITE + f" {'USER':<{u_w}} │ {'PACKAGE':<{p_w}} │ {'STATUS':<{rem_s}}")
-    print(FIXED_MARGIN + Y + "─" * (W-10))
+    print(FIXED_MARGIN + Y + "─" * (u_w + p_w + rem_s + 6))
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
         user_str = str(data.get('user', "Scanning..."))[:u_w-1]
         p_name = str(pkg.split('.')[-1])[:p_w-1]
         st_text = data['status']
+        # In kèm lề để đẩy vào trong
         print(f"{FIXED_MARGIN} {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {p_name:<{p_w}} │ {st_text}")
 
 # --- MAIN LOOP (GIỮ NGUYÊN 100%) ---
