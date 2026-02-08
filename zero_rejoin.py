@@ -126,8 +126,8 @@ def banner():
     menu_items = [
         ("1", "Start Auto Rejoin (Auto setup User ID)"),
         ("2", "Setup Game ID for Packages"),
-        ("3", "Enable Discord Webhook"),
-        ("4", "Auto Check User Setup"),
+        ("3", "Auto Login with Cookie"),
+        ("4", "Enable Discord Webhook"),
         ("5", "Configure Package Prefix"),
     ]
     
