@@ -1,5 +1,6 @@
 import os, time, sys, subprocess, threading, re
 import shutil
+
 # --- AUTO DEPENDENCY FIX ---
 def install_dependencies():
     try:
@@ -9,8 +10,10 @@ def install_dependencies():
                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         os.execv(sys.executable, ['python'] + sys.argv)
 install_dependencies()
+
 from colorama import init, Fore, Style
 init(autoreset=True)
+
 # Global Variables (GIỮ NGUYÊN 100%)
 current_package_prefix = None
 game_id = None
@@ -18,14 +21,17 @@ rejoin_interval = None
 auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {}
+
 def get_W():
     try:
         columns = shutil.get_terminal_size().columns
         return columns if columns > 20 else 80
     except:
         return 80
+
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
+
 # --- LOGIC GỐC (TUYỆT ĐỐI KHÔNG SỬA) ---
 def get_roblox_username(pkg):
     try:
@@ -37,24 +43,29 @@ def get_roblox_username(pkg):
             if match: return match.group(0)
     except: pass
     return None
+
 def get_installed_packages(prefix):
     try:
         output = subprocess.check_output(["pm", "list", "packages", prefix], stderr=subprocess.DEVNULL).decode()
         return [line.split(':')[-1].strip() for line in output.splitlines() if line.strip()]
     except: return []
+
 def kill_app(pkg):
     subprocess.call(["am", "force-stop", pkg], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
 def start_app(pkg):
     kill_app(pkg)
     time.sleep(1)
     deep_link = game_id if "http" in str(game_id) else f"roblox://placeID={game_id}"
     subprocess.call(["am", "start", "--user", "0", "-a", "android.intent.action.VIEW", "-d", deep_link, pkg],
                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
 def is_running(pkg):
     try:
         output = subprocess.check_output(["ps", "-A"], stderr=subprocess.DEVNULL).decode()
         return pkg in output
     except: return False
+
 def auto_rejoin_logic(pkg):
     global auto_running
     while auto_running:
@@ -67,7 +78,7 @@ def auto_rejoin_logic(pkg):
             package_data[pkg]['status'] = f"{Fore.CYAN}Auto Join"
             time.sleep(8)
             package_data[pkg]['status'] = f"{Fore.MAGENTA}Active Now"
-       
+        
         start_time = time.time()
         while auto_running:
             if time.time() - start_time >= rejoin_interval * 60:
@@ -81,8 +92,8 @@ def auto_rejoin_logic(pkg):
                  r_name = get_roblox_username(pkg)
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
-# --- GIAO DIỆN (FIX CỨNG KHOẢNG CÁCH ĐỂ KHÔNG BỊ BIẾN DẠNG) ---
-# Margin cố định để đẩy toàn bộ vào trong, không phụ thuộc vào zoom
+
+# --- GIAO DIỆN ---
 FIXED_MARGIN = " "
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
@@ -96,18 +107,18 @@ def draw_logo():
     ]
     for line in lines:
         print(FIXED_MARGIN + Y + line)
+
 def banner():
     clear()
     Y = Fore.YELLOW + Style.BRIGHT
     draw_logo()
-   
+    
     print(f"\n{FIXED_MARGIN}{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
     print(f"{FIXED_MARGIN}{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
-    # Khung menu cố định chiều rộng để không bị vỡ khi zoom
     print(FIXED_MARGIN + Y + "╭──────┬──────────────────────────────────────────╮")
     print(FIXED_MARGIN + Y + "│ No │ Service Name │")
     print(FIXED_MARGIN + Y + "├──────┼──────────────────────────────────────────┤")
-   
+    
     menu_items = [
         ("1", "Start Auto Rejoin (Auto setup User ID)"),
         ("2", "Setup Game ID for Packages"),
@@ -117,31 +128,33 @@ def banner():
         ("6", "Configure Package Prefix"),
         ("7", "Auto Change Android ID"),
     ]
-   
+    
     for no, name in menu_items:
         print(FIXED_MARGIN + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<40}{Y} │")
-       
+        
     print(FIXED_MARGIN + Y + "╰──────┴──────────────────────────────────────────╯")
     print(f"\n{FIXED_MARGIN}{Fore.WHITE}[ {Y}ZeroNokami{Fore.WHITE} ] - {Fore.YELLOW}Enter command: ", end="")
+
 def status_box():
     clear()
     Y = Fore.YELLOW + Style.BRIGHT
     W = get_W()
     draw_logo()
     print(f"\n{FIXED_MARGIN}{Fore.CYAN + Style.BRIGHT} MONITOR: SYSTEM ACTIVE\n")
-   
+    
     u_w, p_w = int(W * 0.25), int(W * 0.35)
     rem_s = max(10, W - u_w - p_w - 5)
-   
+    
     print(FIXED_MARGIN + Fore.WHITE + f" {'USER':<{u_w}} │ {'PACKAGE':<{p_w}} │ {'STATUS':<{rem_s}}")
     print(FIXED_MARGIN + Y + "─" * (W-10))
-   
+    
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
         user_str = str(data.get('user', "Scanning..."))[:u_w-1]
         p_name = str(pkg.split('.')[-1])[:p_w-1]
         st_text = data['status']
         print(f"{FIXED_MARGIN} {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {p_name:<{p_w}} │ {st_text}")
+
 # --- MAIN LOOP (GIỮ NGUYÊN 100%) ---
 while True:
     if auto_running:
@@ -155,14 +168,14 @@ while True:
     banner()
     try:
         ch = input()
-       
+        
         if ch == "6":
             new_prefix = input(f"\n{FIXED_MARGIN}{Fore.YELLOW}>> Enter Package Prefix: ")
             if new_prefix:
                 current_package_prefix = new_prefix
                 found = get_installed_packages(new_prefix)
                 print(f"{FIXED_MARGIN}{Fore.GREEN}>> Detected {len(found)} matching packages.")
-       
+        
         elif ch == "2":
             if not current_package_prefix:
                 print(f"\n{FIXED_MARGIN}{Fore.RED}>> Error: Please set package prefix first!")
@@ -183,14 +196,14 @@ while True:
                 for k, v in game_list.items():
                     print(f"{FIXED_MARGIN}{Fore.WHITE} [{k}] {v[0]}")
                 print(f"{FIXED_MARGIN}{Fore.WHITE} [11] Other Game / Private Server Link")
-               
+                
                 gc = input(f"\n{FIXED_MARGIN}{Fore.YELLOW}>> Select Option: ")
                 if gc in game_list:
                     game_id = game_list[gc][1]
                     print(f"{FIXED_MARGIN}{Fore.GREEN}>> Linked: {game_list[gc][0]}")
                 elif gc == "11":
                     game_id = input(f"{FIXED_MARGIN}{Fore.YELLOW}>> Paste Link: ")
-       
+        
         elif ch == "1":
             if not current_package_prefix or not game_id:
                 print(f"\n{FIXED_MARGIN}{Fore.RED}>> Error: Configuration missing!")
@@ -204,18 +217,25 @@ while True:
                         package_data[p] = {'status': 'Starting...', 'user': "Scanning..."}
                         threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
                 except: print(f"{FIXED_MARGIN}{Fore.RED}>> Error!")
-       
+        
         elif ch in ["3", "4", "5"]:
             print(f"\n{FIXED_MARGIN}{Fore.RED}>> Feature coming soon in this Version!")
             time.sleep(1)
+
         elif ch == "7":
-            new_id = input(f"\n{FIXED_MARGIN}{Fore.YELLOW}Enter Change Id : ")
-            try:
-                subprocess.call(["su", "-c", f"settings put secure android_id {new_id}"])
-                print(f"{FIXED_MARGIN}{Fore.GREEN}>> Android ID changed to {new_id}")
-            except:
-                print(f"{FIXED_MARGIN}{Fore.RED}>> Error changing Android ID")
+            # --- FIX CHÍNH TẠI ĐÂY ---
+            new_id = input(f"\n{FIXED_MARGIN}{Fore.YELLOW}Enter Change Id: ")
+            if new_id:
+                try:
+                    # Chạy lệnh su với settings put để thay đổi Android ID triệt để
+                    subprocess.run(["su", "-c", f"settings put secure android_id {new_id}"], check=True)
+                    # Xác nhận lại bằng cách đọc ID hiện tại
+                    actual_id = subprocess.check_output(["su", "-c", "settings get secure android_id"]).decode().strip()
+                    print(f"{FIXED_MARGIN}{Fore.GREEN}>> System Android ID is now: {actual_id}")
+                except Exception as e:
+                    print(f"{FIXED_MARGIN}{Fore.RED}>> Error: {e}")
             time.sleep(1)
+
         if not auto_running: input(f"\n{FIXED_MARGIN}{Fore.GREEN}Press Enter to continue...")
     except Exception as e:
         print(f"Error: {e}")
