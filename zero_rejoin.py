@@ -22,13 +22,13 @@ auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {}
 
-# Cố định độ rộng để chống vỡ khung khi zoom
-FIXED_WIDTH = 80
-FIXED_MARGIN = "      " # Tạo khoảng cách lề trái để đẩy khung vào trong
+# --- THIẾT LẬP GIAO DIỆN CHỐNG BIẾN DẠNG ---
+FIXED_MARGIN = "          " 
+FRAME_WIDTH = 55 # Độ rộng cố định cho khung để không bị vỡ khi zoom
 
 def get_W():
-    # Sử dụng độ rộng cố định để giao diện không bị nhảy khi zoom màn hình
-    return FIXED_WIDTH
+    # Giữ hàm này cho logic cũ nhưng trả về giá trị ổn định hơn
+    return 80
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -94,11 +94,10 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
 
-# --- GIAO DIỆN (KHÔI PHỤC LOGO GỐC & FIX LỖI ZOOM) ---
+# --- GIAO DIỆN (GIỮ NGUYÊN LOGO - FIX KHUNG) ---
 
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
-    # Đã khôi phục đúng định dạng chữ của bạn
     lines = [
         "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗      ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -118,8 +117,8 @@ def banner():
     print(f"\n{FIXED_MARGIN}{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
     print(f"{FIXED_MARGIN}{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
 
-    # Khung menu sử dụng chiều rộng cố định để không bị vỡ khi zoom
-    print(FIXED_MARGIN + Y + "╭──────┬──────────────────────────────────────────╮")
+    # Khung menu sử dụng độ rộng cố định FRAME_WIDTH để không vỡ
+    print(FIXED_MARGIN + Y + "┌──────┬──────────────────────────────────────────┐")
     print(FIXED_MARGIN + Y + "│  No  │ Service Name                             │")
     print(FIXED_MARGIN + Y + "├──────┼──────────────────────────────────────────┤")
     
@@ -128,37 +127,39 @@ def banner():
         ("2", "Setup Game ID for Packages"),
         ("3", "Auto Login with Cookie"),
         ("4", "Enable Discord Webhook"),
-        ("5", "Configure Package Prefix"),
+        ("5", "Auto Check User Setup"),
+        ("6", "Configure Package Prefix"),
+        ("7", "Auto Change Android ID"),
     ]
     
     for no, name in menu_items:
+        # Căn chỉnh chữ xanh Blue thụt vào chính xác theo khung
         print(FIXED_MARGIN + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<40}{Y} │")
         
-    print(FIXED_MARGIN + Y + "╰──────┴──────────────────────────────────────────╯")
+    print(FIXED_MARGIN + Y + "└──────┴──────────────────────────────────────────┘")
     print(f"\n{FIXED_MARGIN}{Fore.WHITE}[ {Y}ZeroNokami{Fore.WHITE} ] - {Fore.YELLOW}Enter command: ", end="")
 
 def status_box():
     clear()
     Y = Fore.YELLOW + Style.BRIGHT
-    W = get_W()
     draw_logo()
     print(f"\n{FIXED_MARGIN}{Fore.CYAN + Style.BRIGHT} MONITOR: SYSTEM ACTIVE\n")
     
-    # Cân đối tỷ lệ cột dựa trên FIXED_WIDTH
-    u_w = 20
-    p_w = 25
-    rem_s = 25
+    # Cố định độ rộng các cột cho bảng Monitor
+    u_w, p_w, s_w = 15, 20, 25
     
-    print(FIXED_MARGIN + Fore.WHITE + f" {'USER':<{u_w}} │ {'PACKAGE':<{p_w}} │ {'STATUS':<{rem_s}}")
-    print(FIXED_MARGIN + Y + "─" * (u_w + p_w + rem_s + 6))
+    # Vẽ header bảng
+    header = f"{'USER':<{u_w}} │ {'PACKAGE':<{p_w}} │ {'STATUS':<{s_w}}"
+    print(FIXED_MARGIN + Fore.WHITE + header)
+    print(FIXED_MARGIN + Y + "─" * (u_w + p_w + s_w + 5))
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
         user_str = str(data.get('user', "Scanning..."))[:u_w-1]
         p_name = str(pkg.split('.')[-1])[:p_w-1]
         st_text = data['status']
-        # In kèm lề để đẩy vào trong
-        print(f"{FIXED_MARGIN} {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {p_name:<{p_w}} │ {st_text}")
+        # In dữ liệu monitor căn lề cố định
+        print(f"{FIXED_MARGIN} {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {Fore.BLUE}{p_name:<{p_w}} {Fore.WHITE}│ {st_text}")
 
 # --- MAIN LOOP (GIỮ NGUYÊN 100%) ---
 while True:
@@ -175,7 +176,7 @@ while True:
     try:
         ch = input()
         
-        if ch == "5":
+        if ch == "6":
             new_prefix = input(f"\n{FIXED_MARGIN}{Fore.YELLOW}>> Enter Package Prefix: ")
             if new_prefix:
                 current_package_prefix = new_prefix
@@ -224,8 +225,16 @@ while True:
                         threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
                 except: print(f"{FIXED_MARGIN}{Fore.RED}>> Error!")
         
-        elif ch in ["3", "4", "5", "7"]:
+        elif ch in ["3", "4", "5"]:
             print(f"\n{FIXED_MARGIN}{Fore.RED}>> Feature coming soon in this Version!")
+            time.sleep(1)
+        elif ch == "7":
+            new_id = input(f"\n{FIXED_MARGIN}{Fore.YELLOW}Enter Change Id : ")
+            try:
+                subprocess.call(["su", "-c", f"settings put secure android_id {new_id}"])
+                print(f"{FIXED_MARGIN}{Fore.GREEN}>> Android ID changed to {new_id}")
+            except:
+                print(f"{FIXED_MARGIN}{Fore.RED}>> Error changing Android ID")
             time.sleep(1)
 
         if not auto_running: input(f"\n{FIXED_MARGIN}{Fore.GREEN}Press Enter to continue...")
