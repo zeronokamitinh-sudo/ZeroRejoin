@@ -57,7 +57,7 @@ def start_app(pkg):
     kill_app(pkg)
     time.sleep(1)
     deep_link = game_id if "http" in str(game_id) else f"roblox://placeID={game_id}"
-    subprocess.call(["am", "start", "--user", "0", "-a", "android.intent.action.VIEW", "-d", deep_link, pkg],
+    subprocess.call(["am", "start", "--user", "0", "-a", "android.intent.action.VIEW", "-d", deep_link, pkg], 
                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def is_running(pkg):
@@ -93,17 +93,19 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
 
-# --- GIAO DIỆN ---
-FIXED_MARGIN = " "
+# --- GIAO DIỆN (FIX CỨNG KHOẢNG CÁCH ĐỂ KHÔNG BỊ BIẾN DẠNG) ---
+# Margin cố định để đẩy toàn bộ vào trong, không phụ thuộc vào zoom
+FIXED_MARGIN = "          " 
+
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
     lines = [
-        "███████╗███████╗██████╗ ██████╗ ███╗ ███╗ █████╗ ███╗ ██╗ █████╗ ██████╗ ███████╗██████╗ ",
-        "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗ ████╗ ████║██╔══██╗████╗ ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
-        " ███╔╝ █████╗ ██████╔╝██║ ██║ ██╔████╔██║███████║██╔██╗ ██║███████║██║ ███╗█████╗ ██████╔╝",
-        " ███╔╝ ██╔══╝ ██╔══██╗██║ ██║ ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║ ██║██╔══╝ ██╔══██╗",
-        "███████╗███████╗██║ ██║╚██████╔╝ ██║ ╚═╝ ██║██║ ██║██║ ╚████║██║ ██║╚██████╔╝███████╗██║ ██║",
-        "╚══════╝╚══════╝╚═╝ ╚═╝ ╚═════╝ ╚═╝ ╚═╝╚═╝ ╚═╝╚═╝ ╚═══╝╚═╝ ╚═╝ ╚═════╝ ╚══════╝╚═╝ ╚═╝"
+        "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
+        "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗      ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
+        "  ███╔╝ █████╗  ██████╔╝██║   ██║      ██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗  ██████╔╝",
+        " ███╔╝  ██╔══╝  ██╔══██╗██║   ██║      ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  ██╔══██╗",
+        "███████╗███████╗██║  ██║╚██████╔╝      ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║",
+        "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝       ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝"
     ]
     for line in lines:
         print(FIXED_MARGIN + Y + line)
@@ -115,18 +117,18 @@ def banner():
     
     print(f"\n{FIXED_MARGIN}{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
     print(f"{FIXED_MARGIN}{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
+
+    # Khung menu cố định chiều rộng để không bị vỡ khi zoom
     print(FIXED_MARGIN + Y + "╭──────┬──────────────────────────────────────────╮")
-    print(FIXED_MARGIN + Y + "│ No │ Service Name │")
+    print(FIXED_MARGIN + Y + "│  No  │ Service Name                             │")
     print(FIXED_MARGIN + Y + "├──────┼──────────────────────────────────────────┤")
     
     menu_items = [
         ("1", "Start Auto Rejoin (Auto setup User ID)"),
         ("2", "Setup Game ID for Packages"),
-        ("3", "Auto Login with Cookie"),
-        ("4", "Enable Discord Webhook"),
-        ("5", "Auto Check User Setup"),
-        ("6", "Configure Package Prefix"),
-        ("7", "Auto Change Android ID"),
+        ("3", "Enable Discord Webhook"),
+        ("4", "Auto Check User Setup"),
+        ("5", "Configure Package Prefix"),
     ]
     
     for no, name in menu_items:
@@ -165,6 +167,7 @@ while True:
             package_data.clear()
             continue
         continue
+
     banner()
     try:
         ch = input()
@@ -218,22 +221,8 @@ while True:
                         threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
                 except: print(f"{FIXED_MARGIN}{Fore.RED}>> Error!")
         
-        elif ch in ["3", "4", "5"]:
+        elif ch in ["3", "4", "5", "7"]:
             print(f"\n{FIXED_MARGIN}{Fore.RED}>> Feature coming soon in this Version!")
-            time.sleep(1)
-
-        elif ch == "7":
-            # --- FIX CHÍNH TẠI ĐÂY ---
-            new_id = input(f"\n{FIXED_MARGIN}{Fore.YELLOW}Enter Change Id: ")
-            if new_id:
-                try:
-                    # Chạy lệnh su với settings put để thay đổi Android ID triệt để
-                    subprocess.run(["su", "-c", f"settings put secure android_id {new_id}"], check=True)
-                    # Xác nhận lại bằng cách đọc ID hiện tại
-                    actual_id = subprocess.check_output(["su", "-c", "settings get secure android_id"]).decode().strip()
-                    print(f"{FIXED_MARGIN}{Fore.GREEN}>> System Android ID is now: {actual_id}")
-                except Exception as e:
-                    print(f"{FIXED_MARGIN}{Fore.RED}>> Error: {e}")
             time.sleep(1)
 
         if not auto_running: input(f"\n{FIXED_MARGIN}{Fore.GREEN}Press Enter to continue...")
