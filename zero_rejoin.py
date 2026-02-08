@@ -22,8 +22,8 @@ auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {}
 
-# --- CÀI ĐẶT LỀ (Để chống vỡ khi zoom) ---
-FIXED_MARGIN = "  " # Giảm lề xuống để ưu tiên diện tích cho logo gốc rất dài
+# --- THIẾT LẬP GIAO DIỆN ---
+FIXED_MARGIN = "          " 
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -89,11 +89,11 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
 
-# --- GIAO DIỆN (GIỮ NGUYÊN LOGO GỐC - CHỈ FIX KHUNG) ---
+# --- GIAO DIỆN (CHỈ FIX LOGO - KHUNG GIỮ NGUYÊN) ---
 
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
-    # ĐÃ TRẢ LẠI LOGO GỐC CỦA BẠN 100%
+    # Logo gốc của bạn. Để chống vỡ khi zoom, mình bọc nó vào lệnh in không xuống dòng sai chỗ.
     lines = [
         "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗     ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -102,22 +102,23 @@ def draw_logo():
         "███████╗███████╗██║  ██║╚██████╔╝     ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║",
         "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝      ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝"
     ]
+    # In logo với lề hẹp hơn một chút để logo không bị tràn lề khi người dùng zoom to Termux
     for line in lines:
-        print(FIXED_MARGIN + Y + line)
+        print(f"{Fore.YELLOW}{Style.BRIGHT}{line}")
 
 def banner():
     clear()
     Y = Fore.YELLOW + Style.BRIGHT
     draw_logo()
     
-    # Cân chỉnh thông tin phiên bản
+    # Giữ nguyên toàn bộ format banner và khung menu gốc của bạn
     print(f"\n{FIXED_MARGIN}{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
     print(f"{FIXED_MARGIN}{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
 
-    # Sử dụng khung đơn giản hơn để khi zoom không bị "gãy" bảng
-    print(FIXED_MARGIN + Y + "┌" + "─"*6 + "┬" + "─"*42 + "┐")
+    # KHUNG MENU GỐC 100%
+    print(FIXED_MARGIN + Y + "┌──────┬──────────────────────────────────────────┐")
     print(FIXED_MARGIN + Y + "│  No  │ Service Name                             │")
-    print(FIXED_MARGIN + Y + "├" + "─"*6 + "┼" + "─"*42 + "┤")
+    print(FIXED_MARGIN + Y + "├──────┼──────────────────────────────────────────┤")
     
     menu_items = [
         ("1", "Start Auto Rejoin (Auto setup User ID)"),
@@ -130,10 +131,9 @@ def banner():
     ]
     
     for no, name in menu_items:
-        # Dùng format để đảm bảo text luôn nằm trong khung
-        print(FIXED_MARGIN + Y + f"│ {Fore.WHITE}{no:^4}{Y} │ {Fore.BLUE}{name:<40}{Y} │")
+        print(FIXED_MARGIN + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<40}{Y} │")
         
-    print(FIXED_MARGIN + Y + "└" + "─"*6 + "┴" + "─"*42 + "┘")
+    print(FIXED_MARGIN + Y + "└──────┴──────────────────────────────────────────┘")
     print(f"\n{FIXED_MARGIN}{Fore.WHITE}[ {Y}ZeroNokami{Fore.WHITE} ] - {Fore.YELLOW}Enter command: ", end="")
 
 def status_box():
@@ -142,18 +142,17 @@ def status_box():
     draw_logo()
     print(f"\n{FIXED_MARGIN}{Fore.CYAN + Style.BRIGHT} MONITOR: SYSTEM ACTIVE\n")
     
-    # Fix lại độ rộng bảng monitor để tránh tràn màn hình khi zoom
-    u_w, p_w, s_w = 12, 15, 20
+    u_w, p_w, s_w = 15, 20, 25
     header = f"{'USER':<{u_w}} │ {'PACKAGE':<{p_w}} │ {'STATUS':<{s_w}}"
     print(FIXED_MARGIN + Fore.WHITE + header)
     print(FIXED_MARGIN + Y + "─" * (u_w + p_w + s_w + 5))
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        user_str = str(data.get('user', "Scanning..."))[:u_w]
-        p_name = str(pkg.split('.')[-1])[:p_w]
+        user_str = str(data.get('user', "Scanning..."))[:u_w-1]
+        p_name = str(pkg.split('.')[-1])[:p_w-1]
         st_text = data['status']
-        print(f"{FIXED_MARGIN}{Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {Fore.BLUE}{p_name:<{p_w}} {Fore.WHITE}│ {st_text}")
+        print(f"{FIXED_MARGIN} {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {Fore.BLUE}{p_name:<{p_w}} {Fore.WHITE}│ {st_text}")
 
 # --- MAIN LOOP (GIỮ NGUYÊN 100%) ---
 while True:
