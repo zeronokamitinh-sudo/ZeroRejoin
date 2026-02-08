@@ -172,7 +172,7 @@ while True:
     try:
         ch = input()
         
-        if ch == "6":
+        if ch == "5":
             new_prefix = input(f"\n{FIXED_MARGIN}{Fore.YELLOW}>> Enter Package Prefix: ")
             if new_prefix:
                 current_package_prefix = new_prefix
