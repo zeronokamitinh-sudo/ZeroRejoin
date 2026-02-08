@@ -1148,7 +1148,7 @@ class UIManager:
 
         panel = Panel(
             table,
-            title="[bold yellow]discord.gg/ghmaDgNzDa - Beta Edition[/bold yellow]",
+            title="[bold yellow]ZeroNokami - Tool Auto Rejoin[/bold yellow]",
             border_style="yellow",
             box=ROUNDED
         )
