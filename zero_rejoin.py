@@ -22,9 +22,8 @@ auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {}
 
-# --- THIẾT LẬP GIAO DIỆN CHỐNG BIẾN DẠNG ---
-FIXED_MARGIN = "          " 
-FRAME_WIDTH = 55 
+# --- CÀI ĐẶT LỀ (Để chống vỡ khi zoom) ---
+FIXED_MARGIN = "  " # Giảm lề xuống để ưu tiên diện tích cho logo gốc rất dài
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -90,11 +89,11 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
 
-# --- GIAO DIỆN (FIX CHỐNG BIẾN DẠNG LOGO & ĐẨY CONTROL VÀO TRONG) ---
+# --- GIAO DIỆN (GIỮ NGUYÊN LOGO GỐC - CHỈ FIX KHUNG) ---
 
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
-    # Đã căn chỉnh chính xác 100% độ dài từng dòng để không bao giờ vỡ khi zoom
+    # ĐÃ TRẢ LẠI LOGO GỐC CỦA BẠN 100%
     lines = [
         "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗     ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -111,14 +110,14 @@ def banner():
     Y = Fore.YELLOW + Style.BRIGHT
     draw_logo()
     
-    # Đưa các dòng thông tin dời vào trong lề FIXED_MARGIN
+    # Cân chỉnh thông tin phiên bản
     print(f"\n{FIXED_MARGIN}{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
     print(f"{FIXED_MARGIN}{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
 
-    # Toàn bộ khối menu nằm gọn trong FIXED_MARGIN
-    print(FIXED_MARGIN + Y + "┌──────┬──────────────────────────────────────────┐")
+    # Sử dụng khung đơn giản hơn để khi zoom không bị "gãy" bảng
+    print(FIXED_MARGIN + Y + "┌" + "─"*6 + "┬" + "─"*42 + "┐")
     print(FIXED_MARGIN + Y + "│  No  │ Service Name                             │")
-    print(FIXED_MARGIN + Y + "├──────┼──────────────────────────────────────────┤")
+    print(FIXED_MARGIN + Y + "├" + "─"*6 + "┼" + "─"*42 + "┤")
     
     menu_items = [
         ("1", "Start Auto Rejoin (Auto setup User ID)"),
@@ -131,10 +130,10 @@ def banner():
     ]
     
     for no, name in menu_items:
-        print(FIXED_MARGIN + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<40}{Y} │")
+        # Dùng format để đảm bảo text luôn nằm trong khung
+        print(FIXED_MARGIN + Y + f"│ {Fore.WHITE}{no:^4}{Y} │ {Fore.BLUE}{name:<40}{Y} │")
         
-    print(FIXED_MARGIN + Y + "└──────┴──────────────────────────────────────────┘")
-    # Đẩy dòng enter command vào trong luôn
+    print(FIXED_MARGIN + Y + "└" + "─"*6 + "┴" + "─"*42 + "┘")
     print(f"\n{FIXED_MARGIN}{Fore.WHITE}[ {Y}ZeroNokami{Fore.WHITE} ] - {Fore.YELLOW}Enter command: ", end="")
 
 def status_box():
@@ -143,17 +142,18 @@ def status_box():
     draw_logo()
     print(f"\n{FIXED_MARGIN}{Fore.CYAN + Style.BRIGHT} MONITOR: SYSTEM ACTIVE\n")
     
-    u_w, p_w, s_w = 15, 20, 25
+    # Fix lại độ rộng bảng monitor để tránh tràn màn hình khi zoom
+    u_w, p_w, s_w = 12, 15, 20
     header = f"{'USER':<{u_w}} │ {'PACKAGE':<{p_w}} │ {'STATUS':<{s_w}}"
     print(FIXED_MARGIN + Fore.WHITE + header)
     print(FIXED_MARGIN + Y + "─" * (u_w + p_w + s_w + 5))
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
-        user_str = str(data.get('user', "Scanning..."))[:u_w-1]
-        p_name = str(pkg.split('.')[-1])[:p_w-1]
+        user_str = str(data.get('user', "Scanning..."))[:u_w]
+        p_name = str(pkg.split('.')[-1])[:p_w]
         st_text = data['status']
-        print(f"{FIXED_MARGIN} {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {Fore.BLUE}{p_name:<{p_w}} {Fore.WHITE}│ {st_text}")
+        print(f"{FIXED_MARGIN}{Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {Fore.BLUE}{p_name:<{p_w}} {Fore.WHITE}│ {st_text}")
 
 # --- MAIN LOOP (GIỮ NGUYÊN 100%) ---
 while True:
