@@ -93,7 +93,10 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
 
-# --- GIAO DIỆN (FIX KHUNG DỜI VÀO TRONG & LOGO CHUẨN) ---
+# --- GIAO DIỆN (FIX CỨNG KHOẢNG CÁCH ĐỂ KHÔNG BỊ BIẾN DẠNG) ---
+# Margin cố định để đẩy toàn bộ vào trong, không phụ thuộc vào zoom
+FIXED_MARGIN = "          " 
+
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
     lines = [
@@ -104,33 +107,25 @@ def draw_logo():
         "███████╗███████╗██║  ██║╚██████╔╝      ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║",
         "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝       ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝"
     ]
-    W = get_W()
-    logo_w = len(lines[0])
-    pad = max(0, (W - logo_w) // 2)
     for line in lines:
-        print(" " * pad + Y + line)
+        print(FIXED_MARGIN + Y + line)
 
 def banner():
     clear()
     Y = Fore.YELLOW + Style.BRIGHT
-    W = get_W()
     draw_logo()
     
-    # Header Info
-    print(f"\n{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
-    print(f"{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
+    print(f"\n{FIXED_MARGIN}{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
+    print(f"{FIXED_MARGIN}{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
 
-    # Dời khung vào trong bằng cách tăng margin
-    menu_w = 46 
-    margin = " " * max(0, (W - menu_w) // 2 + 2) # Cộng thêm 2 để đẩy sâu vào trong
-    
-    print(margin + Y + "╭──────┬──────────────────────────────────╮")
-    print(margin + Y + "│  No  │ Service Name                     │")
-    print(margin + Y + "├──────┼──────────────────────────────────┤")
+    # Khung menu cố định chiều rộng để không bị vỡ khi zoom
+    print(FIXED_MARGIN + Y + "╭──────┬──────────────────────────────────────────╮")
+    print(FIXED_MARGIN + Y + "│  No  │ Service Name                             │")
+    print(FIXED_MARGIN + Y + "├──────┼──────────────────────────────────────────┤")
     
     menu_items = [
-        ("1", "Start Auto Rejoin"),
-        ("2", "Setup Game ID"),
+        ("1", "Start Auto Rejoin (Auto setup User ID)"),
+        ("2", "Setup Game ID for Packages"),
         ("3", "Auto Login with Cookie"),
         ("4", "Enable Discord Webhook"),
         ("5", "Auto Check User Setup"),
@@ -139,30 +134,30 @@ def banner():
     ]
     
     for no, name in menu_items:
-        print(margin + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<32}{Y} │")
+        print(FIXED_MARGIN + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<40}{Y} │")
         
-    print(margin + Y + "╰──────┴──────────────────────────────────╯")
-    print(f"\n{margin}{Fore.WHITE}[ {Y}ZeroNokami{Fore.WHITE} ] - {Fore.YELLOW}Enter command: ", end="")
+    print(FIXED_MARGIN + Y + "╰──────┴──────────────────────────────────────────╯")
+    print(f"\n{FIXED_MARGIN}{Fore.WHITE}[ {Y}ZeroNokami{Fore.WHITE} ] - {Fore.YELLOW}Enter command: ", end="")
 
 def status_box():
     clear()
     Y = Fore.YELLOW + Style.BRIGHT
     W = get_W()
     draw_logo()
-    print(f"\n{Fore.CYAN + Style.BRIGHT} MONITOR: SYSTEM ACTIVE\n")
+    print(f"\n{FIXED_MARGIN}{Fore.CYAN + Style.BRIGHT} MONITOR: SYSTEM ACTIVE\n")
     
     u_w, p_w = int(W * 0.25), int(W * 0.35)
     rem_s = max(10, W - u_w - p_w - 5)
     
-    print(Fore.WHITE + f" {'USER':<{u_w}} │ {'PACKAGE':<{p_w}} │ {'STATUS':<{rem_s}}")
-    print(Y + "─" * W)
+    print(FIXED_MARGIN + Fore.WHITE + f" {'USER':<{u_w}} │ {'PACKAGE':<{p_w}} │ {'STATUS':<{rem_s}}")
+    print(FIXED_MARGIN + Y + "─" * (W-10))
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
         user_str = str(data.get('user', "Scanning..."))[:u_w-1]
         p_name = str(pkg.split('.')[-1])[:p_w-1]
         st_text = data['status']
-        print(f" {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {p_name:<{p_w}} │ {st_text}")
+        print(f"{FIXED_MARGIN} {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {p_name:<{p_w}} │ {st_text}")
 
 # --- MAIN LOOP (GIỮ NGUYÊN 100%) ---
 while True:
@@ -180,17 +175,17 @@ while True:
         ch = input()
         
         if ch == "6":
-            new_prefix = input(f"{Fore.YELLOW}>> Enter Package Prefix: ")
+            new_prefix = input(f"\n{FIXED_MARGIN}{Fore.YELLOW}>> Enter Package Prefix: ")
             if new_prefix:
                 current_package_prefix = new_prefix
                 found = get_installed_packages(new_prefix)
-                print(f"{Fore.GREEN}>> Detected {len(found)} matching packages.")
+                print(f"{FIXED_MARGIN}{Fore.GREEN}>> Detected {len(found)} matching packages.")
         
         elif ch == "2":
             if not current_package_prefix:
-                print(Fore.RED + ">> Error: Please set package prefix first!")
+                print(f"\n{FIXED_MARGIN}{Fore.RED}>> Error: Please set package prefix first!")
             else:
-                print(Fore.CYAN + "\n --- SELECT GAME ---")
+                print(f"\n{FIXED_MARGIN}{Fore.CYAN} --- SELECT GAME ---")
                 game_list = {
                     "1": ("Blox Fruit", "2753915549"),
                     "2": ("99 Night In The Forest", "79546208627805"),
@@ -204,21 +199,21 @@ while True:
                     "10": ("King Legacy", "4520749081"),
                 }
                 for k, v in game_list.items():
-                    print(f"{Fore.WHITE} [{k}] {v[0]}")
-                print(Fore.WHITE + " [11] Other Game / Private Server Link")
+                    print(f"{FIXED_MARGIN}{Fore.WHITE} [{k}] {v[0]}")
+                print(f"{FIXED_MARGIN}{Fore.WHITE} [11] Other Game / Private Server Link")
                 
-                gc = input(f"\n{Fore.YELLOW}>> Select Option: ")
+                gc = input(f"\n{FIXED_MARGIN}{Fore.YELLOW}>> Select Option: ")
                 if gc in game_list:
                     game_id = game_list[gc][1]
-                    print(f"{Fore.GREEN}>> Linked: {game_list[gc][0]}")
+                    print(f"{FIXED_MARGIN}{Fore.GREEN}>> Linked: {game_list[gc][0]}")
                 elif gc == "11":
-                    game_id = input(f"{Fore.YELLOW}>> Paste Link: ")
+                    game_id = input(f"{FIXED_MARGIN}{Fore.YELLOW}>> Paste Link: ")
         
         elif ch == "1":
             if not current_package_prefix or not game_id:
-                print(f"{Fore.RED}>> Error: Configuration missing!")
+                print(f"\n{FIXED_MARGIN}{Fore.RED}>> Error: Configuration missing!")
             else:
-                iv = input(f"{Fore.YELLOW}>> Interval (Min): ")
+                iv = input(f"\n{FIXED_MARGIN}{Fore.YELLOW}>> Interval (Min): ")
                 try:
                     rejoin_interval = float(iv)
                     auto_running = True
@@ -226,13 +221,13 @@ while True:
                     for p in pkgs:
                         package_data[p] = {'status': 'Starting...', 'user': "Scanning..."}
                         threading.Thread(target=auto_rejoin_logic, args=(p,), daemon=True).start()
-                except: print(Fore.RED + ">> Error!")
+                except: print(f"{FIXED_MARGIN}{Fore.RED}>> Error!")
         
         elif ch in ["3", "4", "5", "7"]:
-            print(f"{Fore.RED}>> Feature coming soon in this Version!")
+            print(f"\n{FIXED_MARGIN}{Fore.RED}>> Feature coming soon in this Version!")
             time.sleep(1)
 
-        if not auto_running: input(f"\n{Fore.GREEN}Press Enter to continue...")
+        if not auto_running: input(f"\n{FIXED_MARGIN}{Fore.GREEN}Press Enter to continue...")
     except Exception as e:
         print(f"Error: {e}")
         input()
