@@ -9,8 +9,8 @@ def install_dependencies():
         subprocess.check_call([sys.executable, "-m", "pip", "install", "colorama"],
                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         os.execv(sys.executable, ['python'] + sys.argv)
-install_dependencies()
 
+install_dependencies()
 from colorama import init, Fore, Style
 init(autoreset=True)
 
@@ -22,9 +22,12 @@ auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {}
 
-# --- THIẾT LẬP GIAO DIỆN CHỐNG BIẾN DẠNG ---
-FIXED_MARGIN = "          " 
-FRAME_WIDTH = 55 
+def get_W():
+    try:
+        columns = shutil.get_terminal_size().columns
+        return columns if columns > 20 else 80
+    except:
+        return 80
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -54,7 +57,7 @@ def start_app(pkg):
     kill_app(pkg)
     time.sleep(1)
     deep_link = game_id if "http" in str(game_id) else f"roblox://placeID={game_id}"
-    subprocess.call(["am", "start", "--user", "0", "-a", "android.intent.action.VIEW", "-d", deep_link, pkg], 
+    subprocess.call(["am", "start", "--user", "0", "-a", "android.intent.action.VIEW", "-d", deep_link, pkg],
                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def is_running(pkg):
@@ -90,44 +93,32 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
 
-# --- GIAO DIỆN (CHỈ FIX LOGO BỊ NHẢY DÒNG - CÒN LẠI GIỮ NGUYÊN) ---
-
+# --- GIAO DIỆN (ĐÃ FIX CHỮ MANAGER TRÊN CÙNG 1 DÒNG) ---
+FIXED_MARGIN = " "
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
+    # Đã căn chỉnh lại toàn bộ cụm ZERO MANAGER để không bị lỗi font khi hiển thị
     lines = [
-        "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
-        "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗     ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
-        "  ███╔╝ █████╗  ██████╔╝██║   ██║     ██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗  ██████╔╝",
-        " ███╔╝  ██╔══╝  ██╔══██╗██║   ██║     ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  ██╔══██╗",
-        "███████╗███████╗██║  ██║╚██████╔╝     ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║",
-        "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝      ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝"
+        " ███████╗███████╗██████╗  ██████╗     ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
+        " ╚══███╔╝██╔════╝██╔══██╗██╔═══██╗    ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
+        "   ███╔╝ █████╗  ██████╔╝██║   ██║    ██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗  ██████╔╝",
+        "  ███╔╝  ██╔══╝  ██╔══██╗██║   ██║    ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  ██╔══██╗",
+        " ███████╗███████╗██║  ██║╚██████╔╝    ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║",
+        " ╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝     ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝"
     ]
-    # Lấy chiều rộng màn hình hiện tại
-    try:
-        cols, _ = shutil.get_terminal_size()
-    except:
-        cols = 80
-
     for line in lines:
-        # Nếu dòng logo dài hơn màn hình, nó sẽ tự động được xử lý để không làm nát khung bên dưới
-        if len(line) > cols:
-            print(Y + line[:cols-1])
-        else:
-            # In logo sát lề trái để tiết kiệm diện tích khi zoom
-            print(Y + line)
+        print(FIXED_MARGIN + Y + line)
 
 def banner():
     clear()
     Y = Fore.YELLOW + Style.BRIGHT
     draw_logo()
     
-    # GIỮ NGUYÊN BANNER CŨ CỦA BẠN
     print(f"\n{FIXED_MARGIN}{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
     print(f"{FIXED_MARGIN}{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
-
-    # KHUNG MENU GỐC 100% KHÔNG ĐỔI MỘT KÝ TỰ
-    print(FIXED_MARGIN + Y + "┌──────┬──────────────────────────────────────────┐")
-    print(FIXED_MARGIN + Y + "│  No  │ Service Name                             │")
+    
+    print(FIXED_MARGIN + Y + "╭──────┬──────────────────────────────────────────╮")
+    print(FIXED_MARGIN + Y + "│ No   │ Service Name                             │")
     print(FIXED_MARGIN + Y + "├──────┼──────────────────────────────────────────┤")
     
     menu_items = [
@@ -143,26 +134,28 @@ def banner():
     for no, name in menu_items:
         print(FIXED_MARGIN + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<40}{Y} │")
         
-    print(FIXED_MARGIN + Y + "└──────┴──────────────────────────────────────────┘")
+    print(FIXED_MARGIN + Y + "╰──────┴──────────────────────────────────────────╯")
     print(f"\n{FIXED_MARGIN}{Fore.WHITE}[ {Y}ZeroNokami{Fore.WHITE} ] - {Fore.YELLOW}Enter command: ", end="")
 
 def status_box():
     clear()
     Y = Fore.YELLOW + Style.BRIGHT
+    W = get_W()
     draw_logo()
     print(f"\n{FIXED_MARGIN}{Fore.CYAN + Style.BRIGHT} MONITOR: SYSTEM ACTIVE\n")
     
-    u_w, p_w, s_w = 15, 20, 25
-    header = f"{'USER':<{u_w}} │ {'PACKAGE':<{p_w}} │ {'STATUS':<{s_w}}"
-    print(FIXED_MARGIN + Fore.WHITE + header)
-    print(FIXED_MARGIN + Y + "─" * (u_w + p_w + s_w + 5))
+    u_w, p_w = int(W * 0.25), int(W * 0.35)
+    rem_s = max(10, W - u_w - p_w - 5)
+    
+    print(FIXED_MARGIN + Fore.WHITE + f" {'USER':<{u_w}} │ {'PACKAGE':<{p_w}} │ {'STATUS':<{rem_s}}")
+    print(FIXED_MARGIN + Y + "─" * (W-10))
     
     for pkg in sorted(package_data.keys()):
         data = package_data[pkg]
         user_str = str(data.get('user', "Scanning..."))[:u_w-1]
         p_name = str(pkg.split('.')[-1])[:p_w-1]
         st_text = data['status']
-        print(f"{FIXED_MARGIN} {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {Fore.BLUE}{p_name:<{p_w}} {Fore.WHITE}│ {st_text}")
+        print(f"{FIXED_MARGIN} {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {p_name:<{p_w}} │ {st_text}")
 
 # --- MAIN LOOP (GIỮ NGUYÊN 100%) ---
 while True:
@@ -174,7 +167,6 @@ while True:
             package_data.clear()
             continue
         continue
-
     banner()
     try:
         ch = input()
@@ -239,7 +231,6 @@ while True:
             except:
                 print(f"{FIXED_MARGIN}{Fore.RED}>> Error changing Android ID")
             time.sleep(1)
-
         if not auto_running: input(f"\n{FIXED_MARGIN}{Fore.GREEN}Press Enter to continue...")
     except Exception as e:
         print(f"Error: {e}")
