@@ -93,10 +93,10 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
 
-# --- GIAO DIỆN (FIX LOGO & FULL GAME LIST) ---
+# --- GIAO DIỆN (FIX ZOOM, MANAGER & CREDIT) ---
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
-    # Căn chỉnh MANAGER chuẩn từng pixel
+    # Fix MANAGER: Căn chỉnh lại các khoảng trắng để tránh biến dạng khi zoom
     lines = [
         "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗      ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -117,17 +117,17 @@ def banner():
     W = get_W()
     draw_logo()
     
-    print(f"\n{Fore.WHITE} - Version: {Fore.GREEN}2.2.6 | Created By Shouko.dev | Bug Fixes By Nexus Hideout")
-    print(f"{Fore.WHITE} - Credit : {Fore.YELLOW}Shouko.dev")
-    print(f"{Fore.WHITE} - Method : Check Executor\n")
+    # Header Info - Đã đổi theo yêu cầu
+    print(f"\n{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
+    print(f"{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
 
-    menu_w = 55
+    # Bảng Menu - Thu nhỏ menu_w để khung vào trong
+    menu_w = 50
     margin = " " * max(0, (W - menu_w) // 2)
     
-    # Vẽ khung bo góc màu vàng đậm
-    print(margin + Y + "╭──────┬──────────────────────────────────────────╮")
-    print(margin + Y + "│  No  │ Service Name                             │")
-    print(margin + Y + "├──────┼──────────────────────────────────────────┤")
+    print(margin + Y + "╭──────┬──────────────────────────────────────╮")
+    print(margin + Y + "│  No  │ Service Name                         │")
+    print(margin + Y + "├──────┼──────────────────────────────────────┤")
     
     menu_items = [
         ("1", "Start Auto Rejoin (Auto setup User ID)"),
@@ -140,10 +140,11 @@ def banner():
     ]
     
     for no, name in menu_items:
-        print(margin + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<40}{Y} │")
+        # Căn chỉnh văn bản bên trong khung gọn hơn
+        print(margin + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<36}{Y} │")
         
-    print(margin + Y + "╰──────┴──────────────────────────────────────────╯")
-    print(f"\n{margin}{Fore.WHITE}[ {Y}Shouko.dev{Fore.WHITE} ] - {Fore.YELLOW}Enter command: ", end="")
+    print(margin + Y + "╰──────┴──────────────────────────────────────╯")
+    print(f"\n{margin}{Fore.WHITE}[ {Y}ZeroNokami{Fore.WHITE} ] - {Fore.YELLOW}Enter command: ", end="")
 
 def status_box():
     clear()
@@ -165,7 +166,7 @@ def status_box():
         st_text = data['status']
         print(f" {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {p_name:<{p_w}} │ {st_text}")
 
-# --- MAIN LOOP (KHÔI PHỤC FULL GAME LIST) ---
+# --- MAIN LOOP (GIỮ NGUYÊN LOGIC) ---
 while True:
     if auto_running:
         status_box()
@@ -192,7 +193,6 @@ while True:
                 print(Fore.RED + ">> Error: Please set package prefix (Option 6) first!")
             else:
                 print(Fore.CYAN + "\n --- SELECT GAME ---")
-                # Khôi phục đầy đủ danh sách game
                 game_list = {
                     "1": ("Blox Fruit", "2753915549"),
                     "2": ("99 Night In The Forest", "79546208627805"),
@@ -231,7 +231,7 @@ while True:
                 except: print(Fore.RED + ">> Error!")
         
         elif ch in ["3", "4", "5", "7"]:
-            print(f"{Fore.RED}>> Feature coming soon in this Beta Version!")
+            print(f"{Fore.RED}>> Feature coming soon in this Version!")
             time.sleep(1)
 
         if not auto_running: input(f"\n{Fore.GREEN}Press Enter to continue...")
