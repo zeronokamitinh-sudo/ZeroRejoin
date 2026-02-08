@@ -22,6 +22,7 @@ from rich.console import Console
 from datetime import datetime, timezone
 from threading import Lock, Event
 from psutil import boot_time, process_iter, cpu_percent, virtual_memory, Process, NoSuchProcess, AccessDenied, ZombieProcess
+
 package_lock = Lock()
 status_lock = Lock()
 rejoin_lock = Lock()
@@ -36,15 +37,18 @@ webhook_interval = None
 reset_tab_interval = None
 close_and_rejoin_delay = None
 boot_time = boot_time()
+
 auto_android_id_enabled = False
 auto_android_id_thread = None
 auto_android_id_value = None
+
 globals()["_disable_ui"] = "0"
 globals()["package_statuses"] = {}
 globals()["_uid_"] = {}
 globals()["_user_"] = {}
 globals()["is_runner_ez"] = False
 globals()["check_exec_enable"] = "1"
+
 executors = {
     "Fluxus": "/storage/emulated/0/Fluxus/",
     "Fluxus Clone 001": "/storage/emulated/0/RobloxClone001/Fluxus/",
@@ -261,46 +265,57 @@ workspace_paths = [f"{base_path}Workspace" for base_path in executors.values()] 
                   [f"{base_path}workspace" for base_path in executors.values()]
 globals()["workspace_paths"] = workspace_paths
 globals()["executors"] = executors
+
 if not os.path.exists("ZeroNokami"):
     os.makedirs("ZeroNokami", exist_ok=True)
 SERVER_LINKS_FILE = "ZeroNokami/server-links.txt"
 ACCOUNTS_FILE = "ZeroNokami/accounts.txt"
 CONFIG_FILE = "ZeroNokami/config.json"
+
 version = "3.6.7 | By ZeroNokami | Bug Fixes By ZeroNokami"
+
 class Utilities:
     @staticmethod
     def collect_garbage():
         gc.collect()
+
     @staticmethod
     def log_error(error_message):
         with open("error_log.txt", "a") as error_log:
             error_log.write(f"{error_message}\n\n")
+
     @staticmethod
     def clear_screen():
         os.system('cls' if os.name == 'nt' else 'clear')
+
     @staticmethod
     def get_hwid_codex():
         return subprocess.run(["settings", "get", "secure", "android_id"], capture_output=True, text=True, check=True).stdout.strip()
+
     @staticmethod
     def calculate_time_left(expiry_timestamp):
         current_time = int(time.time())
         time_left = expiry_timestamp / 1000 - current_time
         return time_left
+
     @staticmethod
     def format_time_left(time_left):
         hours, remainder = divmod(time_left, 3600)
         minutes, seconds = divmod(remainder, 60)
         return f"{int(hours):02} hour(s) {int(minutes):02} minute(s) {int(seconds):02} second(s)"
+
     @staticmethod
     def convert_to_ho_chi_minh_time(expiry_timestamp):
         ho_chi_minh_tz = pytz.timezone("Asia/Ho_Chi_Minh")
         expiry_datetime = datetime.fromtimestamp(expiry_timestamp / 1000, pytz.utc)
         expiry_datetime = expiry_datetime.astimezone(ho_chi_minh_tz)
         return expiry_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
 class FileManager:
     SERVER_LINKS_FILE = "ZeroNokami/server-link.txt"
     ACCOUNTS_FILE = "ZeroNokami/account.txt"
     CONFIG_FILE = "ZeroNokami/config-wh.json"
+
     @staticmethod
     def setup_user_ids():
         print("\033[1;32m[ ZeroNokami ] - Auto-detecting User IDs from app packages...\033[0m")
@@ -309,6 +324,7 @@ class FileManager:
         if not packages:
             print("\033[1;31m[ ZeroNokami ] - No Roblox packages detected to set up User IDs.\033[0m")
             return []
+
         for package_name in packages:
             file_path = f'/data/data/{package_name}/files/appData/LocalStorage/appStorage.json'
             try:
@@ -321,13 +337,15 @@ class FileManager:
             except Exception as e:
                 print(f"\033[1;31m[ ZeroNokami ] - Error reading file for {package_name}: {e}\033[0m")
                 Utilities.log_error(f"Error reading appStorage.json for {package_name}: {e}")
+
         if accounts:
             FileManager.save_accounts(accounts)
             print("\033[1;32m[ ZeroNokami ] - User IDs have been successfully saved.\033[0m")
         else:
             print("\033[1;31m[ ZeroNokami ] - Could not find any valid User IDs to set up.\033[0m")
-       
+        
         return accounts
+
     @staticmethod
     def save_server_links(server_links):
         try:
@@ -339,6 +357,7 @@ class FileManager:
         except IOError as e:
             print(f"\033[1;31m[ ZeroNokami ] - Error saving server links: {e}\033[0m")
             Utilities.log_error(f"Error saving server links: {e}")
+
     @staticmethod
     def load_server_links():
         server_links = []
@@ -348,11 +367,13 @@ class FileManager:
                     package, link = line.strip().split(",", 1)
                     server_links.append((package, link))
         return server_links
+
     @staticmethod
     def save_accounts(accounts):
         with open(FileManager.ACCOUNTS_FILE, "w") as file:
             for package, user_id in accounts:
                 file.write(f"{package},{user_id}\n")
+
     @staticmethod
     def load_accounts():
         accounts = []
@@ -368,6 +389,7 @@ class FileManager:
                         except ValueError:
                             print(f"\033[1;31m[ ZeroNokami ] - Invalid line format: {line}. Expected format 'package,user_id'.\033[0m")
         return accounts
+
     @staticmethod
     def find_userid_from_file(file_path):
         try:
@@ -376,15 +398,19 @@ class FileManager:
                 userid_start = content.find('"UserId":"')
                 if userid_start == -1:
                     return None
+
                 userid_start += len('"UserId":"')
                 userid_end = content.find('"', userid_start)
                 if userid_end == -1:
                     return None
+
                 userid = content[userid_start:userid_end]
                 return userid
+
         except IOError as e:
             print(f"\033[1;31m[ ZeroNokami ] - Error reading file: {e}\033[0m")
             return None
+
     @staticmethod
     def get_username(user_id):
         user = FileManager.load_saved_username(user_id)
@@ -404,6 +430,7 @@ class FileManager:
             except requests.exceptions.RequestException as e:
                 print(f"\033[1;31m[ ZeroNokami ] - Attempt {attempt + 1} failed for Roblox Users API: {e}\033[0m")
                 time.sleep(2 ** attempt)
+
         for attempt in range(retry_attempts):
             try:
                 url = f"https://users.roproxy.com/v1/users/{user_id}"
@@ -417,7 +444,9 @@ class FileManager:
             except requests.exceptions.RequestException as e:
                 print(f"\033[1;31m[ ZeroNokami ] - Attempt {attempt + 1} failed for RoProxy API: {e}\033[0m")
                 time.sleep(2 ** attempt)
+
         return "Unknown"
+
     @staticmethod
     def save_username(user_id, username):
         try:
@@ -436,6 +465,7 @@ class FileManager:
                     file.truncate()
         except (IOError, json.JSONDecodeError) as e:
             print(f"\033[1;31m[ ZeroNokami ] - Error saving username: {e}\033[0m")
+
     @staticmethod
     def load_saved_username(user_id):
         try:
@@ -445,6 +475,7 @@ class FileManager:
         except (FileNotFoundError, json.JSONDecodeError, IOError) as e:
             print(f"\033[1;31m[ ZeroNokami ] - Error loading username: {e}\033[0m")
             return None
+
     @staticmethod
     def download_file(url, destination, binary=False):
         try:
@@ -473,6 +504,7 @@ class FileManager:
             print(f"\033[1;31m[ ZeroNokami ] - {error_message}\033[0m")
             Utilities.log_error(error_message)
             return None
+
     @staticmethod
     def _load_config():
         global webhook_url, device_name, webhook_interval, close_and_rejoin_delay, reset_tab_interval
@@ -504,6 +536,7 @@ class FileManager:
         except Exception as e:
             print(f"\033[1;31m[ ZeroNokami ] - Error loading configuration: {e}\033[0m")
             Utilities.log_error(f"Error loading configuration: {e}")
+
     @staticmethod
     def save_config():
         try:
@@ -523,6 +556,7 @@ class FileManager:
         except Exception as e:
             print(f"\033[1;31m[ ZeroNokami ] - Error saving configuration: {e}\033[0m")
             Utilities.log_error(f"Error saving configuration: {e}")
+
     @staticmethod
     def check_and_create_cookie_file():
         folder_path = os.path.dirname(os.path.abspath(__file__))
@@ -530,6 +564,7 @@ class FileManager:
         if not os.path.exists(cookie_file_path):
             with open(cookie_file_path, 'w') as f:
                 f.write("")
+
 class SystemMonitor:
     @staticmethod
     def capture_screenshot():
@@ -543,6 +578,7 @@ class SystemMonitor:
             print(f"\033[1;31m[ ZeroNokami ] - Error capturing screenshot: {e}\033[0m")
             Utilities.log_error(f"Error capturing screenshot: {e}")
             return None
+
     @staticmethod
     def get_uptime():
         current_time = time.time()
@@ -552,6 +588,7 @@ class SystemMonitor:
         minutes = int((uptime_seconds % 3600) // 60)
         seconds = int(uptime_seconds % 60)
         return f"{days}d {hours}h {minutes}m {seconds}s"
+
     @staticmethod
     def roblox_processes():
         package_names = []
@@ -571,6 +608,7 @@ class SystemMonitor:
             except (NoSuchProcess, AccessDenied, ZombieProcess):
                 continue
         return package_names
+
     @staticmethod
     def get_memory_usage():
         try:
@@ -582,6 +620,7 @@ class SystemMonitor:
             print(f"\033[1;31m[ ZeroNokami ] - Error getting memory usage: {e}\033[0m")
             Utilities.log_error(f"Error getting memory usage: {e}")
             return None
+
     @staticmethod
     def get_system_info():
         try:
@@ -600,6 +639,7 @@ class SystemMonitor:
             print(f"\033[1;31m[ ZeroNokami ] - Error retrieving system information: {e}\033[0m")
             Utilities.log_error(f"Error retrieving system information: {e}")
             return False
+
 class RobloxManager:
     @staticmethod
     def get_cookie():
@@ -608,14 +648,18 @@ class RobloxManager:
             cookie_txt_path = os.path.join(current_dir, "cookie.txt")
             new_dir_path = os.path.join(current_dir, "ZeroNokami/ZeroNokami - Data")
             new_cookie_path = os.path.join(new_dir_path, "cookie.txt")
+
             if not os.path.exists(new_dir_path):
                 os.makedirs(new_dir_path)
+
             if not os.path.exists(cookie_txt_path):
                 print("\033[1;31m[ ZeroNokami ] - cookie.txt not found in the current directory!\033[0m")
                 Utilities.log_error("cookie.txt not found in the current directory.")
                 return False
+
             cookies = []
             org = []
+
             with open(cookie_txt_path, "r") as file:
                 for line in file.readlines():
                     parts = str(line).strip().split(":")
@@ -626,21 +670,28 @@ class RobloxManager:
                     if ck.startswith("_|WARNING:"):
                         org.append(str(line).strip())
                         cookies.append(ck)
+
             if len(cookies) == 0:
                 print("\033[1;31m[ ZeroNokami ] - No valid cookies found in cookie.txt. Please add cookies.\033[0m")
                 Utilities.log_error("No valid cookies found in cookie.txt.")
                 return False
+
             cookie = cookies.pop(0)
             original_line = org.pop(0)
+
             with open(new_cookie_path, "a") as new_file:
                 new_file.write(original_line + "\n")
+
             with open(cookie_txt_path, "w") as file:
                 file.write("\n".join(org))
+
             return cookie
+
         except Exception as e:
             print(f"\033[1;31m[ ZeroNokami ] - Error: {e}\033[0m")
             Utilities.log_error(f"Error in get_cookie: {e}")
             return False
+
     @staticmethod
     def verify_cookie(cookie_value):
         try:
@@ -653,8 +704,11 @@ class RobloxManager:
                 'Accept-Encoding': 'gzip, deflate, br',
                 'Connection': 'keep-alive'
             }
+
             time.sleep(1)
+
             response = requests.get('https://users.roblox.com/v1/users/authenticated', headers=headers)
+
             if response.status_code == 200:
                 print("\033[1;32m[ ZeroNokami ] - Cookie is valid! User is authenticated.\033[0m")
                 return response.json().get("id", False)
@@ -666,16 +720,19 @@ class RobloxManager:
                 print(f"\033[1;31m[ ZeroNokami ] - {error_message}\033[0m")
                 Utilities.log_error(error_message)
                 return False
+
         except requests.RequestException as e:
             error_message = f"Request exception occurred while verifying cookie: {e}"
             print(f"\033[1;31m[ ZeroNokami ] - {error_message}\033[0m")
             Utilities.log_error(error_message)
             return False
+
         except Exception as e:
             error_message = f"Unexpected exception occurred while verifying cookie: {e}"
             print(f"\033[1;31m[ ZeroNokami ] - {error_message}\033[0m")
             Utilities.log_error(error_message)
             return False
+
     @staticmethod
     def check_user_online(user_id, cookie=None):
         max_retries = 2
@@ -692,11 +749,13 @@ class RobloxManager:
                 primary_data = primary_response.json()
                 primary_presence_type = primary_data["userPresences"][0]["userPresenceType"]
                 return primary_presence_type
+
             except requests.exceptions.RequestException as e:
                 print(f"\033[1;31mError checking online status for user {user_id} (Attempt {attempt + 1}) for Roblox API: {e}\033[0m")
                 if attempt < max_retries - 1:
                     time.sleep(delay)
                     delay *= 2
+
         headers = {"Content-Type": "application/json"}
         for attempt in range(max_retries):
             try:
@@ -706,6 +765,7 @@ class RobloxManager:
                 primary_data = primary_response.json()
                 primary_presence_type = primary_data["userPresences"][0]["userPresenceType"]
                 return primary_presence_type
+
             except requests.exceptions.RequestException as e:
                 print(f"\033[1;31mError checking online status for user {user_id} (Attempt {attempt + 1}) for RoProxy API: {e}\033[0m")
                 if attempt < max_retries - 1:
@@ -713,6 +773,7 @@ class RobloxManager:
                     delay *= 2
                 else:
                     return None
+
     @staticmethod
     def get_roblox_packages():
         packages = []
@@ -730,6 +791,7 @@ class RobloxManager:
             print(f"\033[1;31m[ ZeroNokami ] - Error retrieving packages: {e}\033[0m")
             Utilities.log_error(f"Error retrieving packages: {e}")
         return packages
+
     @staticmethod
     def kill_roblox_processes():
         packages = RobloxManager.get_roblox_packages()
@@ -741,6 +803,7 @@ class RobloxManager:
             if any(package_name in proc for proc in running):
                 os.system(f"nohup /system/bin/am force-stop {package_name} > /dev/null 2>&1 &")
         time.sleep(2)
+
     @staticmethod
     def kill_roblox_process(package_name):
         print(f"\033[1;96m[ ZeroNokami ] - Killing Roblox process for {package_name}...\033[0m")
@@ -756,6 +819,7 @@ class RobloxManager:
         except subprocess.CalledProcessError as e:
             print(f"\033[1;31m[ ZeroNokami ] - Error killing process for {package_name}: {e}\033[0m")
             Utilities.log_error(f"Error killing process for {package_name}: {e}")
+
     @staticmethod
     def delete_cache_for_package(package_name):
         cache_path = f'/data/data/{package_name}/cache/'
@@ -764,34 +828,42 @@ class RobloxManager:
             print(f"\033[1;32m[ ZeroNokami ] - Cache cleared for {package_name}\033[0m")
         else:
             print(f"\033[1;93m[ ZeroNokami ] - No cache found for {package_name}\033[0m")
+
     @staticmethod
     def launch_roblox(package_name, server_link):
         try:
             RobloxManager.kill_roblox_process(package_name)
             time.sleep(2)
+
             with status_lock:
                 globals()["_uid_"][globals()["_user_"][package_name]] = time.time()
                 globals()["package_statuses"][package_name]["Status"] = f"\033[1;36mOpening Roblox for {package_name}...\033[0m"
                 UIManager.update_status_table()
+
             subprocess.run([
                 'am', 'start',
                 '-a', 'android.intent.action.MAIN',
                 '-n', f'{package_name}/com.roblox.client.startup.ActivitySplash'
             ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
             time.sleep(10)
+
             with status_lock:
                 globals()["package_statuses"][package_name]["Status"] = f"\033[1;36mJoining Roblox for {package_name}...\033[0m"
                 UIManager.update_status_table()
+
             subprocess.run([
                 'am', 'start',
                 '-a', 'android.intent.action.VIEW',
                 '-n', f'{package_name}/com.roblox.client.ActivityProtocolLaunch',
                 '-d', server_link
             ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
             time.sleep(20)
             with status_lock:
                 globals()["package_statuses"][package_name]["Status"] = "\033[1;32mJoined Roblox\033[0m"
                 UIManager.update_status_table()
+
         except Exception as e:
             error_message = f"Error launching Roblox for {package_name}: {e}"
             with status_lock:
@@ -799,49 +871,62 @@ class RobloxManager:
                 UIManager.update_status_table()
             print(f"\033[1;31m[ ZeroNokami ] - {error_message}\033[0m")
             Utilities.log_error(error_message)
+
     @staticmethod
     def inject_cookies_and_appstorage():
         RobloxManager.kill_roblox_processes()
         db_url = "https://raw.githubusercontent.com/nghvit/module/refs/heads/main/import/Cookies"
         appstorage_url = "https://raw.githubusercontent.com/nghvit/module/refs/heads/main/import/appStorage.json"
+
         downloaded_db_path = FileManager.download_file(db_url, "Cookies.db", binary=True)
         downloaded_appstorage_path = FileManager.download_file(appstorage_url, "appStorage.json", binary=False)
+
         if not downloaded_db_path or not downloaded_appstorage_path:
             print("\033[1;31m[ ZeroNokami ] - Failed to download necessary files. Exiting.\033[0m")
             Utilities.log_error("Failed to download necessary files for cookie and appStorage injection.")
             return
+
         packages = RobloxManager.get_roblox_packages()
         if not packages:
             print("\033[1;31m[ ZeroNokami ] - No Roblox packages detected.\033[0m")
             return
+
         for package_name in packages:
             try:
                 cookie = RobloxManager.get_cookie()
                 if not cookie:
                     print(f"\033[1;31m[ ZeroNokami ] - Failed to retrieve a cookie for {package_name}. Skipping...\033[0m")
                     break
+
                 user_id = RobloxManager.verify_cookie(cookie)
                 if user_id:
                     print(f"\033[1;32m[ ZeroNokami ] - Cookie for {package_name} is valid! User ID: {user_id}\033[0m")
                 else:
                     print(f"\033[1;31m[ ZeroNokami ] - Cookie for {package_name} is invalid. Skipping injection...\033[0m")
                     continue
+
                 print(f"\033[1;32m[ ZeroNokami ] - Injecting cookie for {package_name}: {cookie}\033[0m")
+
                 destination_db_dir = f"/data/data/{package_name}/app_webview/Default/"
                 destination_appstorage_dir = f"/data/data/{package_name}/files/appData/LocalStorage/"
                 os.makedirs(destination_db_dir, exist_ok=True)
                 os.makedirs(destination_appstorage_dir, exist_ok=True)
+
                 destination_db_path = os.path.join(destination_db_dir, "Cookies")
                 shutil.copyfile(downloaded_db_path, destination_db_path)
                 print(f"\033[1;32m[ ZeroNokami ] - Copied Cookies.db to {destination_db_path}\033[0m")
+
                 destination_appstorage_path = os.path.join(destination_appstorage_dir, "appStorage.json")
                 shutil.copyfile(downloaded_appstorage_path, destination_appstorage_path)
                 print(f"\033[1;32m[ ZeroNokami ] - Copied appStorage.json to {destination_appstorage_path}\033[0m")
+
                 RobloxManager.replace_cookie_value_in_db(destination_db_path, cookie)
+
             except Exception as e:
                 error_message = f"Error injecting cookie for {package_name}: {e}"
                 print(f"\033[1;31m[ ZeroNokami ] - {error_message}\033[0m")
                 Utilities.log_error(error_message)
+
         print("\033[1;32m[ ZeroNokami ] - Opening all Roblox tabs...\033[0m")
         failed_packages = []
         for package_name in packages:
@@ -865,12 +950,15 @@ class RobloxManager:
                 print(f"\033[1;31m[ ZeroNokami ] - {error_message}\033[0m")
                 Utilities.log_error(error_message)
                 failed_packages.append(package_name)
+
         if failed_packages:
             print(f"\033[1;31m[ ZeroNokami ] - Failed to launch packages: {', '.join(failed_packages)}\033[0m")
         else:
             print("\033[1;32m[ ZeroNokami ] - Successfully launched all packages.\033[0m")
+
         print("\033[1;33m[ ZeroNokami ] - Waiting for all tabs to load (1 minute)...\033[0m")
         time.sleep(60)
+
         debug_mode = input("\033[1;93m[ ZeroNokami ] - Keep Roblox tabs open for debugging? (y/n): \033[0m").strip().lower()
         if debug_mode != 'y':
             print("\033[1;33m[ ZeroNokami ] - Closing all Roblox tabs after loading...\033[0m")
@@ -878,7 +966,9 @@ class RobloxManager:
             time.sleep(5)
         else:
             print("\033[1;33m[ ZeroNokami ] - Keeping Roblox tabs open for debugging.\033[0m")
+
         print("\033[1;32m[ ZeroNokami ] - Cookie and appStorage injection, followed by app launch, completed for all packages.\033[0m")
+
     @staticmethod
     def replace_cookie_value_in_db(db_path, new_cookie_value):
         try:
@@ -892,6 +982,7 @@ class RobloxManager:
             print(f"\033[1;31mDatabase error during cookie replacement: {e}\033[0m")
         except Exception as e:
             print(f"\033[1;31mError replacing cookie value in database: {e}\033[0m")
+
     @staticmethod
     def format_server_link(input_link):
         if 'roblox.com' in input_link:
@@ -901,6 +992,7 @@ class RobloxManager:
         else:
             print("\033[1;31m[ ZeroNokami ] - Invalid input! Please enter a valid game ID or private server link.\033[0m")
             return None
+
 class WebhookManager:
     @staticmethod
     def start_webhook_thread():
@@ -909,6 +1001,7 @@ class WebhookManager:
             stop_webhook_thread = False
             webhook_thread = threading.Thread(target=WebhookManager.send_webhook)
             webhook_thread.start()
+
     @staticmethod
     def send_webhook():
         global stop_webhook_thread
@@ -917,9 +1010,11 @@ class WebhookManager:
                 screenshot_path = SystemMonitor.capture_screenshot()
                 if not screenshot_path:
                     continue
+
                 info = SystemMonitor.get_system_info()
                 if not info:
                     continue
+
                 cpu = f"{info['cpu_usage']:.1f}%"
                 mem_used = f"{info['memory_used']:.2f} GB"
                 mem_total = f"{info['memory_total']:.2f} GB"
@@ -928,13 +1023,17 @@ class WebhookManager:
                 roblox_count = len(info['roblox_packages'])
                 roblox_status = f"Running: {roblox_count} instance{'s' if roblox_count != 1 else ''}"
                 roblox_details = "\n".join(info['roblox_packages']) if info['roblox_packages'] else "None"
+
                 tool_mem_usage = SystemMonitor.get_memory_usage()
                 tool_mem_display = f"{tool_mem_usage} MB" if tool_mem_usage is not None else "Unavailable"
+
                 if roblox_count > 0:
                     status_text = f"🟢 Online"
                 else:
                     status_text = "🔴 Offline"
+
                 random_color = random.randint(0, 16777215)
+
                 embed = {
                     "color": random_color,
                     "title": "📈 System Status Monitor",
@@ -959,23 +1058,29 @@ class WebhookManager:
                                "url": "https://discord.gg/rokidmanager",
                                "icon_url": "https://i.imgur.com/5yXNxU4.png"}
                 }
+
                 with open(screenshot_path, "rb") as file:
                     response = requests.post(
                         webhook_url,
                         data={"payload_json": json.dumps({"embeds": [embed], "username": "ZeroNokami", "avatar_url": "https://i.imgur.com/5yXNxU4.png"})},
                         files={"file": ("screenshot.png", file)}
                     )
+
                 if response.status_code not in (200, 204):
                     print(f"\033[1;31m[ ZeroNokami ] - Error sending device info: {response.status_code}\033[0m")
                     Utilities.log_error(f"Error sending webhook: Status code {response.status_code}")
+
             except Exception as e:
                 print(f"\033[1;31m[ ZeroNokami ] - Webhook error: {e}\033[0m")
                 Utilities.log_error(f"Error in webhook thread: {e}")
+
             time.sleep(webhook_interval * 60)
+
     @staticmethod
     def stop_webhook():
         global stop_webhook_thread
         stop_webhook_thread = True
+
     @staticmethod
     def setup_webhook():
         global webhook_url, device_name, webhook_interval, stop_webhook_thread
@@ -990,26 +1095,23 @@ class WebhookManager:
         except Exception as e:
             print(f"\033[1;31m[ ZeroNokami ] - Error during webhook setup: {e}\033[0m")
             Utilities.log_error(f"Error during webhook setup: {e}")
+
 class UIManager:
     @staticmethod
     def print_header(version):
         console = Console()
-        lines_raw = [
-            "███████╗███████╗██████╗ ██████╗ ███╗ ███╗ █████╗ ███╗ ██╗ █████╗ ██████╗ ███████╗██████╗ ",
-            "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗ ████╗ ████║██╔══██╗████╗ ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
-            " ███╔╝ █████╗ ██████╔╝██║ ██║ ██╔████╔██║███████║██╔██╗ ██║███████║██║ ███╗█████╗ ██████╔╝",
-            " ███╔╝ ██╔══╝ ██╔══██╗██║ ██║ ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║ ██║██╔══╝ ██╔══██╗",
-            "███████╗███████╗██║ ██║╚██████╔╝ ██║ ╚═╝ ██║██║ ██║██║ ╚████║██║ ██║╚██████╔╝███████╗██║ ██║",
-            "╚══════╝╚══════╝╚═╝ ╚═╝ ╚═════╝ ╚═╝ ╚═╝╚═╝ ╚═╝╚═╝ ╚═══╝╚═╝ ╚═╝ ╚═════╝ ╚══════╝╚═╝ ╚═╝"
-        ]
-        block = '\n'.join(lines_raw)
-        header = Text(block, style="bold red")
-        console.print(Align.center(header))
-        console.print(f"[bold yellow]- Version: [/bold yellow][bold white]{version}[/bold white]")
-        console.print(f"[bold yellow]- Credit: [/bold yellow][bold white]ZeroNokami[/bold white]")
+        header = Text(r"""
+      ________ ______ _____   ____     __  __          _   _          _____ ______ _____  
+|___  /  ____|  __ \ / __ \   |  \/  |   /\   | \ | |   /\   / ____|  ____|  __ \ 
+   / /| |__  | |__) | |  | |  | \  / |  /  \  |  \| |  /  \ | |  __| |__  | |__) |
+  / / |  __| |  _  /| |  | |  | |\/| | / /\ \ | . ` | / /\ \| | |_ |  __| |  _  / 
+ / /__| |____| | \ \| |__| |  | |  | |/ ____ \| |\  |/ ____ \ |__| | |____| | \ \ 
+/_____|______|_|  \_\\____/   |_|  |_/_/    \_\_| \_/_/    \_\_____|______|_|  \_\
+        """, style="bold yellow")
+
         config_file = os.path.join("ZeroNokami", "config.json")
         check_executor = "1"
-       
+        
         if os.path.exists(config_file):
             try:
                 with open(config_file, "r") as f:
@@ -1017,15 +1119,22 @@ class UIManager:
                     check_executor = config.get("check_executor", "0")
             except Exception as e:
                 console.print(f"[bold red][ ZeroNokami ] - Error reading {config_file}: {e}[/bold red]")
+
+        console.print(header)
+        console.print(f"[bold yellow]- Version: [/bold yellow][bold white]{version}[/bold white]")
+        console.print(f"[bold yellow]- Credit: [/bold yellow][bold white]ZeroNokami[/bold white]")
+
         if check_executor == "1":
             console.print("[bold yellow]- Method: [/bold yellow][bold white]Check Executor[/bold white]")
         else:
             console.print("[bold yellow]- Method: [/bold yellow][bold white]Check Online[/bold white]")
-       
+        
         console.print("\n")
+
     @staticmethod
     def create_dynamic_menu(options):
         console = Console()
+
         table = Table(
             header_style="bold white",
             border_style="bright_white",
@@ -1033,80 +1142,97 @@ class UIManager:
         )
         table.add_column("No", justify="center", style="bold cyan", width=6)
         table.add_column("Service Name", style="bold magenta", justify="left")
+
         for i, service in enumerate(options, start=1):
             table.add_row(f"[bold yellow][ {i} ][/bold yellow]", f"[bold blue]{service}[/bold blue]")
+
         panel = Panel(
             table,
             title="[bold yellow]ZeroNokami - Tool Auto Rejoin[/bold yellow]",
             border_style="yellow",
             box=ROUNDED
         )
+
         console.print(Align.left(panel))
+
     @staticmethod
     def create_dynamic_table(headers, rows):
         table = PrettyTable(field_names=headers, border=True, align="l")
         for huy in rows:
             table.add_row(list(huy))
         print(table)
+
     last_update_time = 0
     update_interval = 5
+
     @staticmethod
     def update_status_table():
         current_time = time.time()
         if current_time - UIManager.last_update_time < UIManager.update_interval:
             return
-       
+        
         cpu_usage = psutil.cpu_percent(interval=2)
         memory_info = psutil.virtual_memory()
         ram = round(memory_info.used / memory_info.total * 100, 2)
         title = f"CPU: {cpu_usage}% | RAM: {ram}%"
+
         table_packages = PrettyTable(
             field_names=["Package", "Username", "Package Status"],
             title=title,
             border=True,
             align="l"
         )
+
         for package, info in globals().get("package_statuses", {}).items():
             username = str(info.get("Username", "Unknown"))
+
             if username != "Unknown":
                 obfuscated_username = "******" + username[6:] if len(username) > 6 else "******"
                 username = obfuscated_username
+
             table_packages.add_row([
                 str(package),
                 username,
                 str(info.get("Status", "Unknown"))
             ])
+
         Utilities.clear_screen()
         UIManager.print_header(version)
         print(table_packages)
+
 class ExecutorManager:
     @staticmethod
     def detect_executors():
         console = Console()
         detected_executors = []
+
         for executor_name, base_path in executors.items():
             possible_autoexec_paths = [
                 os.path.join(base_path, "Autoexec"),
                 os.path.join(base_path, "Autoexecute"),
                 os.path.join(base_path, "autoexec")
             ]
+
             for path in possible_autoexec_paths:
                 if os.path.exists(path):
                     detected_executors.append(executor_name)
                     console.print(f"[bold green][ ZeroNokami ] - Detected executor: {executor_name}[/bold green]")
                     break
+
         return detected_executors
-   
+    
     @staticmethod
     def write_lua_script(detected_executors):
         console = Console()
         config_file = os.path.join("ZeroNokami", "checkui.lua")
+
         try:
             with open(config_file, "r") as f:
                 lua_script_content = f.read()
         except Exception as e:
             console.print(f"[bold red][ ZeroNokami ] - Error reading config from {config_file}: {e}[/bold red]")
             return
+
         for executor_name in detected_executors:
             base_path = executors[executor_name]
             possible_autoexec_paths = [
@@ -1114,10 +1240,13 @@ class ExecutorManager:
                 os.path.join(base_path, "Autoexecute"),
                 os.path.join(base_path, "autoexec")
             ]
+
             lua_written = False
+
             if executor_name.upper() == "KRNL":
                 autoruns_path = os.path.join("/storage/emulated/0/krnl/workspace/.storage", "autoruns.json")
                 tabs_path = os.path.join("/storage/emulated/0/krnl/workspace/.storage/tabs", "check_executor.luau")
+
                 if os.path.exists(autoruns_path):
                     with open(autoruns_path, "r") as f:
                         try:
@@ -1128,6 +1257,7 @@ class ExecutorManager:
                             autoruns_data = []
                 else:
                     autoruns_data = []
+
                 if "check_executor" not in autoruns_data:
                     autoruns_data.append("check_executor")
                     try:
@@ -1139,6 +1269,7 @@ class ExecutorManager:
                         Utilities.log_error(f"Error updating KRNL autoexec: {e}")
                 else:
                     console.print(f"[bold green][ ZeroNokami ] - Script already exists in KRNL autoexec![/bold green]")
+
                 try:
                     os.makedirs(os.path.dirname(tabs_path), exist_ok=True)
                     with open(tabs_path, "w") as f:
@@ -1148,6 +1279,7 @@ class ExecutorManager:
                 except Exception as e:
                     console.print(f"[bold red][ ZeroNokami ] - Error writing Lua script to KRNL autoexec: {e}[/bold red]")
                     Utilities.log_error(f"Error writing Lua script to KRNL autoexec: {e}")
+
             if not lua_written:
                 if executor_name.upper() == "DELTA":
                     target_path = os.path.join(base_path, "Autoexecute")
@@ -1161,21 +1293,26 @@ class ExecutorManager:
                     except Exception as e:
                         console.print(f"[bold red][ ZeroNokami ] - Error writing Lua script to {lua_script_path}: {e}[/bold red]")
                         Utilities.log_error(f"Error writing Lua script to {lua_script_path}: {e}")
+
                 if not lua_written:
                     for path in possible_autoexec_paths:
                         if os.path.exists(path):
                             lua_script_path = os.path.join(path, "executor_check.lua")
+
                             try:
                                 with open(lua_script_path, 'w') as file:
                                     file.write(lua_script_content)
                                 lua_written = True
                                 console.print(f"[bold green][ ZeroNokami ] - Lua script written to: {lua_script_path}[/bold green]")
                                 break
+
                             except Exception as e:
                                 console.print(f"[bold red][ ZeroNokami ] - Error writing Lua script to {lua_script_path}: {e}[/bold red]")
                                 Utilities.log_error(f"Error writing Lua script to {lua_script_path}: {e}")
+
                     if not lua_written:
                         console.print(f"[bold yellow][ ZeroNokami ] - No valid path found to write Lua script for {executor_name}[/bold yellow]")
+
     @staticmethod
     def check_executor_status(package_name, continuous=True, max_wait_time=180):
         retry_timeout = time.time() + max_wait_time
@@ -1188,10 +1325,12 @@ class ExecutorManager:
             if continuous and time.time() > retry_timeout:
                 return False
             time.sleep(20)
+
     @staticmethod
     def check_executor_and_rejoin(package_name, server_link, next_package_event):
         user_id = globals()["_user_"][package_name]
         detected_executors = ExecutorManager.detect_executors()
+
         if detected_executors:
             globals()["package_statuses"][package_name]["Status"] = "\033[1;33mChecking executor...\033[0m"
             UIManager.update_status_table()
@@ -1200,6 +1339,7 @@ class ExecutorManager:
                 try:
                     start_time = time.time()
                     executor_loaded = False
+
                     while time.time() - start_time < 180:
                         if ExecutorManager.check_executor_status(package_name):
                             globals()["package_statuses"][package_name]["Status"] = "\033[1;32mExecutor has loaded successfully\033[0m"
@@ -1207,11 +1347,13 @@ class ExecutorManager:
                             executor_loaded = True
                             next_package_event.set()
                             break
-                        time.sleep(20)
+                        time.sleep(20)  
+
                     if not executor_loaded:
                         globals()["package_statuses"][package_name]["Status"] = "\033[1;31mExecutor didn't load. Rejoining...\033[0m"
                         UIManager.update_status_table()
                         time.sleep(15)
+
                         ExecutorManager.reset_executor_file(package_name)
                         time.sleep(0.5)
                         RobloxManager.kill_roblox_process(package_name)
@@ -1223,10 +1365,12 @@ class ExecutorManager:
                         RobloxManager.launch_roblox(package_name, server_link)
                         globals()["package_statuses"][package_name]["Status"] = "\033[1;32mJoined Roblox\033[0m"
                         UIManager.update_status_table()
+
                 except Exception as e:
                     globals()["package_statuses"][package_name]["Status"] = f"\033[1;31mError checking executor for {package_name}: {e}\033[0m"
                     UIManager.update_status_table()
                     time.sleep(10)
+
                     ExecutorManager.reset_executor_file(package_name)
                     time.sleep(2)
                     RobloxManager.kill_roblox_process(package_name)
@@ -1238,10 +1382,12 @@ class ExecutorManager:
                     RobloxManager.launch_roblox(package_name, server_link)
                     globals()["package_statuses"][package_name]["Status"] = "\033[1;32mJoined Roblox\033[0m"
                     UIManager.update_status_table()
+
         else:
             globals()["package_statuses"][package_name]["Status"] = f"\033[1;32mJoined without executor for {user_id}\033[0m"
             UIManager.update_status_table()
             next_package_event.set()
+
     @staticmethod
     def reset_executor_file(package_name):
         try:
@@ -1252,6 +1398,7 @@ class ExecutorManager:
                     os.remove(file_path)
         except:
             pass
+
 class Runner:
     @staticmethod
     def launch_package_sequentially(server_links):
@@ -1296,19 +1443,20 @@ class Runner:
             else:
                 next_package_event.set()
             next_package_event.wait()
+
     @staticmethod
     def monitor_presence(server_links, stop_event):
         in_game_status = {package_name: False for package_name, _ in server_links}
-       
+        
         while not stop_event.is_set():
             try:
                 if globals()["check_exec_enable"] == "0":
                     for package_name, server_link in server_links:
                         ckhuy = FileManager.xuat(f"/data/data/{package_name}/app_webview/Default/Cookies")
                         user_id = globals()["_user_"][package_name]
-                       
+                        
                         presence_type = RobloxManager.check_user_online(user_id, ckhuy)
-                       
+                        
                         if not in_game_status[package_name]:
                             if presence_type == 2:
                                 with status_lock:
@@ -1316,8 +1464,8 @@ class Runner:
                                     UIManager.update_status_table()
                                 in_game_status[package_name] = True
                                 print(f"\033[1;32m[ ZeroNokami ] - {user_id} is now In-Game, monitoring started.\033[0m")
-                            continue
-                       
+                            continue 
+                        
                         if presence_type != 2:
                             with status_lock:
                                 globals()["package_statuses"][package_name]["Status"] = "\033[1;31mNot In-Game, Rejoining!\033[0m"
@@ -1335,6 +1483,7 @@ class Runner:
             except Exception as e:
                 Utilities.log_error(f"Error in presence monitor: {e}")
                 time.sleep(60)
+
     @staticmethod
     def force_rejoin(server_links, interval, stop_event):
         start_time = time.time()
@@ -1348,11 +1497,13 @@ class Runner:
                 time.sleep(5)
                 Runner.launch_package_sequentially(server_links)
             time.sleep(120)
+
     @staticmethod
     def update_status_table_periodically():
         while True:
             UIManager.update_status_table()
             time.sleep(30)
+
 def check_activation_status():
     try:
         response = requests.get("https://raw.githubusercontent.com/nghvit/module/refs/heads/main/status/customize", timeout=5)
@@ -1372,26 +1523,30 @@ def check_activation_status():
         print(f"\033[1;31m[ ZeroNokami ] - Error checking activation status: {e}\033[0m")
         Utilities.log_error(f"Error checking activation status: {e}")
         return False
+
 def set_android_id(android_id):
     try:
         subprocess.run(["settings", "put", "secure", "android_id", android_id], check=True)
     except Exception as e:
         Utilities.log_error(f"Failed to set Android ID: {e}")
+
 def auto_change_android_id():
     global auto_android_id_enabled, auto_android_id_value
     while auto_android_id_enabled:
         if auto_android_id_value:
             set_android_id(auto_android_id_value)
-        time.sleep(2)
+        time.sleep(2)  
+
 def main():
     global stop_webhook_thread, webhook_interval
     global auto_android_id_enabled, auto_android_id_thread, auto_android_id_value
+
     if not check_activation_status():
         print("\033[1;31m[ ZeroNokami ] - Exiting due to activation status check failure.\033[0m")
         return
-   
+    
     FileManager._load_config()
-   
+    
     if not globals().get("command_8_configured", False):
         globals()["check_exec_enable"] = "1"
         globals()["lua_script_template"] = 'task.spawn(function()local a=tostring(game.Players.LocalPlayer.UserId)..".main"while true do pcall(function()if isfile(a)then delfile(a)end; local success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)while not success do task.wait(1); success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)end end) task.wait(10) end end)'
@@ -1405,6 +1560,7 @@ def main():
             print(f"\033[1;31m[ ZeroNokami ] - Error saving default script to {config_file}: {e}\033[0m")
             Utilities.log_error(f"Error saving default script to {config_file}: {e}")
         FileManager.save_config()
+
     if webhook_interval is None:
         print("\033[1;31m[ ZeroNokami ] - Webhook interval not set, disabled.\033[0m")
         webhook_interval = float('inf')
@@ -1412,11 +1568,14 @@ def main():
         WebhookManager.start_webhook_thread()
     else:
         print("\033[1;33m[ ZeroNokami ] - Webhook not configured or disabled.\033[0m")
+
     stop_main_event = threading.Event()
+
     while True:
         Utilities.clear_screen()
         UIManager.print_header(version)
         FileManager.check_and_create_cookie_file()
+
         menu_options = [
             "Start Auto Rejoin (Auto setup User ID)",
             "Setup Game ID for Packages",
@@ -1426,57 +1585,67 @@ def main():
             "Configure Package Prefix",
             "Auto Change Android ID"
         ]
+
         UIManager.create_dynamic_menu(menu_options)
         setup_type = input("\033[1;93m[ ZeroNokami ] - Enter command: \033[0m")
-       
+        
         if setup_type == "1":
             try:
                 FileManager.setup_user_ids()
-               
+                
                 globals()["accounts"] = FileManager.load_accounts()
-               
+                
                 if not globals()["accounts"]:
                     print("\033[1;31m[ ZeroNokami ] - Setup ran, but no User IDs were found. Cannot start Auto Rejoin.\033[0m")
                     input("\033[1;32mPress Enter to return...\033[0m")
                     continue
-               
+                
                 server_links = FileManager.load_server_links()
                 globals()["_uid_"] = {}
+
                 if not server_links:
                     print("\033[1;31m[ ZeroNokami ] - No game ID or server link set up. Please run option 2 first.\033[0m")
                     input("\033[1;32mPress Enter to return...\033[0m")
                     continue
+
                 force_rejoin_input = input("\033[1;93m[ ZeroNokami ] - Force rejoin interval (minutes, 'q' to skip): \033[0m")
                 force_rejoin_interval = float('inf') if force_rejoin_input.lower() == 'q' else int(force_rejoin_input) * 60
                 if force_rejoin_interval <= 0:
                     print("\033[1;31m[ ZeroNokami ] - Interval must be positive.\033[0m")
                     input("\033[1;32mPress Enter to return...\033[0m")
                     continue
+
                 RobloxManager.kill_roblox_processes()
                 time.sleep(5)
                 Runner.launch_package_sequentially(server_links)
                 globals()["is_runner_ez"] = True
+
                 for task in [
                     (Runner.monitor_presence, (server_links, stop_main_event)),
                     (Runner.force_rejoin, (server_links, force_rejoin_interval, stop_main_event)),
                     (Runner.update_status_table_periodically, ())
                 ]:
                     threading.Thread(target=task[0], args=task[1], daemon=True).start()
+
                 while not stop_main_event.is_set():
                     time.sleep(500)
                     with status_lock:
                         UIManager.update_status_table()
                     Utilities.collect_garbage()
+
             except Exception as e:
                 print(f"\033[1;31m[ ZeroNokami ] - Error: {e}\033[0m")
                 Utilities.log_error(f"Setup error: {e}")
                 input("\033[1;32mPress Enter to return...\033[0m")
                 continue
+
+
         if setup_type == "2":
             try:
                 print("\033[1;32m[ ZeroNokami ] - Auto Setup User IDs from appStorage.json...\033[0m")
                 packages = RobloxManager.get_roblox_packages()
                 accounts = []
+
                 for package_name in packages:
                     file_path = f'/data/data/{package_name}/files/appData/LocalStorage/appStorage.json'
                     try:
@@ -1489,6 +1658,7 @@ def main():
                     except Exception as e:
                         print(f"\033[1;31m[ ZeroNokami ] - Error reading file for {package_name}: {e}\033[0m")
                         Utilities.log_error(f"Error reading appStorage.json for {package_name}: {e}")
+
                 if accounts:
                     FileManager.save_accounts(accounts)
                     print("\033[1;32m[ ZeroNokami ] - User IDs saved!\033[0m")
@@ -1496,6 +1666,7 @@ def main():
                     print("\033[1;31m[ ZeroNokami ] - No User IDs found.\033[0m")
                     input("\033[1;32mPress Enter to return...\033[0m")
                     continue
+
                 print("\033[93m[ ZeroNokami ] - Select game:\033[0m")
                 games = [
                     "1. Blox Fruits", "2. Grow A Garden", "3. King Legacy", "4. Fisch",
@@ -1505,6 +1676,7 @@ def main():
                 ]
                 for game in games:
                     print(f"\033[96m{game}\033[0m")
+
                 choice = input("\033[93m[ ZeroNokami ] - Enter choice: \033[0m").strip()
                 game_ids = {
                     "1": "2753915549", "2": "126884695634066", "3": "4520749081", "4": "16732694052",
@@ -1512,6 +1684,7 @@ def main():
                     "9": "79546208627805", "10": "142823291", "11": "109983668079237", "12": "18668065416",
                     "13": "87039211657390"
                 }
+
                 if choice in game_ids:
                     server_link = game_ids[choice]
                 elif choice == "14":
@@ -1520,30 +1693,36 @@ def main():
                     print("\033[1;31m[ ZeroNokami ] - Invalid choice.\033[0m")
                     input("\033[1;32mPress Enter to return...\033[0m")
                     continue
+
                 formatted_link = RobloxManager.format_server_link(server_link)
                 if formatted_link:
                     server_links = [(package_name, formatted_link) for package_name, _ in accounts]
                     FileManager.save_server_links(server_links)
                 else:
                     print("\033[1;31m[ ZeroNokami ] - Invalid server link.\033[0m")
+
             except Exception as e:
                 print(f"\033[1;31m[ ZeroNokami ] - Error: {e}\033[0m")
                 Utilities.log_error(f"Setup error: {e}")
-           
+            
             input("\033[1;32mPress Enter to return...\033[0m")
             continue
+
         elif setup_type == "3":
             RobloxManager.inject_cookies_and_appstorage()
             input("\033[1;32m\nPress Enter to exit...\033[0m")
             continue
+
         elif setup_type == "4":
             WebhookManager.setup_webhook()
             input("\033[1;32m\nPress Enter to exit...\033[0m")
             continue
+
         elif setup_type == "5":
             try:
                 print("\033[1;35m[1]\033[1;32m Executor Check\033[0m \033[1;35m[2]\033[1;36m Online Check\033[0m")
                 config_choice = input("\033[1;93m[ ZeroNokami ] - Select check method (1-2, 'q' to keep default): \033[0m").strip()
+
                 if config_choice.lower() == "q":
                     globals()["check_exec_enable"] = "1"
                     globals()["lua_script_template"] = 'task.spawn(function()local a=tostring(game.Players.LocalPlayer.UserId)..".main"while true do pcall(function()if isfile(a)then delfile(a)end; local success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)while not success do task.wait(1); success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)end end) task.wait(10) end end)'
@@ -1560,6 +1739,7 @@ def main():
                     print("\033[1;31m[ ZeroNokami ] - Invalid choice. Keeping default.\033[0m")
                     globals()["check_exec_enable"] = "1"
                     globals()["lua_script_template"] = 'task.spawn(function()local a=tostring(game.Players.LocalPlayer.UserId)..".main"while true do pcall(function()if isfile(a)then delfile(a)end; local success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)while not success do task.wait(1); success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)end end) task.wait(10) end end)'
+
                 config_file = os.path.join("ZeroNokami", "checkui.lua")
                 if globals()["lua_script_template"]:
                     try:
@@ -1578,7 +1758,9 @@ def main():
                         except Exception as e:
                             print(f"\033[1;31m[ ZeroNokami ] - Error removing {config_file}: {e}\033[0m")
                             Utilities.log_error(f"Error removing {config_file}: {e}")
+
                 globals()["command_8_configured"] = True
+
                 FileManager.save_config()
                 print("\033[1;32m[ ZeroNokami ] - Check method configuration saved.\033[0m")
             except Exception as e:
@@ -1588,12 +1770,13 @@ def main():
                 continue
             input("\033[1;32mPress Enter to return...\033[0m")
             continue
+
         elif setup_type == "6":
             try:
                 current_prefix = globals().get("package_prefix", "com.roblox")
                 print(f"\033[1;32m[ ZeroNokami ] - Current package prefix: {current_prefix}\033[0m")
                 new_prefix = input("\033[1;93m[ ZeroNokami ] - Enter new package prefix (or press Enter to keep current): \033[0m").strip()
-               
+                
                 if new_prefix:
                     globals()["package_prefix"] = new_prefix
                     FileManager.save_config()
@@ -1607,6 +1790,7 @@ def main():
                 continue
             input("\033[1;32mPress Enter to return...\033[0m")
             continue
+
         elif setup_type == "7":
             global auto_android_id_enabled, auto_android_id_thread, auto_android_id_value
             if not auto_android_id_enabled:
@@ -1626,10 +1810,11 @@ def main():
                 print("\033[1;31m[ ZeroNokami ] - Auto change Android ID disabled.\033[0m")
             input("\033[1;32mPress Enter to return...\033[0m")
             continue
+
 if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        print(f"\033[1;31m[ ZeroNokami ] - Error during initialization: {e}\033[0m")
+        print(f"\033[1;31m[ ZeroNokami  ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
         raise
