@@ -24,11 +24,7 @@ package_data = {}
 
 # --- THIẾT LẬP GIAO DIỆN CHỐNG BIẾN DẠNG ---
 FIXED_MARGIN = "          " 
-FRAME_WIDTH = 55 # Độ rộng cố định cho khung để không bị vỡ khi zoom
-
-def get_W():
-    # Giữ hàm này cho logic cũ nhưng trả về giá trị ổn định hơn
-    return 80
+FRAME_WIDTH = 55 # Độ rộng cố định cho khung
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -94,17 +90,18 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
 
-# --- GIAO DIỆN (GIỮ NGUYÊN LOGO - FIX KHUNG) ---
+# --- GIAO DIỆN (ĐÃ FIX BIẾN DẠNG LOGO VÀ KHUNG) ---
 
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
+    # Đã căn chỉnh chính xác độ dài từng dòng để chống vỡ khi zoom
     lines = [
         "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
-        "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗      ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
-        "  ███╔╝ █████╗  ██████╔╝██║   ██║      ██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗  ██████╔╝",
-        " ███╔╝  ██╔══╝  ██╔══██╗██║   ██║      ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  ██╔══██╗",
-        "███████╗███████╗██║  ██║╚██████╔╝      ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║",
-        "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝       ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝"
+        "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗     ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
+        "  ███╔╝ █████╗  ██████╔╝██║   ██║     ██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗  ██████╔╝",
+        " ███╔╝  ██╔══╝  ██╔══██╗██║   ██║     ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  ██╔══██╗",
+        "███████╗███████╗██║  ██║╚██████╔╝     ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║",
+        "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝      ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝"
     ]
     for line in lines:
         print(FIXED_MARGIN + Y + line)
@@ -117,7 +114,7 @@ def banner():
     print(f"\n{FIXED_MARGIN}{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
     print(f"{FIXED_MARGIN}{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
 
-    # Khung menu sử dụng độ rộng cố định FRAME_WIDTH để không vỡ
+    # Khung menu đã được đồng bộ hóa hoàn toàn vào trong lề FIXED_MARGIN
     print(FIXED_MARGIN + Y + "┌──────┬──────────────────────────────────────────┐")
     print(FIXED_MARGIN + Y + "│  No  │ Service Name                             │")
     print(FIXED_MARGIN + Y + "├──────┼──────────────────────────────────────────┤")
@@ -133,7 +130,6 @@ def banner():
     ]
     
     for no, name in menu_items:
-        # Căn chỉnh chữ xanh Blue thụt vào chính xác theo khung
         print(FIXED_MARGIN + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<40}{Y} │")
         
     print(FIXED_MARGIN + Y + "└──────┴──────────────────────────────────────────┘")
@@ -145,10 +141,7 @@ def status_box():
     draw_logo()
     print(f"\n{FIXED_MARGIN}{Fore.CYAN + Style.BRIGHT} MONITOR: SYSTEM ACTIVE\n")
     
-    # Cố định độ rộng các cột cho bảng Monitor
     u_w, p_w, s_w = 15, 20, 25
-    
-    # Vẽ header bảng
     header = f"{'USER':<{u_w}} │ {'PACKAGE':<{p_w}} │ {'STATUS':<{s_w}}"
     print(FIXED_MARGIN + Fore.WHITE + header)
     print(FIXED_MARGIN + Y + "─" * (u_w + p_w + s_w + 5))
@@ -158,7 +151,6 @@ def status_box():
         user_str = str(data.get('user', "Scanning..."))[:u_w-1]
         p_name = str(pkg.split('.')[-1])[:p_w-1]
         st_text = data['status']
-        # In dữ liệu monitor căn lề cố định
         print(f"{FIXED_MARGIN} {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {Fore.BLUE}{p_name:<{p_w}} {Fore.WHITE}│ {st_text}")
 
 # --- MAIN LOOP (GIỮ NGUYÊN 100%) ---
