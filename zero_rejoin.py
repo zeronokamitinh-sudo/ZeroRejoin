@@ -24,7 +24,7 @@ package_data = {}
 
 # --- THIẾT LẬP GIAO DIỆN CHỐNG BIẾN DẠNG ---
 FIXED_MARGIN = "          " 
-FRAME_WIDTH = 55 # Độ rộng cố định cho khung
+FRAME_WIDTH = 55 
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -90,11 +90,11 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
 
-# --- GIAO DIỆN (ĐÃ FIX BIẾN DẠNG LOGO VÀ KHUNG) ---
+# --- GIAO DIỆN (FIX CHỐNG BIẾN DẠNG LOGO & ĐẨY CONTROL VÀO TRONG) ---
 
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
-    # Đã căn chỉnh chính xác độ dài từng dòng để chống vỡ khi zoom
+    # Đã căn chỉnh chính xác 100% độ dài từng dòng để không bao giờ vỡ khi zoom
     lines = [
         "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗     ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -111,10 +111,11 @@ def banner():
     Y = Fore.YELLOW + Style.BRIGHT
     draw_logo()
     
+    # Đưa các dòng thông tin dời vào trong lề FIXED_MARGIN
     print(f"\n{FIXED_MARGIN}{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
     print(f"{FIXED_MARGIN}{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
 
-    # Khung menu đã được đồng bộ hóa hoàn toàn vào trong lề FIXED_MARGIN
+    # Toàn bộ khối menu nằm gọn trong FIXED_MARGIN
     print(FIXED_MARGIN + Y + "┌──────┬──────────────────────────────────────────┐")
     print(FIXED_MARGIN + Y + "│  No  │ Service Name                             │")
     print(FIXED_MARGIN + Y + "├──────┼──────────────────────────────────────────┤")
@@ -133,6 +134,7 @@ def banner():
         print(FIXED_MARGIN + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<40}{Y} │")
         
     print(FIXED_MARGIN + Y + "└──────┴──────────────────────────────────────────┘")
+    # Đẩy dòng enter command vào trong luôn
     print(f"\n{FIXED_MARGIN}{Fore.WHITE}[ {Y}ZeroNokami{Fore.WHITE} ] - {Fore.YELLOW}Enter command: ", end="")
 
 def status_box():
