@@ -93,10 +93,9 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
 
-# --- GIAO DIỆN (FIX ZOOM, MANAGER & CREDIT) ---
+# --- GIAO DIỆN (FIX KHUNG DỜI VÀO TRONG & LOGO CHUẨN) ---
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
-    # Fix MANAGER: Căn chỉnh lại các khoảng trắng để tránh biến dạng khi zoom
     lines = [
         "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗      ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -117,21 +116,21 @@ def banner():
     W = get_W()
     draw_logo()
     
-    # Header Info - Đã đổi theo yêu cầu
+    # Header Info
     print(f"\n{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
     print(f"{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
 
-    # Bảng Menu - Thu nhỏ menu_w để khung vào trong
-    menu_w = 50
-    margin = " " * max(0, (W - menu_w) // 2)
+    # Dời khung vào trong bằng cách tăng margin
+    menu_w = 46 
+    margin = " " * max(0, (W - menu_w) // 2 + 2) # Cộng thêm 2 để đẩy sâu vào trong
     
-    print(margin + Y + "╭──────┬──────────────────────────────────────╮")
-    print(margin + Y + "│  No  │ Service Name                         │")
-    print(margin + Y + "├──────┼──────────────────────────────────────┤")
+    print(margin + Y + "╭──────┬──────────────────────────────────╮")
+    print(margin + Y + "│  No  │ Service Name                     │")
+    print(margin + Y + "├──────┼──────────────────────────────────┤")
     
     menu_items = [
-        ("1", "Start Auto Rejoin (Auto setup User ID)"),
-        ("2", "Setup Game ID for Packages"),
+        ("1", "Start Auto Rejoin"),
+        ("2", "Setup Game ID"),
         ("3", "Auto Login with Cookie"),
         ("4", "Enable Discord Webhook"),
         ("5", "Auto Check User Setup"),
@@ -140,10 +139,9 @@ def banner():
     ]
     
     for no, name in menu_items:
-        # Căn chỉnh văn bản bên trong khung gọn hơn
-        print(margin + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<36}{Y} │")
+        print(margin + Y + f"│ {Fore.WHITE}[{no:^2}]{Y} │ {Fore.BLUE}{name:<32}{Y} │")
         
-    print(margin + Y + "╰──────┴──────────────────────────────────────╯")
+    print(margin + Y + "╰──────┴──────────────────────────────────╯")
     print(f"\n{margin}{Fore.WHITE}[ {Y}ZeroNokami{Fore.WHITE} ] - {Fore.YELLOW}Enter command: ", end="")
 
 def status_box():
@@ -166,7 +164,7 @@ def status_box():
         st_text = data['status']
         print(f" {Fore.GREEN}{user_str:<{u_w}} {Fore.WHITE}│ {p_name:<{p_w}} │ {st_text}")
 
-# --- MAIN LOOP (GIỮ NGUYÊN LOGIC) ---
+# --- MAIN LOOP (GIỮ NGUYÊN 100%) ---
 while True:
     if auto_running:
         status_box()
@@ -190,7 +188,7 @@ while True:
         
         elif ch == "2":
             if not current_package_prefix:
-                print(Fore.RED + ">> Error: Please set package prefix (Option 6) first!")
+                print(Fore.RED + ">> Error: Please set package prefix first!")
             else:
                 print(Fore.CYAN + "\n --- SELECT GAME ---")
                 game_list = {
