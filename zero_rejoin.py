@@ -1101,13 +1101,15 @@ class UIManager:
     def print_header(version):
         console = Console()
         header = Text(r"""
-      ________ ______ _____   ____     __  __          _   _          _____ ______ _____  
+ ________ ______ _____   ____     __  __          _   _          _____ ______ _____  
 |___  /  ____|  __ \ / __ \   |  \/  |   /\   | \ | |   /\   / ____|  ____|  __ \ 
    / /| |__  | |__) | |  | |  | \  / |  /  \  |  \| |  /  \ | |  __| |__  | |__) |
   / / |  __| |  _  /| |  | |  | |\/| | / /\ \ | . ` | / /\ \| | |_ |  __| |  _  / 
  / /__| |____| | \ \| |__| |  | |  | |/ ____ \| |\  |/ ____ \ |__| | |____| | \ \ 
 /_____|______|_|  \_\\____/   |_|  |_/_/    \_\_| \_/_/    \_\_____|______|_|  \_\
         """, style="bold yellow")
+        console.print(header)
+        console.print(f"[bold cyan]Version:[/bold cyan] {version}\n")
 
         config_file = os.path.join("ZeroNokami", "config.json")
         check_executor = "1"
