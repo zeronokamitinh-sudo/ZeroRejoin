@@ -22,8 +22,9 @@ auto_running = False
 DISPLAY_NAME = "Zero Manager"
 package_data = {}
 
-# --- THIẾT LẬP GIAO DIỆN ---
+# --- THIẾT LẬP GIAO DIỆN CHỐNG BIẾN DẠNG ---
 FIXED_MARGIN = "          " 
+FRAME_WIDTH = 55 
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -89,11 +90,10 @@ def auto_rejoin_logic(pkg):
                  if r_name: package_data[pkg]['user'] = r_name
             time.sleep(5)
 
-# --- GIAO DIỆN (CHỈ FIX LOGO - KHUNG GIỮ NGUYÊN) ---
+# --- GIAO DIỆN (CHỈ FIX LOGO BỊ NHẢY DÒNG - CÒN LẠI GIỮ NGUYÊN) ---
 
 def draw_logo():
     Y = Fore.YELLOW + Style.BRIGHT
-    # Logo gốc của bạn. Để chống vỡ khi zoom, mình bọc nó vào lệnh in không xuống dòng sai chỗ.
     lines = [
         "███████╗███████╗██████╗  ██████╗      ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ",
         "╚══███╔╝██╔════╝██╔══██╗██╔═══██╗     ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗",
@@ -102,20 +102,30 @@ def draw_logo():
         "███████╗███████╗██║  ██║╚██████╔╝     ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║",
         "╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝      ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝"
     ]
-    # In logo với lề hẹp hơn một chút để logo không bị tràn lề khi người dùng zoom to Termux
+    # Lấy chiều rộng màn hình hiện tại
+    try:
+        cols, _ = shutil.get_terminal_size()
+    except:
+        cols = 80
+
     for line in lines:
-        print(f"{Fore.YELLOW}{Style.BRIGHT}{line}")
+        # Nếu dòng logo dài hơn màn hình, nó sẽ tự động được xử lý để không làm nát khung bên dưới
+        if len(line) > cols:
+            print(Y + line[:cols-1])
+        else:
+            # In logo sát lề trái để tiết kiệm diện tích khi zoom
+            print(Y + line)
 
 def banner():
     clear()
     Y = Fore.YELLOW + Style.BRIGHT
     draw_logo()
     
-    # Giữ nguyên toàn bộ format banner và khung menu gốc của bạn
+    # GIỮ NGUYÊN BANNER CŨ CỦA BẠN
     print(f"\n{FIXED_MARGIN}{Fore.WHITE} - Version: {Fore.GREEN}3.6.7 | By ZeroNokami | Bugs Fixes By ZeroNokami")
     print(f"{FIXED_MARGIN}{Fore.WHITE} - Credit : {Fore.YELLOW}ZeroNokami\n")
 
-    # KHUNG MENU GỐC 100%
+    # KHUNG MENU GỐC 100% KHÔNG ĐỔI MỘT KÝ TỰ
     print(FIXED_MARGIN + Y + "┌──────┬──────────────────────────────────────────┐")
     print(FIXED_MARGIN + Y + "│  No  │ Service Name                             │")
     print(FIXED_MARGIN + Y + "├──────┼──────────────────────────────────────────┤")
