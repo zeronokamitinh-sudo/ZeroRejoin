@@ -1099,10 +1099,8 @@ class WebhookManager:
 class UIManager:
     @staticmethod
     def print_header(version):
-        console = Console()
-        
-        # Đặt width cố định để tránh bị vỡ
-        console.width = 120
+        # Tạo console với width cố định
+        console = Console(width=120, force_terminal=True)
         
         header = Text(r"""
     ________ ______ _____   ____      __  __          _   _          _____ ______ _____ 
@@ -1111,7 +1109,7 @@ class UIManager:
      / /    |  __| |  _  /| |  | |   | |\/| | / /\ \ | . ` | / /\ \| | |_ |  __| |  _  /
     / /__   | |____| | \ \| |__| |   | |  | |/ ____ \| |\  |/ ____ \ |__| | |____| | \ \
    /_____|  |______|_|  \_\\____/    |_|  |_/_/    \_\_| \_/_/    \_\_____|______|_|  \_\
-        """, style="bold yellow")
+        """, style="bold yellow", no_wrap=True)
         
         console.print(header)
         console.print(f"[bold cyan]Version:[/bold cyan] {version}\n")
