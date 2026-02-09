@@ -1100,6 +1100,10 @@ class UIManager:
     @staticmethod
     def print_header(version):
         console = Console()
+        
+        # Đặt width cố định để tránh bị vỡ
+        console.width = 120
+        
         header = Text(r"""
     ________ ______ _____   ____      __  __          _   _          _____ ______ _____ 
    |___  /  |  ____|  __ \ / __ \    |  \/  |   /\   | \ | |   /\   / ____|  ____|  __ \
@@ -1108,6 +1112,7 @@ class UIManager:
     / /__   | |____| | \ \| |__| |   | |  | |/ ____ \| |\  |/ ____ \ |__| | |____| | \ \
    /_____|  |______|_|  \_\\____/    |_|  |_/_/    \_\_| \_/_/    \_\_____|______|_|  \_\
         """, style="bold yellow")
+        
         console.print(header)
         console.print(f"[bold cyan]Version:[/bold cyan] {version}\n")
 
