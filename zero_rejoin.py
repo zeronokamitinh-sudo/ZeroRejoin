@@ -1677,7 +1677,7 @@ def main():
                     "1. Blox Fruits", "2. Grow A Garden", "3. King Legacy", "4. Fisch",
                     "5. Bee Swarm Simulator", "6. Anime Last Stand", "7. Dead Rails Alpha",
                     "8. All Star Tower Defense X", "9. 99 Nights In The Forest", "10. Murder Mystery 2",
-                    "11. Steal A Brainrot", "12. Blue Lock Rivals", "13. Arise Crossover", "14. Other game or Private Server Link"
+                    "11. Steal A Brainrot", "12. Blue Lock Rivals", "13. Arise Crossover", "14. Escape Tsunami For Brainrots", "15. Other game or Private Server Link"
                 ]
                 for game in games:
                     print(f"\033[96m{game}\033[0m")
@@ -1687,12 +1687,12 @@ def main():
                     "1": "2753915549", "2": "126884695634066", "3": "4520749081", "4": "16732694052",
                     "5": "1537690962", "6": "12886143095", "7": "116495829188952", "8": "17687504411",
                     "9": "79546208627805", "10": "142823291", "11": "109983668079237", "12": "18668065416",
-                    "13": "87039211657390"
+                    "13": "87039211657390", "14": "131623223084840"
                 }
 
                 if choice in game_ids:
                     server_link = game_ids[choice]
-                elif choice == "14":
+                elif choice == "15":
                     server_link = input("\033[93m[ ZeroNokami ] - Enter game ID or private server link: \033[0m")
                 else:
                     print("\033[1;31m[ ZeroNokami ] - Invalid choice.\033[0m")
