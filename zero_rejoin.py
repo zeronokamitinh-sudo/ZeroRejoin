@@ -965,19 +965,19 @@ class WebhookManager:
                         {"name": "🔍 Roblox Details", "value": f"```{roblox_details}```", "inline": False},
                         {"name": "✅ Status", "value": f"```{status_text}```", "inline": True}
                     ],
-                    "thumbnail": {"url": "https://i.imgur.com/TaKgWJS.png"},
+                    "thumbnail": {"url": "https://i.imgur.com/LfeYgCd.png"},
                     "image": {"url": "attachment://screenshot.png"},
                     "footer": {"text": f"Made with 🇻🇳 by ZeroNokami | Hữu Tìnhdz ",
-                               "icon_url": "https://i.imgur.com/TaKgWJS.png"},
+                               "icon_url": "https://i.imgur.com/LfeYgCd.png"},
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                     "author": {"name": "ZeroNokami",
                                "url": "https://discord.gg/chuoihub",
-                               "icon_url": "https://i.imgur.com/TaKgWJS.png"}
+                               "icon_url": "https://i.imgur.com/LfeYgCd.png"}
                 }
                 with open(screenshot_path, "rb") as file:
                     response = requests.post(
                         webhook_url,
-                        data={"payload_json": json.dumps({"embeds": [embed], "username": "ZeroNokami", "avatar_url": "https://i.imgur.com/5yXNxU4.png"})},
+                        data={"payload_json": json.dumps({"embeds": [embed], "username": "ZeroNokami", "avatar_url": "https://i.imgur.com/Bui2u4v.png"})},
                         files={"file": ("screenshot.png", file)}
                     )
                 if response.status_code not in (200, 204):
