@@ -1509,15 +1509,10 @@ def auto_execute_setup():
             print("\033[1;32m[ ZeroNokami] - Script Saved\033[0m")
         else:
             scripts = {}
-            import sys
-            import termios
-            import tty
             
             for user_id, username in user_id_to_username.items():
-                # Xóa buffer trước khi nhập
-                termios.tcflush(sys.stdin, termios.TCIFLUSH)
-                
-                script = input(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username}: \033[0m").strip()
+                script = input(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username}: \033[0m")
+                script = script.strip()
                 
                 if script:
                     scripts[user_id] = script
@@ -1528,13 +1523,17 @@ def auto_execute_setup():
             if not scripts:
                 print("\033[1;31m[ ZeroNokami ] - No scripts entered.\033[0m")
                 return
+            
             lua_content = 'local userid = game.Players.LocalPlayer.UserId\n'
             for user_id, script in scripts.items():
-                lua_content += f'if userid == {user_id} then loadstring("{script}")() end\n'
+                lua_content += f'if userid == {user_id} then\n    loadstring("{script}")()\nend\n'
+            
             ExecutorManager.write_custom_script(detected_executors, lua_content)
+            print("\033[1;32m[ ZeroNokami] - All Scripts Saved Successfully\033[0m")
     except Exception as e:
         print(f"\033[1;31m[ ZeroNokami ] - Error in auto execute setup: {e}\033[0m")
         Utilities.log_error(f"Auto execute setup error: {e}")
+
 def main():
     global stop_webhook_thread, webhook_interval
     global auto_android_id_enabled, auto_android_id_thread, auto_android_id_value
