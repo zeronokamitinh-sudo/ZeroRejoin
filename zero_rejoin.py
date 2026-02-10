@@ -1486,6 +1486,12 @@ def auto_execute_setup():
             if username != "Unknown":
                 usernames.append(username)
                 user_id_to_username[user_id] = username
+        
+        # DEBUG: In ra để kiểm tra
+        print("\033[1;36m[ DEBUG ] - User ID to Username mapping:\033[0m")
+        for uid, uname in user_id_to_username.items():
+            print(f"\033[1;36m  User ID: {uid} -> Username: {uname}\033[0m")
+        
         if not usernames:
             print("\033[1;31m[ ZeroNokami ] - No valid usernames found.\033[0m")
             return
@@ -1513,7 +1519,6 @@ def auto_execute_setup():
                 print("\033[1;31m[ ZeroNokami ] - Script cannot be empty.\033[0m")
                 return
             
-            # Escape dấu ngoặc kép và backslash
             script_escaped = script.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
             lua_content = f'loadstring("{script_escaped}")()'
             ExecutorManager.write_custom_script(detected_executors, lua_content)
@@ -1522,6 +1527,9 @@ def auto_execute_setup():
             scripts = {}
             
             for user_id, username in user_id_to_username.items():
+                # DEBUG: In ra user_id và username hiện tại
+                print(f"\033[1;36m[ DEBUG ] - Processing User ID: {user_id}, Username: {username}\033[0m")
+                
                 print(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username} (press Enter twice when done): \033[0m")
                 lines = []
                 empty_count = 0
@@ -1549,7 +1557,6 @@ def auto_execute_setup():
             
             lua_content = 'local userid = game.Players.LocalPlayer.UserId\n'
             for user_id, script in scripts.items():
-                # Escape dấu ngoặc kép và backslash
                 script_escaped = script.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
                 lua_content += f'if userid == {user_id} then\n    loadstring("{script_escaped}")()\nend\n'
             
