@@ -1735,7 +1735,7 @@ def main():
                 elif config_choice == "1":
                     globals()["check_exec_enable"] = "1"
                     globals()["lua_script_template"] = 'task.spawn(function()local a=tostring(game.Players.LocalPlayer.UserId)..".main"while true do pcall(function()if isfile(a)then delfile(a)end; local success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)while not success do task.wait(1); success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)end end) task.wait(10) end end)'
-                    print("\033[1;32m[ ZeroNokami ] - Set to Executor + Shouko Check\033[0m")
+                    print("\033[1;32m[ ZeroNokami ] - Set to Executor + ZeroNokami Check\033[0m")
                 elif config_choice == "2":
                     globals()["check_exec_enable"] = "0"
                     globals()["lua_script_template"] = None
