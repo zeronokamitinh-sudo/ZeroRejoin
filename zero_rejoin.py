@@ -965,14 +965,14 @@ class WebhookManager:
                         {"name": "🔍 Roblox Details", "value": f"```{roblox_details}```", "inline": False},
                         {"name": "✅ Status", "value": f"```{status_text}```", "inline": True}
                     ],
-                    "thumbnail": {"url": "https://imgur.com/a/Yzdx8gh"},
+                    "thumbnail": {"url": "https://i.imgur.com/TaKgWJS.png"},
                     "image": {"url": "attachment://screenshot.png"},
                     "footer": {"text": f"Made with 🇻🇳 by ZeroNokami | Hữu Tìnhdz ",
-                               "icon_url": "https://i.imgur.com/5yXNxU4.png"},
+                               "icon_url": "https://i.imgur.com/TaKgWJS.png"},
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                     "author": {"name": "ZeroNokami",
                                "url": "https://discord.gg/chuoihub",
-                               "icon_url": "https://imgur.com/a/Yzdx8gh"}
+                               "icon_url": "https://i.imgur.com/TaKgWJS.png"}
                 }
                 with open(screenshot_path, "rb") as file:
                     response = requests.post(
@@ -1731,7 +1731,7 @@ def main():
                 if config_choice.lower() == "q":
                     globals()["check_exec_enable"] = "1"
                     globals()["lua_script_template"] = 'task.spawn(function()local a=tostring(game.Players.LocalPlayer.UserId)..".main"while true do pcall(function()if isfile(a)then delfile(a)end; local success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)while not success do task.wait(1); success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)end end) task.wait(10) end end)'
-                    print("\033[1;32m[ ZeroNokami ] - Default set: Executor + Shouko Check\033[0m")
+                    print("\033[1;32m[ ZeroNokami ] - Default set: Executor + ZeroNokami Check\033[0m")
                 elif config_choice == "1":
                     globals()["check_exec_enable"] = "1"
                     globals()["lua_script_template"] = 'task.spawn(function()local a=tostring(game.Players.LocalPlayer.UserId)..".main"while true do pcall(function()if isfile(a)then delfile(a)end; local success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)while not success do task.wait(1); success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)end end) task.wait(10) end end)'
