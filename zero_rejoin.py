@@ -1510,14 +1510,21 @@ def auto_execute_setup():
         else:
             scripts = {}
             import sys
+            import termios
+            import tty
+            
             for user_id, username in user_id_to_username.items():
-                print(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username}: \033[0m", end='', flush=True)
-                script = sys.stdin.readline().rstrip('\n\r')
+                # Xóa buffer trước khi nhập
+                termios.tcflush(sys.stdin, termios.TCIFLUSH)
+                
+                script = input(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username}: \033[0m").strip()
+                
                 if script:
                     scripts[user_id] = script
                     print(f"\033[1;32m[ ZeroNokami] - Script Saved For {username}\033[0m")
                 else:
                     print(f"\033[1;33m[ ZeroNokami] - No script entered for {username}, skipping.\033[0m")
+            
             if not scripts:
                 print("\033[1;31m[ ZeroNokami ] - No scripts entered.\033[0m")
                 return
