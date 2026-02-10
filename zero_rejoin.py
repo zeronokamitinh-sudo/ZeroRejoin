@@ -1500,17 +1500,31 @@ def auto_execute_setup():
             print("\033[1;31m[ ZeroNokami ] - No executors detected. Cannot set up auto execute.\033[0m")
             return
         if same_script_choice == "y":
-            script = input("\033[1;93m[ ZeroNokami ] - Enter The Script: \033[0m").strip()
+            print(f"\033[1;93m[ ZeroNokami ] - Enter The Script (end with 'END' on a new line): \033[0m")
+            script_lines = []
+            while True:
+                line = input()
+                if line.strip() == "END":
+                    break
+                script_lines.append(line)
+            script = '\n'.join(script_lines)
             if not script:
                 print("\033[1;31m[ ZeroNokami ] - Script cannot be empty.\033[0m")
                 return
-            lua_content = f'loadstring("{script}")()'
+            lua_content = f'loadstring([[{script}]])()'
             ExecutorManager.write_custom_script(detected_executors, lua_content)
             print("\033[1;32m[ ZeroNokami] - Script Saved\033[0m")
         else:
             scripts = {}
             for user_id, username in user_id_to_username.items():
-                script = input(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username}: \033[0m").strip()
+                print(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username} (end with 'END' on a new line): \033[0m")
+                script_lines = []
+                while True:
+                    line = input()
+                    if line.strip() == "END":
+                        break
+                    script_lines.append(line)
+                script = '\n'.join(script_lines)
                 if script:
                     scripts[user_id] = script
                     print("\033[1;32m[ ZeroNokami] - Script Saved\033[0m")
@@ -1519,7 +1533,7 @@ def auto_execute_setup():
                 return
             lua_content = 'local userid = game.Players.LocalPlayer.UserId\n'
             for user_id, script in scripts.items():
-                lua_content += f'if userid == {user_id} then loadstring("{script}")() end\n'
+                lua_content += f'if userid == {user_id} then loadstring([[{script}]])() end\n'
             ExecutorManager.write_custom_script(detected_executors, lua_content)
     except Exception as e:
         print(f"\033[1;31m[ ZeroNokami ] - Error in auto execute setup: {e}\033[0m")
@@ -1730,52 +1744,10 @@ def main():
                 continue
             input("\033[1;32mPress Enter to return...\033[0m")
             continue
-        elif setup_type == "6":
-            try:
-                current_prefix = globals().get("package_prefix", "com.roblox")
-                print(f"\033[1;32m[ ZeroNokami ] - Current package prefix: {current_prefix}\033[0m")
-                new_prefix = input("\033[1;93m[ ZeroNokami ] - Enter new package prefix (or press Enter to keep current): \033[0m").strip()
-               
-                if new_prefix:
-                    globals()["package_prefix"] = new_prefix
-                    FileManager.save_config()
-                    print(f"\033[1;32m[ ZeroNokami ] - Package prefix updated to: {new_prefix}\033[0m")
-                else:
-                    print(f"\033[1;33m[ ZeroNokami ] - Package prefix unchanged: {current_prefix}\033[0m")
-            except Exception as e:
-                print(f"\033[1;31m[ ZeroNokami ] - Error setting package prefix: {e}\033[0m")
-                Utilities.log_error(f"Error setting package prefix: {e}")
-                input("\033[1;32mPress Enter to return...\033[0m")
-                continue
-            input("\033[1;32mPress Enter to return...\033[0m")
-            continue
-        elif setup_type == "7":
-            global auto_android_id_enabled, auto_android_id_thread, auto_android_id_value
-            if not auto_android_id_enabled:
-                android_id = input("\033[1;93m[ ZeroNokami ] - Enter Android ID to spam set: \033[0m").strip()
-                if not android_id:
-                    print("\033[1;31m[ ZeroNokami ] - Android ID cannot be empty.\033[0m")
-                    input("\033[1;32mPress Enter to return...\033[0m")
-                    continue
-                auto_android_id_value = android_id
-                auto_android_id_enabled = True
-                if auto_android_id_thread is None or not auto_android_id_thread.is_alive():
-                    auto_android_id_thread = threading.Thread(target=auto_change_android_id, daemon=True)
-                    auto_android_id_thread.start()
-                print("\033[1;32m[ ZeroNokami ] - Auto change Android ID enabled.\033[0m")
-            else:
-                auto_android_id_enabled = False
-                print("\033[1;31m[ ZeroNokami ] - Auto change Android ID disabled.\033[0m")
-            input("\033[1;32mPress Enter to return...\033[0m")
-            continue
-        elif setup_type == "8":
-            auto_execute_setup()
-            input("\033[1;32mPress Enter to return...\033[0m")
-            continue
 if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        print(f"\033[1;31m[ ZeroNokami ] - Error during initialization: {e}\033[0m")
+        print(f"\033[1;31m[ ZeroNokami  ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
         raise
