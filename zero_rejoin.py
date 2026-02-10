@@ -1780,4 +1780,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\033[1;31m[ ZeroNokami ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
-        raise.
+        raise
