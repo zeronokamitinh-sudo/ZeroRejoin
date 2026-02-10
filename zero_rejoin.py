@@ -965,14 +965,14 @@ class WebhookManager:
                         {"name": "🔍 Roblox Details", "value": f"```{roblox_details}```", "inline": False},
                         {"name": "✅ Status", "value": f"```{status_text}```", "inline": True}
                     ],
-                    "thumbnail": {"url": "https://i.imgur.com/5yXNxU4.png"},
+                    "thumbnail": {"url": "https://ibb.co/7JgdWYwH"},
                     "image": {"url": "attachment://screenshot.png"},
-                    "footer": {"text": f"Made with 💖 by ZeroNokami | Join us at discord.gg/rokidmanager",
+                    "footer": {"text": f"Made with 🇻🇳 by ZeroNokami | Hữu Tìnhdz ",
                                "icon_url": "https://i.imgur.com/5yXNxU4.png"},
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                     "author": {"name": "ZeroNokami",
-                               "url": "https://discord.gg/rokidmanager",
-                               "icon_url": "https://i.imgur.com/5yXNxU4.png"}
+                               "url": "https://discord.gg/chuoihub",
+                               "icon_url": "https://ibb.co/7JgdWYwH"}
                 }
                 with open(screenshot_path, "rb") as file:
                     response = requests.post(
