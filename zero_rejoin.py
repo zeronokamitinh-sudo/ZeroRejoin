@@ -1509,13 +1509,15 @@ def auto_execute_setup():
             print("\033[1;32m[ ZeroNokami] - Script Saved\033[0m")
         else:
             scripts = {}
+            import sys
             for user_id, username in user_id_to_username.items():
-                while True:
-                    script = input(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username}: \033[0m")
-                    if script:
-                        break
-                scripts[user_id] = script.strip()
-                print(f"\033[1;32m[ ZeroNokami] - Script Saved For {username}\033[0m")
+                print(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username}: \033[0m", end='', flush=True)
+                script = sys.stdin.readline().rstrip('\n\r')
+                if script:
+                    scripts[user_id] = script
+                    print(f"\033[1;32m[ ZeroNokami] - Script Saved For {username}\033[0m")
+                else:
+                    print(f"\033[1;33m[ ZeroNokami] - No script entered for {username}, skipping.\033[0m")
             if not scripts:
                 print("\033[1;31m[ ZeroNokami ] - No scripts entered.\033[0m")
                 return
