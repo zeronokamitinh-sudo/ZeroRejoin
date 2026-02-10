@@ -530,6 +530,21 @@ class FileManager:
         if not os.path.exists(cookie_file_path):
             with open(cookie_file_path, 'w') as f:
                 f.write("")
+    @staticmethod
+    def xuat(db_path):
+        try:
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT value FROM cookies WHERE host_key = '.roblox.com' AND name = '.ROBLOSECURITY'")
+            result = cursor.fetchone()
+            conn.close()
+            if result:
+                return result[0]
+            else:
+                return None
+        except Exception as e:
+            print(f"\033[1;31m[ ZeroNokami ] - Error extracting cookie: {e}\033[0m")
+            return None
 class SystemMonitor:
     @staticmethod
     def capture_screenshot():
@@ -1751,13 +1766,16 @@ def main():
             else:
                 auto_android_id_enabled = False
                 print("\033[1;31m[ ZeroNokami ] - Auto change Android ID disabled.\033[0m")
-            input("\033[1;32mPress Enter to return...\033
+            input("\033[1;32mPress Enter to return...\033[0m")
             continue
-            
+        elif setup_type == "8":
+            auto_execute_setup()
+            input("\033[1;32mPress Enter to return...\033[0m")
+            continue
 if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        print(f"\033[1;31m[ ZeroNokami  ] - Error during initialization: {e}\033[0m")
+        print(f"\033[1;31m[ ZeroNokami ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
         raise
