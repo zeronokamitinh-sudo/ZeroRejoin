@@ -1752,3 +1752,12 @@ def main():
                 auto_android_id_enabled = False
                 print("\033[1;31m[ ZeroNokami ] - Auto change Android ID disabled.\033[0m")
             input("\033[1;32mPress Enter to return...\033
+            continue
+            
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        print(f"\033[1;31m[ ZeroNokami  ] - Error during initialization: {e}\033[0m")
+        Utilities.log_error(f"Initialization error: {e}")
+        raise
