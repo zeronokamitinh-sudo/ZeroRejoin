@@ -1500,19 +1500,42 @@ def auto_execute_setup():
             print("\033[1;31m[ ZeroNokami ] - No executors detected. Cannot set up auto execute.\033[0m")
             return
         if same_script_choice == "y":
-            script = input("\033[1;93m[ ZeroNokami ] - Enter The Script: \033[0m").strip()
+            print("\033[1;93m[ ZeroNokami ] - Enter The Script (press Enter when done): \033[0m")
+            lines = []
+            while True:
+                line = input()
+                if line == "":
+                    break
+                lines.append(line)
+            script = "\n".join(lines).strip()
+            
             if not script:
                 print("\033[1;31m[ ZeroNokami ] - Script cannot be empty.\033[0m")
                 return
-            lua_content = f'loadstring("{script}")()'
+            
+            # Escape dấu ngoặc kép và backslash
+            script_escaped = script.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+            lua_content = f'loadstring("{script_escaped}")()'
             ExecutorManager.write_custom_script(detected_executors, lua_content)
             print("\033[1;32m[ ZeroNokami] - Script Saved\033[0m")
         else:
             scripts = {}
             
             for user_id, username in user_id_to_username.items():
-                script = input(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username}: \033[0m")
-                script = script.strip()
+                print(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username} (press Enter twice when done): \033[0m")
+                lines = []
+                empty_count = 0
+                while True:
+                    line = input()
+                    if line == "":
+                        empty_count += 1
+                        if empty_count >= 2:
+                            break
+                    else:
+                        empty_count = 0
+                        lines.append(line)
+                
+                script = "\n".join(lines).strip()
                 
                 if script:
                     scripts[user_id] = script
@@ -1526,7 +1549,9 @@ def auto_execute_setup():
             
             lua_content = 'local userid = game.Players.LocalPlayer.UserId\n'
             for user_id, script in scripts.items():
-                lua_content += f'if userid == {user_id} then\n    loadstring("{script}")()\nend\n'
+                # Escape dấu ngoặc kép và backslash
+                script_escaped = script.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+                lua_content += f'if userid == {user_id} then\n    loadstring("{script_escaped}")()\nend\n'
             
             ExecutorManager.write_custom_script(detected_executors, lua_content)
             print("\033[1;32m[ ZeroNokami] - All Scripts Saved Successfully\033[0m")
