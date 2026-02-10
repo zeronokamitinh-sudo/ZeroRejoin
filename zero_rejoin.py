@@ -326,7 +326,7 @@ class FileManager:
             print("\033[1;32m[ ZeroNokami ] - User IDs have been successfully saved.\033[0m")
         else:
             print("\033[1;31m[ ZeroNokami ] - Could not find any valid User IDs to set up.\033[0m")
-       
+      
         return accounts
     @staticmethod
     def save_server_links(server_links):
@@ -1010,7 +1010,7 @@ class UIManager:
     def print_header(version):
         # Tạo console với width cố định
         console = Console(width=120, force_terminal=True)
-       
+      
         header = Text(r"""
     ________ ______ _____ ____ __ __ _ _ _____ ______ _____
    |___ / | ____| __ \ / __ \ | \/ | /\ | \ | | /\ / ____| ____| __ \
@@ -1019,12 +1019,12 @@ class UIManager:
     / /__ | |____| | \ \| |__| | | | | |/ ____ \| |\ |/ ____ \ |__| | |____| | \ \
    /_____| |______|_| \_\\____/ |_| |_/_/ \_\_| \_/_/ \_\_____|______|_| \_\
         """, style="bold yellow", no_wrap=True)
-       
+      
         console.print(header)
         console.print(f"[bold cyan]Version:[/bold cyan] {version}\n")
         config_file = os.path.join("ZeroNokami", "config.json")
         check_executor = "1"
-       
+      
         if os.path.exists(config_file):
             try:
                 with open(config_file, "r") as f:
@@ -1039,7 +1039,7 @@ class UIManager:
             console.print("[bold yellow]- Method: [/bold yellow][bold white]Check Executor[/bold white]")
         else:
             console.print("[bold yellow]- Method: [/bold yellow][bold white]Check Online[/bold white]")
-       
+      
         console.print("\n")
     @staticmethod
     def create_dynamic_menu(options):
@@ -1073,7 +1073,7 @@ class UIManager:
         current_time = time.time()
         if current_time - UIManager.last_update_time < UIManager.update_interval:
             return
-       
+      
         cpu_usage = psutil.cpu_percent(interval=2)
         memory_info = psutil.virtual_memory()
         ram = round(memory_info.used / memory_info.total * 100, 2)
@@ -1114,7 +1114,7 @@ class ExecutorManager:
                     console.print(f"[bold green][ ZeroNokami ] - Detected executor: {executor_name}[/bold green]")
                     break
         return detected_executors
-   
+  
     @staticmethod
     def write_lua_script(detected_executors):
         console = Console()
@@ -1389,16 +1389,16 @@ class Runner:
     @staticmethod
     def monitor_presence(server_links, stop_event):
         in_game_status = {package_name: False for package_name, _ in server_links}
-       
+      
         while not stop_event.is_set():
             try:
                 if globals()["check_exec_enable"] == "0":
                     for package_name, server_link in server_links:
                         ckhuy = FileManager.xuat(f"/data/data/{package_name}/app_webview/Default/Cookies")
                         user_id = globals()["_user_"][package_name]
-                       
+                      
                         presence_type = RobloxManager.check_user_online(user_id, ckhuy)
-                       
+                      
                         if not in_game_status[package_name]:
                             if presence_type == 2:
                                 with status_lock:
@@ -1407,7 +1407,7 @@ class Runner:
                                 in_game_status[package_name] = True
                                 print(f"\033[1;32m[ ZeroNokami ] - {user_id} is now In-Game, monitoring started.\033[0m")
                             continue
-                       
+                      
                         if presence_type != 2:
                             with status_lock:
                                 globals()["package_statuses"][package_name]["Status"] = "\033[1;31mNot In-Game, Rejoining!\033[0m"
@@ -1500,41 +1500,27 @@ def auto_execute_setup():
             print("\033[1;31m[ ZeroNokami ] - No executors detected. Cannot set up auto execute.\033[0m")
             return
         if same_script_choice == "y":
-            print(f"\033[1;93m[ ZeroNokami ] - Enter The Script (end with 'END' on a new line): \033[0m")
-            script_lines = []
-            while True:
-                line = input()
-                if line.strip() == "END":
-                    break
-                script_lines.append(line)
-            script = '\n'.join(script_lines)
+            script = input("\033[1;93m[ ZeroNokami ] - Enter The Script: \033[0m").strip()
             if not script:
                 print("\033[1;31m[ ZeroNokami ] - Script cannot be empty.\033[0m")
                 return
-            lua_content = f'loadstring([[{script}]])()'
+            lua_content = f'loadstring("{script}")()'
             ExecutorManager.write_custom_script(detected_executors, lua_content)
             print("\033[1;32m[ ZeroNokami] - Script Saved\033[0m")
         else:
             scripts = {}
             for user_id, username in user_id_to_username.items():
-                print(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username} (end with 'END' on a new line): \033[0m")
-                script_lines = []
-                while True:
-                    line = input()
-                    if line.strip() == "END":
-                        break
-                    script_lines.append(line)
-                script = '\n'.join(script_lines)
+                script = input(f"\033[1;93m[ ZeroNokami ] - Enter The Script For The Account {username}: \033[0m").strip()
                 if script:
                     scripts[user_id] = script
-                    print("\033[1;32m[ ZeroNokami] - Script Saved\033[0m")
             if not scripts:
                 print("\033[1;31m[ ZeroNokami ] - No scripts entered.\033[0m")
                 return
             lua_content = 'local userid = game.Players.LocalPlayer.UserId\n'
             for user_id, script in scripts.items():
-                lua_content += f'if userid == {user_id} then loadstring([[{script}]])() end\n'
+                lua_content += f'if userid == {user_id} then loadstring("{script}")() end\n'
             ExecutorManager.write_custom_script(detected_executors, lua_content)
+            print("\033[1;32m[ ZeroNokami] - All Scripts Saved\033[0m")
     except Exception as e:
         print(f"\033[1;31m[ ZeroNokami ] - Error in auto execute setup: {e}\033[0m")
         Utilities.log_error(f"Auto execute setup error: {e}")
@@ -1544,9 +1530,9 @@ def main():
     if not check_activation_status():
         print("\033[1;31m[ ZeroNokami ] - Exiting due to activation status check failure.\033[0m")
         return
-   
+  
     FileManager._load_config()
-   
+  
     if not globals().get("command_8_configured", False):
         globals()["check_exec_enable"] = "1"
         globals()["lua_script_template"] = 'task.spawn(function()local a=tostring(game.Players.LocalPlayer.UserId)..".main"while true do pcall(function()if isfile(a)then delfile(a)end; local success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)while not success do task.wait(1); success,err=pcall(function()writefile(a,"https://discord.gg/FcEGmkNDDe")end)end end) task.wait(10) end end)'
@@ -1584,18 +1570,18 @@ def main():
         ]
         UIManager.create_dynamic_menu(menu_options)
         setup_type = input("\033[1;93m[ ZeroNokami ] - Enter command: \033[0m")
-       
+      
         if setup_type == "1":
             try:
                 FileManager.setup_user_ids()
-               
+              
                 globals()["accounts"] = FileManager.load_accounts()
-               
+              
                 if not globals()["accounts"]:
                     print("\033[1;31m[ ZeroNokami ] - Setup ran, but no User IDs were found. Cannot start Auto Rejoin.\033[0m")
                     input("\033[1;32mPress Enter to return...\033[0m")
                     continue
-               
+              
                 server_links = FileManager.load_server_links()
                 globals()["_uid_"] = {}
                 if not server_links:
@@ -1685,7 +1671,7 @@ def main():
             except Exception as e:
                 print(f"\033[1;31m[ ZeroNokami ] - Error: {e}\033[0m")
                 Utilities.log_error(f"Setup error: {e}")
-           
+          
             input("\033[1;32mPress Enter to return...\033[0m")
             continue
         elif setup_type == "3":
@@ -1733,21 +1719,4 @@ def main():
                             print(f"\033[1;36m[ ZeroNokami ] - Removed {config_file} for Online Check.\033[0m")
                         except Exception as e:
                             print(f"\033[1;31m[ ZeroNokami ] - Error removing {config_file}: {e}\033[0m")
-                            Utilities.log_error(f"Error removing {config_file}: {e}")
-                globals()["command_8_configured"] = True
-                FileManager.save_config()
-                print("\033[1;32m[ ZeroNokami ] - Check method configuration saved.\033[0m")
-            except Exception as e:
-                print(f"\033[1;31m[ ZeroNokami ] - Error setting up check method: {e}\033[0m")
-                Utilities.log_error(f"Check method setup error: {e}")
-                input("\033[1;32mPress Enter to return...\033[0m")
-                continue
-            input("\033[1;32mPress Enter to return...\033[0m")
-            continue
-if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        print(f"\033[1;31m[ ZeroNokami  ] - Error during initialization: {e}\033[0m")
-        Utilities.log_error(f"Initialization error: {e}")
-        raise
+                           
