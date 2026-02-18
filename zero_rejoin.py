@@ -1,4 +1,4 @@
-＃ Tool Rejoin Zero Manager By ZeroNokami | Bug Fixes By ZeroNokami | Hữu Tình dz
+# Tool Rejoin Zero Manager By ZeroNokami | Bug Fixes By ZeroNokami | Hữu Tình dz
 ＃ An Giang
 ＃ Bà Rịa – Vũng Tàu
 ＃ Bắc Giang
