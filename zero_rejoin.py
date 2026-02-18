@@ -1,4 +1,5 @@
 # Tool Rejoin Zero Manager By ZeroNokami | Bug Fixes By ZeroNokami | Hữu Tình dz
+# Vietnam Is Number One cali tuổi lồn
 # HTC Dream
 # HTC Magic
 # HTC Hero
