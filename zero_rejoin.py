@@ -1484,6 +1484,7 @@ SERVER_LINKS_FILE = "ZeroNokami/server-links.txt"
 ACCOUNTS_FILE = "ZeroNokami/accounts.txt"
 CONFIG_FILE = "ZeroNokami/config.json"
 version = "3.6.7 | By ZeroNokami | Bug Fixes By ZeroNokami"
+
 class Utilities:
     @staticmethod
     def collect_garbage():
@@ -2817,7 +2818,6 @@ def main():
         UIManager.print_header(version)
         FileManager.check_and_create_cookie_file()
         menu_options = [
-            "Exit",
             "Start Auto Rejoin (Auto setup User ID)",
             "Setup Game ID for Packages",
             "Auto Login with Cookie",
@@ -2825,12 +2825,13 @@ def main():
             "Auto Check User Setup",
             "Configure Package Prefix",
             "Auto Change Android ID",
-            "Auto Execute Script Setup"
+            "Auto Execute Script Setup",
+            "Exit"
         ]
         UIManager.create_dynamic_menu(menu_options)
         setup_type = input("\033[1;93m[ ZeroNokami ] - Enter command: \033[0m")
        
-        if setup_type == "2":
+        if setup_type == "1":
             try:
                 FileManager.setup_user_ids()
                
@@ -2873,7 +2874,7 @@ def main():
                 Utilities.log_error(f"Setup error: {e}")
                 input("\033[1;32mPress Enter to return...\033[0m")
                 continue
-        if setup_type == "3":
+        if setup_type == "2":
             try:
                 print("\033[1;32m[ ZeroNokami ] - Auto Setup User IDs from appStorage.json...\033[0m")
                 packages = RobloxManager.get_roblox_packages()
@@ -2933,15 +2934,15 @@ def main():
            
             input("\033[1;32mPress Enter to return...\033[0m")
             continue
-        elif setup_type == "4":
+        elif setup_type == "3":
             RobloxManager.inject_cookies_and_appstorage()
             input("\033[1;32m\nPress Enter to exit...\033[0m")
             continue
-        elif setup_type == "5":
+        elif setup_type == "4":
             WebhookManager.setup_webhook()
             input("\033[1;32m\nPress Enter to exit...\033[0m")
             continue
-        elif setup_type == "6":
+        elif setup_type == "5":
             try:
                 print("\033[1;35m[1]\033[1;32m Executor Check\033[0m \033[1;35m[2]\033[1;36m Online Check\033[0m")
                 config_choice = input("\033[1;93m[ ZeroNokami ] - Select check method (1-2, 'q' to keep default): \033[0m").strip()
@@ -2989,7 +2990,7 @@ def main():
                 continue
             input("\033[1;32mPress Enter to return...\033[0m")
             continue
-        elif setup_type == "7":
+        elif setup_type == "6":
             try:
                 current_prefix = globals().get("package_prefix", "com.roblox")
                 print(f"\033[1;32m[ ZeroNokami ] - Current package prefix: {current_prefix}\033[0m")
@@ -3008,7 +3009,7 @@ def main():
                 continue
             input("\033[1;32mPress Enter to return...\033[0m")
             continue
-        elif setup_type == "8":
+        elif setup_type == "7":
             global auto_android_id_enabled, auto_android_id_thread, auto_android_id_value
             if not auto_android_id_enabled:
                 android_id = input("\033[1;93m[ ZeroNokami ] - Enter Android ID to spam set: \033[0m").strip()
@@ -3027,14 +3028,9 @@ def main():
                 print("\033[1;31m[ ZeroNokami ] - Auto change Android ID disabled.\033[0m")
             input("\033[1;32mPress Enter to return...\033[0m")
             continue
-        elif setup_type == "9":
+        elif setup_type == "8":
             auto_execute_setup()
             input("\033[1;32mPress Enter to return...\033[0m")
-            continue
-        elif setup_type == "1":
-            print(f"\n{Fore.YELLOW}[ZeroNokami] Đang thoát tool...{Style.RESET_ALL}")
-            time.sleep(1)
-            sys.exit(0)
             continue
 if __name__ == "__main__":
     try:
