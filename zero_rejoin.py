@@ -1,5 +1,950 @@
-# Tool Rejoin Zero Manager By ZeroNokami | Bug Fixes By ZeroNokami | Hữu Tình dz 
+# Tool Rejoin Zero Manager By ZeroNokami | Bug Fixes By ZeroNokami | Hữu Tình dz
+# 36
+# 67
+＃ An Giang
+＃ Bà Rịa – Vũng Tàu
+＃ Bắc Giang
+＃ Bắc Kạn
+＃ Bạc Liêu
+＃ Bắc Ninh
+＃ Bến Tre
+＃ Bình Định
+＃ Bình Dương
+＃ Bình Phước
+＃ Bình Thuận
+＃ Cà Mau
+＃ Cần Thơ
+＃ Cao Bằng
+＃ Đà Nẵng
+＃ Đắk Lắk
+＃ Đắk Nông
+＃ Điện Biên
+＃ Đồng Nai
+＃ Đồng Tháp
+＃ Gia Lai
+＃ Hà Giang
+＃ Hà Nam
+＃ Hà Nội
+＃ Hà Tĩnh
+＃ Hải Dương
+＃ Hải Phòng
+＃ Hậu Giang
+＃ Hòa Bình
+＃ Hưng Yên
+＃ Khánh Hòa
+＃ Kiên Giang
+＃ Kon Tum
+＃ Lai Châu
+＃ Lâm Đồng
+＃ Lạng Sơn
+＃ Lào Cai
+＃ Long An
+＃ Nam Định
+＃ Nghệ An
+＃ Ninh Bình
+＃ Ninh Thuận
+＃ Phú Thọ
+＃ Phú Yên
+＃ Quảng Bình
+＃ Quảng Nam
+＃ Quảng Ngãi
+＃ Quảng Ninh
+＃ Quảng Trị
+＃ Sóc Trăng
+＃ Sơn La
+＃ Tây Ninh
+＃ Thái Bình
+＃ Thái Nguyên
+＃ Thanh Hóa
+＃ Thừa Thiên Huế
+＃ Tiền Giang
+＃ TP Hồ Chí Minh
+＃ Trà Vinh
+＃ Tuyên Quang
+＃ Vĩnh Long
+＃ Vĩnh Phúc
+＃ Yên Bái
+# HTC Dream
+# HTC Magic
+# HTC Hero
+# HTC Desire
+# HTC Desire HD
+# HTC Desire Z
+# HTC One
+# HTC One X
+# HTC One M7
+# HTC One M8
+# HTC One M9
+# HTC U11
+# HTC U12+
+# Samsung Galaxy i7500
+# Samsung Galaxy S
+# Samsung Galaxy S2
+# Samsung Galaxy S3
+# Samsung Galaxy S4
+# Samsung Galaxy S5
+# Samsung Galaxy S6
+# Samsung Galaxy S6 Edge
+# Samsung Galaxy S7
+# Samsung Galaxy S7 Edge
+# Samsung Galaxy S8
+# Samsung Galaxy S8+
+# Samsung Galaxy S9
+# Samsung Galaxy S9+
+# Samsung Galaxy S10e
+# Samsung Galaxy S10
+# Samsung Galaxy S10+
+# Samsung Galaxy S20
+# Samsung Galaxy S20+
+# Samsung Galaxy S20 Ultra
+# Samsung Galaxy S21
+# Samsung Galaxy S21+
+# Samsung Galaxy S21 Ultra
+# Samsung Galaxy S22
+# Samsung Galaxy S22+
+# Samsung Galaxy S22 Ultra
+# Samsung Galaxy S23
+# Samsung Galaxy S23+
+# Samsung Galaxy S23 Ultra
+# Samsung Galaxy S24
+# Samsung Galaxy S24+
+# Samsung Galaxy S24 Ultra
+# Samsung Galaxy Note
+# Samsung Galaxy Note 2
+# Samsung Galaxy Note 3
+# Samsung Galaxy Note 4
+# Samsung Galaxy Note 5
+# Samsung Galaxy Note 7
+# Samsung Galaxy Note 8
+# Samsung Galaxy Note 9
+# Samsung Galaxy Note 10
+# Samsung Galaxy Note 10+
+# Samsung Galaxy Note 20
+# Samsung Galaxy Note 20 Ultra
+# Samsung Galaxy A3
+# Samsung Galaxy A5
+# Samsung Galaxy A7
+# Samsung Galaxy A8
+# Samsung Galaxy A8+
+# Samsung Galaxy A10
+# Samsung Galaxy A10s
+# Samsung Galaxy A11
+# Samsung Galaxy A12
+# Samsung Galaxy A13
+# Samsung Galaxy A14
+# Samsung Galaxy A15
+# Samsung Galaxy A20
+# Samsung Galaxy A20s
+# Samsung Galaxy A21
+# Samsung Galaxy A21s
+# Samsung Galaxy A22
+# Samsung Galaxy A22 5G
+# Samsung Galaxy A23
+# Samsung Galaxy A24
+# Samsung Galaxy A30
+# Samsung Galaxy A30s
+# Samsung Galaxy A31
+# Samsung Galaxy A32
+# Samsung Galaxy A32 5G
+# Samsung Galaxy A33 5G
+# Samsung Galaxy A34 5G
+# Samsung Galaxy A35 5G
+# Samsung Galaxy A50
+# Samsung Galaxy A50s
+# Samsung Galaxy A51
+# Samsung Galaxy A52
+# Samsung Galaxy A52 5G
+# Samsung Galaxy A52s 5G
+# Samsung Galaxy A53 5G
+# Samsung Galaxy A54 5G
+# Samsung Galaxy A55 5G
+# Samsung Galaxy A70
+# Samsung Galaxy A71
+# Samsung Galaxy A72
+# Samsung Galaxy A73 5G
+# Samsung Galaxy Z Fold
+# Samsung Galaxy Z Fold2
+# Samsung Galaxy Z Fold3
+# Samsung Galaxy Z Fold4
+# Samsung Galaxy Z Fold5
+# Samsung Galaxy Z Flip
+# Samsung Galaxy Z Flip3
+# Samsung Galaxy Z Flip4
+# Samsung Galaxy Z Flip5
+# Xiaomi Mi 1
+# Xiaomi Mi 2
+# Xiaomi Mi 3
+# Xiaomi Mi 4
+# Xiaomi Mi 5
+# Xiaomi Mi 6
+# Xiaomi Mi 8
+# Xiaomi Mi 9
+# Xiaomi Mi 10
+# Xiaomi Mi 10 Pro
+# Xiaomi Mi 11
+# Xiaomi Mi 11 Ultra
+# Xiaomi 12
+# Xiaomi 12 Pro
+# Xiaomi 12T
+# Xiaomi 12T Pro
+# Xiaomi 13
+# Xiaomi 13 Pro
+# Xiaomi 13 Ultra
+# Xiaomi 14
+# Xiaomi 14 Pro
+# Xiaomi 14 Ultra
+# Redmi 1
+# Redmi 2
+# Redmi 3
+# Redmi 4
+# Redmi 4A
+# Redmi 5
+# Redmi 5A
+# Redmi 6
+# Redmi 6A
+# Redmi 7
+# Redmi 7A
+# Redmi 8
+# Redmi 8A
+# Redmi 9
+# Redmi 9A
+# Redmi 9C
+# Redmi 10
+# Redmi 10A
+# Redmi 11
+# Redmi 12
+# Redmi 13C
+# Redmi Note
+# Redmi Note 2
+# Redmi Note 3
+# Redmi Note 4
+# Redmi Note 5
+# Redmi Note 6 Pro
+# Redmi Note 7
+# Redmi Note 8
+# Redmi Note 8 Pro
+# Redmi Note 9
+# Redmi Note 9 Pro
+# Redmi Note 10
+# Redmi Note 10 Pro
+# Redmi Note 11
+# Redmi Note 11 Pro
+# Redmi Note 12
+# Redmi Note 12 Pro
+# Redmi Note 12 Pro+
+# Redmi Note 13
+# Redmi Note 13 Pro
+# Redmi Note 13 Pro+
+# POCO F1
+# POCO F2 Pro
+# POCO F3
+# POCO F4
+# POCO F5
+# POCO X3 NFC
+# POCO X3 Pro
+# POCO X4 Pro
+# POCO X5
+# POCO X6
+# POCO X6 Pro
+# POCO M3
+# POCO M4 Pro
+# POCO M5
+# OPPO Find 5
+# OPPO Find 7
+# OPPO Find X
+# OPPO Find X2
+# OPPO Find X3 Pro
+# OPPO Find X5 Pro
+# OPPO Find X6 Pro
+# OPPO Find X7 Ultra
+# OPPO Reno
+# OPPO Reno2
+# OPPO Reno3
+# OPPO Reno4
+# OPPO Reno5
+# OPPO Reno6
+# OPPO Reno7
+# OPPO Reno8
+# OPPO Reno9
+# OPPO Reno10
+# OPPO Reno11
+# OPPO A3s
+# OPPO A5
+# OPPO A7
+# OPPO A9
+# OPPO A16
+# OPPO A17
+# OPPO A18
+# OPPO A31
+# OPPO A54
+# OPPO A57
+# OPPO A58
+# OPPO A78
+# OPPO A98
+# vivo X20
+# vivo X21
+# vivo X50
+# vivo X60
+# vivo X70
+# vivo X80
+# vivo X90
+# vivo X100
+# vivo V5
+# vivo V7
+# vivo V9
+# vivo V11
+# vivo V15
+# vivo V17
+# vivo V19
+# vivo V21
+# vivo V23
+# vivo V25
+# vivo V27
+# vivo V29
+# vivo Y11
+# vivo Y12
+# vivo Y15
+# vivo Y17
+# vivo Y20
+# vivo Y21
+# vivo Y22
+# vivo Y36
+# realme 1
+# realme 2
+# realme 3
+# realme 5
+# realme 6
+# realme 7
+# realme 8
+# realme 9
+# realme 10
+# realme 11
+# realme 12
+# realme X
+# realme X2
+# realme X3
+# realme GT
+# realme GT Neo
+# realme GT Neo2
+# realme GT Neo3
+# realme GT5
+# realme GT5 Pro
+# realme C1
+# realme C2
+# realme C3
+# realme C11
+# realme C15
+# realme C25
+# realme C30
+# realme C35
+# realme C55
+# Google Nexus One
+# Google Nexus S
+# Galaxy Nexus
+# Nexus 4
+# Nexus 5
+# Nexus 5X
+# Nexus 6
+# Nexus 6P
+# Google Pixel
+# Google Pixel XL
+# Google Pixel 2
+# Google Pixel 2 XL
+# Google Pixel 3
+# Google Pixel 3 XL
+# Google Pixel 4
+# Google Pixel 4 XL
+# Google Pixel 5
+# Google Pixel 5a
+# Google Pixel 6
+# Google Pixel 6 Pro
+# Google Pixel 6a
+# Google Pixel 7
+# Google Pixel 7 Pro
+# Google Pixel 7a
+# Google Pixel 8
+# Google Pixel 8 Pro
+# OnePlus One
+# OnePlus 2
+# OnePlus 3
+# OnePlus 3T
+# OnePlus 5
+# OnePlus 5T
+# OnePlus 6
+# OnePlus 6T
+# OnePlus 7
+# OnePlus 7 Pro
+# OnePlus 7T
+# OnePlus 8
+# OnePlus 8 Pro
+# OnePlus 9
+# OnePlus 9 Pro
+# OnePlus 10 Pro
+# OnePlus 11
+# OnePlus 12
+# OnePlus Nord
+# OnePlus Nord 2
+# OnePlus Nord 3
+# OnePlus Nord CE
+# OnePlus Nord CE 2
+# OnePlus Nord CE 3 Lite
+# Sony Xperia Z
+# Sony Xperia Z1
+# Sony Xperia Z2
+# Sony Xperia Z3
+# Sony Xperia Z5
+# Sony Xperia XZ
+# Sony Xperia XZ1
+# Sony Xperia XZ2
+# Sony Xperia 1
+# Sony Xperia 1 II
+# Sony Xperia 1 III
+# Sony Xperia 1 IV
+# Sony Xperia 1 V
+# Sony Xperia 5
+# Sony Xperia 5 II
+# Sony Xperia 5 III
+# Sony Xperia 5 IV
+# Sony Xperia 5 V
+# Sony Xperia 10
+# Sony Xperia 10 II
+# Sony Xperia 10 III
+# Sony Xperia 10 IV
+# Sony Xperia 10 V
+# ASUS Zenfone 2
+# ASUS Zenfone 3
+# ASUS Zenfone 4
+# ASUS Zenfone 5
+# ASUS Zenfone 6
+# ASUS Zenfone 7
+# ASUS Zenfone 8
+# ASUS Zenfone 9
+# ASUS Zenfone 10
+# ASUS ROG Phone
+# ASUS ROG Phone 2
+# ASUS ROG Phone 3
+# ASUS ROG Phone 5
+# ASUS ROG Phone 6
+# ASUS ROG Phone 7
+# ASUS ROG Phone 8
+# Motorola Moto G
+# Motorola Moto G2
+# Motorola Moto G3
+# Motorola Moto G4
+# Motorola Moto G5
+# Motorola Moto G6
+# Motorola Moto G7
+# Motorola Moto G8
+# Motorola Moto G9
+# Motorola Moto G10
+# Motorola Moto G20
+# Motorola Moto G30
+# Motorola Moto G50
+# Motorola Edge
+# Motorola Edge 20
+# Motorola Edge 30
+# Motorola Edge 40
+# Motorola Edge 40 Pro
+# Huawei P6
+# Huawei P7
+# Huawei P8
+# Huawei P9
+# Huawei P10
+# Huawei P20
+# Huawei P30
+# Huawei P40
+# Huawei P50
+# Huawei P60
+# Huawei Mate 10
+# Huawei Mate 20
+# Huawei Mate 30
+# Huawei Mate 40
+# Huawei Mate 50
+# Huawei Mate 60
+# Huawei Nova 3
+# Huawei Nova 5
+# Huawei Nova 7
+# Huawei Nova 9
+# Huawei Nova 11
+# Honor 8
+# Honor 9
+# Honor 10
+# Honor 20
+# Honor 30
+# Honor 50
+# Honor 70
+# Honor 90
+# Honor Magic
+# Honor Magic2
+# Honor Magic4
+# Honor Magic5
+# Honor Magic6
+# Nokia 1
+# Nokia 2
+# Nokia 2.1
+# Nokia 3
+# Nokia 3.1
+# Nokia 5
+# Nokia 5.1
+# Nokia 6
+# Nokia 6.1
+# Nokia 7
+# Nokia 7.1
+# Nokia 8
+# Nokia 8.1
+# Nokia 8.3 5G
+# Nokia 9 PureView
+# Nokia G10
+# Nokia G20
+# Nokia G21
+# Nokia G42
+# Nokia X10
+# Nokia X20
+# Nokia XR20
+# Nokia C1
+# Nokia C2
+# Nokia C3
+# Nokia C10
+# Nokia C20
+# Nokia C30
+# Tecno Camon 15
+# Tecno Camon 16
+# Tecno Camon 17
+# Tecno Camon 18
+# Tecno Camon 19
+# Tecno Camon 20
+# Tecno Spark 5
+# Tecno Spark 6
+# Tecno Spark 7
+# Tecno Spark 8
+# Tecno Spark 9
+# Tecno Spark 10
+# Tecno Phantom X
+# Tecno Phantom X2
+# Infinix Hot 8
+# Infinix Hot 9
+# Infinix Hot 10
+# Infinix Hot 11
+# Infinix Hot 12
+# Infinix Hot 20
+# Infinix Note 7
+# Infinix Note 8
+# Infinix Note 10
+# Infinix Note 11
+# Infinix Note 12
+# Infinix Note 30
+# Infinix Zero 8
+# Infinix Zero 20
+# ZTE Axon 7
+# ZTE Axon 10 Pro
+# ZTE Axon 20 5G
+# ZTE Axon 30
+# ZTE Axon 40 Ultra
+# Nubia Z17
+# Nubia Z18
+# Nubia Z20
+# Nubia Z30 Pro
+# Nubia Z50
+# RedMagic 5G
+# RedMagic 6
+# RedMagic 7
+# RedMagic 8 Pro
+# Lenovo K5
+# Lenovo K6
+# Lenovo K8
+# Lenovo Z5
+# Lenovo Z6 Pro
+# Lenovo Legion Phone Duel
+# Lenovo Legion Phone Duel 2
+# Meizu M5
+# Meizu M6
+# Meizu M8
+# Meizu 16
+# Meizu 16s
+# Meizu 17
+# Meizu 18
+# Meizu 20
+# Blackview BV5500
+# Blackview BV6600
+# Blackview BV8800
+# Doogee S40
+# Doogee S58 Pro
+# Doogee S88 Pro
+# Ulefone Armor 7
+# Ulefone Armor 10
+# Ulefone Armor 17 Pro
+# iPhone
+# iPhone 3G
+# iPhone 3GS
+# iPhone 4
+# iPhone 4s
+# iPhone 5
+# iPhone 5c
+# iPhone 5s
+# iPhone 6
+# iPhone 6 Plus
+# iPhone 6s
+# iPhone 6s Plus
+# iPhone SE (2016)
+# iPhone 7
+# iPhone 7 Plus
+# iPhone 8
+# iPhone 8 Plus
+# iPhone X
+# iPhone XR
+# iPhone XS
+# iPhone XS Max
+# iPhone 11
+# iPhone 11 Pro
+# iPhone 11 Pro Max
+# iPhone SE (2020)
+# iPhone 12 mini
+# iPhone 12
+# iPhone 12 Pro
+# iPhone 12 Pro Max
+# iPhone 13 mini
+# iPhone 13
+# iPhone 13 Pro
+# iPhone 13 Pro Max
+# iPhone SE (2022)
+# iPhone 14
+# iPhone 14 Plus
+# iPhone 14 Pro
+# iPhone 14 Pro Max
+# iPhone 15
+# iPhone 15 Plus
+# iPhone 15 Pro
+# iPhone 15 Pro Max
+# iPhone 17
+# iPhone 17 Air
+# iPhone 17 Pro
+# iPhone 17 Pro Max
+# iPad
+# iPad 2
+# iPad 3
+# iPad 4
+# iPad (5th generation)
+# iPad (6th generation)
+# iPad (7th generation)
+# iPad (8th generation)
+# iPad (9th generation)
+# iPad (10th generation)
+# iPad Air
+# iPad Air 2
+# iPad Air (3rd generation)
+# iPad Air (4th generation)
+# iPad Air (5th generation)
+# iPad Pro 9.7-inch
+# iPad Pro 10.5-inch
+# iPad Pro 11-inch
+# iPad Pro 12.9-inch
+# iPad mini
+# iPad mini 2
+# iPad mini 3
+# iPad mini 4
+# iPad mini (5th generation)
+# iPad mini (6th generation)
+# Apple Watch Series 0
+# Apple Watch Series 1
+# Apple Watch Series 2
+# Apple Watch Series 3
+# Apple Watch Series 4
+# Apple Watch Series 5
+# Apple Watch Series 6
+# Apple Watch Series 7
+# Apple Watch Series 8
+# Apple Watch Series 9
+# Apple Watch Ultra
+# Apple Watch Ultra 2
+# Apple TV (2nd generation)
+# Apple TV (3rd generation)
+# Apple TV HD
+# Apple TV 4K (1st generation)
+# Apple TV 4K (2nd generation)
+# Apple TV 4K (3rd generation)
+# iPod touch (1st generation)
+# iPod touch (2nd generation)
+# iPod touch (3rd generation)
+# iPod touch (4th generation)
+# iPod touch (5th generation)
+# iPod touch (6th generation)
+# iPod touch (7th generation)
+# iPad Pro 11-inch (2nd generation)
+# iPad Pro 11-inch (3rd generation)
+# iPad Pro 11-inch (4th generation)
+# iPad Pro 12.9-inch (2nd generation)
+# iPad Pro 12.9-inch (3rd generation)
+# iPad Pro 12.9-inch (4th generation)
+# iPad Pro 12.9-inch (5th generation)
+# iPad Pro 12.9-inch (6th generation)
+# iPad Air (M1)
+# iPad Air (M2)
+# iPad mini (7th generation)
+# iPad (11th generation)
+# iPhone 16
+# iPhone 16 Plus
+# iPhone 16 Pro
+# iPhone 16 Pro Max
+# iPhone 16e
+# iPhone 17 mini
+# iPhone 17 SE
+# iPhone 17 Ultra
+# Apple Watch SE
+# Apple Watch SE (2nd generation)
+# Apple Watch Series 10
+# Apple Watch Ultra 3
+# Apple Watch X
+# Apple TV 4K (4th generation)
+# Apple Vision Pro
+# Apple Vision Pro (2nd generation)
+# Windows 1.0
+# Windows 2.0
+# Windows 2.1
+# Windows 3.0
+# Windows 3.1
+# Windows 3.11
+# Windows 95
+# Windows 98
+# Windows 98 Second Edition
+# Windows Me
+# Windows 2000
+# Windows XP
+# Windows XP Professional x64
+# Windows Vista
+# Windows 7
+# Windows 8
+# Windows 8.1
+# Windows 10
+# Windows 10 Home
+# Windows 10 Pro
+# Windows 10 Enterprise
+# Windows 10 Education
+# Windows 11
+# Windows 11 Home
+# Windows 11 Pro
+# Windows 11 Pro for Workstations
+# Windows 11 Enterprise
+# Windows 11 Education
+# Windows Server 2003
+# Windows Server 2008
+# Windows Server 2008 R2
+# Windows Server 2012
+# Windows Server 2012 R2
+# Windows Server 2016
+# Windows Server 2019
+# Windows Server 2022
+# Windows Server 2025
+# Windows RT
+# Windows CE
+# Windows Embedded
+# Windows Mobile 5
+# Windows Mobile 6
+# Windows Phone 7
+# Windows Phone 8
+# Windows Phone 8.1
+# Windows 10 Mobile
+# Windows 3.2
+# Windows for Workgroups 3.1
+# Windows for Workgroups 3.11
+# Windows NT 3.1
+# Windows NT 3.5
+# Windows NT 3.51
+# Windows NT 4.0
+# Windows XP Starter Edition
+# Windows XP Media Center Edition
+# Windows XP Tablet PC Edition
+# Windows Vista Starter
+# Windows Vista Home Basic
+# Windows Vista Home Premium
+# Windows Vista Business
+# Windows Vista Ultimate
+# Windows 7 Starter
+# Windows 7 Home Basic
+# Windows 7 Home Premium
+# Windows 7 Professional
+# Windows 7 Ultimate
+# Windows 7 Enterprise
+# Windows 8 Core
+# Windows 8 Pro
+# Windows 8 Enterprise
+# Windows 8.1 RT
+# Windows 8.1 Pro
+# Windows 8.1 Enterprise
+# Windows 10 S
+# Windows 10 Pro Education
+# Windows 10 Pro for Workstations
+# Windows 10 Enterprise LTSC
+# Windows 10 IoT Enterprise
+# Windows 11 SE
+# Windows 11 IoT Enterprise
+# Windows 11 Enterprise LTSC
+# Windows Server 2000
+# Windows Server 2003 R2
+# Windows Server 2012 Essentials
+# Windows Server 2016 Essentials
+# Windows Server 2019 Essentials
+# Windows Server 2022 Essentials
+# Windows Home Server
+# Windows Home Server 2011
+# Windows MultiPoint Server
+# Windows Fundamentals for Legacy PCs
+# Windows Thin PC
+# Windows Embedded Compact
+# Windows Embedded Standard 7
+# Windows Embedded 8 Standard
+# Windows Embedded 8.1 Industry
+# Windows IoT Core
+# redfinger
+# ldcloud
+# onething cloud phone
+# vphonegaga
+# x8 sandbox
+# vmos cloud
+# bluestacks x
+# bluestacks cloud
+# now.gg
+# netboom
+# genymotion cloud
+# google firebase test lab
+# samsung remote test lab
+# huawei cloud phone
+# alibaba cloud phone
+# tencent cloud phone
+# amazon appstream 2.0
+# aws ec2 android emulator
+# microsoft azure android vm
+# oracle cloud android vm
+# ibm cloud android instance
+# shadow pc
+# paperspace cloud pc
+# parsec cloud pc
+# geforce now
+# boosteroid
+# rainway
+# appetize.io
+# kamatera android server
+# vultr android vm
+# digitalocean android vm
+# linode android vm
+# scaleway android instance
+# upcloud android server
+# hetzner android vm
+# ovh cloud android vm
+# rackspace android hosting
+# heroku android container
+# android x86 cloud vm
+# nox cloud phone
+# memu cloud android
+# phoenix os cloud
+# remotestacks android cloud
+# anydesk remote android
+# teamviewer remote android
+# chrome remote desktop android
+# air droid remote device
+# vps android emulator
+# cloudmosa puffin cloud phone
+# lecloud phone
+# ucloud android phone
+# bignox cloud
+# tencent wecloud phone
+# china mobile cloud phone
+# china telecom cloud phone
+# china unicom cloud phone
+# kingsoft cloud phone
+# baidu cloud phone
+# 360 cloud phone
+# jd cloud phone
+# qiniu cloud android
+# gcore cloud android
+# hostwinds android vps
+# contabo android vm
+# ionos android server
+# interserver android vps
+# cloudcone android vm
+# dedipath android vps
+# lightnode android vps
+# evolus cloud android
+# sakura cloud android
+# navicosoft android vps
+# aeza android vps
+# time4vps android vm
+# hostinger android vps
+# a2 hosting android vps
+# dreamhost android vm
+# fastcomet android vps
+# cloudzy android vps
+# cherry servers android
+# serverspace android vm
+# v2 cloud android pc
+# shellngn android vps
+# exabytes android cloud
+# alwyzon android vps
+# floki cloud android
+# arubacloud android vm
+# simply cloud android
+# gridscale android vm
+# hostus android vps
+# buyvm android vps
+# virtono android vps
+# ultahost android vps
+# mono vm android
+# hostodo android vps
+# racknerd android vps
+# greencloud vps android
+# hudson valley host android
+# skysilk android vps
+# virmach android vps
+# dediserve android vm
+# firstbyte android vps
+# cloudfanatic android vps
+# serverwala android vps
+# accunet android cloud
+# colohouse android vps
+# massivegrid android vm
+# simplyhosting android vps
+# hoststage android vps
+# elitemvm android vps
+# navisite android cloud
+# zare android vps
+# crowncloud android vps
+# hostslim android vps
+# quickpacket android vps
+# oneprovider android vm
+# ihor android vps
+# hosthatch android vps
+# bluevps android vm
+# servers australia android vps
+# hivelocity android vps
+# zenlayer android cloud
+# edgeuno android vm
+# hostkey android vps
+# ishosting android vps
+# regxa android vps
+# databarn android vps
+# velia android cloud
+# hyperexpert android vps
+#(a + b)^2 = a^2 + 2ab + b^2
+#(a - b)^2 = a^2 - 2ab + b^2
+#a^2 - b^2 = (a - b)(a + b)
+#(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3
+#(a - b)^3 = a^3 - 3a^2b + 3ab^2 - b^3
+#a^3 + b^3 = (a + b)(a^2 - ab + b^2)
+#a^3 - b^3 = (a - b)(a^2 + ab + b^2)
+#(a + b + c)^2 = a^2 + b^2 + c^2 + 2ab + 2ac + 2bc
+#(a - b - c)^2 = a^2 + b^2 + c^2 - 2ab - 2ac + 2bc
+#(a + b)^4 = a^4 + 4a^3b + 6a^2b^2 + 4ab^3 + b^4
+#(a - b)^4 = a^4 - 4a^3b + 6a^2b^2 - 4ab^3 + b^4
+#(x + y)(x - y) = x^2 - y^2
+#(x + a)(x + b) = x^2 + (a + b)x + ab
+#(x - a)(x - b) = x^2 - (a + b)x + ab
+#(x + a)(x - a) = x^2 - a^2
+#(a + b)^2 - (a - b)^2 = 4ab
+#(a + b)^2 + (a - b)^2 = 2(a^2 + b^2)
 # Tool Rejoin Zero Manager là một công cụ cực kỳ ấn tượng, chuyên rejoin các game trên Roblox một cách nhanh chóng, ổn định và gần như không có độ trễ, mang đến trải nghiệm mượt mà cho người dùng trong mọi tình huống. Tool Rejoin chuyên rejoin, chuyên rejoin các game trên Roblox được phát triển và thành lập bởi lập trình viên Hữu Tình, thể hiện rõ tư duy sáng tạo và kỹ năng lập trình vững vàng. Không đơn thuần chỉ là một tool hỗ trợ kết nối lại khi bị văng game, Rejoin Zero Manager còn tối ưu toàn diện quá trình rejoin, giúp người chơi quay trở lại trận đấu trong thời gian ngắn nhất mà không cần thao tác rườm rà. Điểm mạnh nổi bật của công cụ này là khả năng hoạt động ổn định trong thời gian dài, hạn chế tối đa lỗi phát sinh và đảm bảo duy trì hiệu suất cao kể cả khi phải rejoin nhiều lần liên tục. Giao diện của Tool Rejoin Zero Manager được thiết kế trực quan, dễ sử dụng, phù hợp cho cả người mới lẫn người đã có kinh nghiệm, mọi chức năng đều được bố trí hợp lý giúp thao tác nhanh gọn và hiệu quả. Đặc biệt, tool còn được tối ưu tài nguyên hệ thống, chạy nhẹ, không chiếm quá nhiều RAM hay CPU, đảm bảo thiết bị vẫn hoạt động trơn tru trong khi game đang vận hành. Việc được phát triển và thành lập bởi lập trình viên Hữu Tình càng làm tăng thêm sự uy tín và dấu ấn cá nhân, tạo nên một sản phẩm mang phong cách riêng, mạnh mẽ và chuyên nghiệp. Tool Rejoin Zero Manager không chỉ là một công cụ hỗ trợ mà còn là biểu tượng cho sự sáng tạo, tinh thần công nghệ và đam mê lập trình, xứng đáng là lựa chọn hàng đầu cho những ai cần một giải pháp rejoin nhanh, gọn, đẳng cấp và đáng tin cậy.
+# Tool Rejoin Zero Manager is an extremely impressive tool, specializing in rejoining games on Roblox quickly, stably, and with virtually no latency, delivering a smooth experience for users in every situation. Tool Rejoin specializes in rejoining—truly specializes in rejoining games on Roblox—and was developed and founded by programmer Hữu Tình, clearly demonstrating creative thinking and strong programming skills. It is not merely a simple utility for reconnecting after being disconnected from a game; Rejoin Zero Manager comprehensively optimizes the entire rejoin process, helping players return to their match in the shortest possible time without complicated or unnecessary steps. One of the tool’s most outstanding strengths is its ability to operate reliably over extended periods, minimizing potential errors and maintaining high performance even when rejoining multiple times in succession. The interface of Tool Rejoin Zero Manager is designed to be intuitive and user-friendly, making it suitable for both beginners and experienced users alike, with all features logically arranged for fast and efficient operation. In addition, the tool is optimized for system resources, running lightly without consuming excessive RAM or CPU power, ensuring that the device continues to perform smoothly while the game is running. Being developed and founded by programmer Hữu Tình further enhances its credibility and distinct personal touch, resulting in a product that carries a unique, powerful, and professional style. Tool Rejoin Zero Manager is not just a support tool, but also a symbol of creativity, technological spirit, and passion for programming, truly deserving its place as a top choice for anyone seeking a fast, streamlined, high-class, and reliable rejoin solution
+# Tool Rejoin Zero Manager é uma ferramenta extremamente impressionante, especializada em reconectar jogos no Roblox de forma rápida, estável e praticamente sem latência, proporcionando uma experiência suave para os usuários em qualquer situação. Tool Rejoin é especialista em reconectar — realmente especialista em reconectar jogos no Roblox — e foi desenvolvido e fundado pelo programador Hữu Tình, demonstrando claramente pensamento criativo e habilidades sólidas de programação. Não se trata apenas de um utilitário simples para reconectar após ser desconectado do jogo; o Rejoin Zero Manager otimiza de maneira completa todo o processo de reentrada, ajudando os jogadores a retornarem à partida no menor tempo possível, sem etapas complicadas ou desnecessárias. Um dos maiores pontos fortes da ferramenta é sua capacidade de operar de forma confiável por longos períodos, minimizando possíveis erros e mantendo alto desempenho mesmo ao reconectar várias vezes seguidas. A interface do Tool Rejoin Zero Manager foi projetada para ser intuitiva e fácil de usar, sendo adequada tanto para iniciantes quanto para usuários experientes, com todas as funções organizadas de maneira lógica para uma operação rápida e eficiente. Além disso, a ferramenta é otimizada para o uso de recursos do sistema, funcionando de forma leve, sem consumir excesso de RAM ou CPU, garantindo que o dispositivo continue operando de maneira fluida enquanto o jogo está em execução. O fato de ter sido desenvolvido e fundado pelo programador Hữu Tình aumenta ainda mais sua credibilidade e identidade própria, resultando em um produto com estilo único, forte e profissional. Tool Rejoin Zero Manager não é apenas uma ferramenta de suporte, mas também um símbolo de criatividade, espírito tecnológico e paixão pela programação, merecendo plenamente seu lugar como uma das principais escolhas para quem busca uma solução de reconexão rápida, eficiente, sofisticada e confiável
+# Ang Tool Rejoin Zero Manager ay isang napaka-kahanga-hangang tool na dalubhasa sa pag-rejoin ng mga laro sa Roblox nang mabilis, matatag, at halos walang latency, na nagbibigay ng maayos at tuloy-tuloy na karanasan para sa mga user sa anumang sitwasyon. Ang Tool Rejoin ay tunay na eksperto sa pag-rejoin—talagang nakatuon sa pag-rejoin ng mga laro sa Roblox—at ito ay binuo at itinatag ng programmer na si Hữu Tình, na malinaw na nagpapakita ng malikhaing pag-iisip at matibay na kasanayan sa programming. Hindi lamang ito isang simpleng utility para makakonekta muli kapag na-disconnect sa laro; ang Rejoin Zero Manager ay komprehensibong ino-optimize ang buong proseso ng pagbalik, tinutulungan ang mga manlalaro na makabalik sa kanilang laban sa pinakamaikling oras nang walang komplikado o hindi kailangang hakbang. Isa sa pinakamalalakas na katangian ng tool na ito ay ang kakayahan nitong gumana nang maaasahan sa mahabang panahon, binabawasan ang mga posibleng error at pinananatili ang mataas na performance kahit paulit-ulit na nagre-rejoin. Ang interface ng Tool Rejoin Zero Manager ay dinisenyo upang maging intuitive at madaling gamitin, na angkop para sa parehong mga baguhan at bihasang user, at ang lahat ng feature ay maayos na nakaayos para sa mabilis at episyenteng operasyon. Bukod dito, ang tool ay optimized sa paggamit ng system resources, tumatakbo nang magaan at hindi kumokonsumo ng labis na RAM o CPU, kaya’t nananatiling maayos ang takbo ng device habang umaandar ang laro. Ang katotohanang ito ay binuo at itinatag ng programmer na si Hữu Tình ay lalo pang nagpapataas ng kredibilidad at natatanging identidad nito, na nagreresulta sa isang produktong may kakaiba, malakas, at propesyonal na estilo. Ang Tool Rejoin Zero Manager ay hindi lamang isang support tool kundi isa ring simbolo ng pagkamalikhain, espiritu ng teknolohiya, at pagmamahal sa programming, tunay na karapat-dapat maging pangunahing pagpipilian para sa sinumang naghahanap ng mabilis, maayos, sopistikado, at mapagkakatiwalaang solusyon sa pag-rejoin
+# Tool Rejoin Zero Manager es una herramienta extremadamente impresionante, especializada en volver a unirse a juegos en Roblox de manera rápida, estable y con prácticamente cero latencia, brindando una experiencia fluida para los usuarios en cualquier situación. Tool Rejoin es verdaderamente un experto en rejoin—realmente enfocado en volver a conectarse a los juegos en Roblox—y fue desarrollado y fundado por el programador Hữu Tình, demostrando claramente pensamiento creativo y sólidas habilidades de programación. No se trata solo de una utilidad simple para reconectarse después de ser expulsado del juego; Rejoin Zero Manager optimiza de forma integral todo el proceso de reingreso, ayudando a los jugadores a regresar a su partida en el menor tiempo posible sin pasos complicados o innecesarios. Una de las mayores fortalezas de esta herramienta es su capacidad para funcionar de manera confiable durante largos períodos, minimizando posibles errores y manteniendo un alto rendimiento incluso al volver a unirse varias veces consecutivas. La interfaz de Tool Rejoin Zero Manager está diseñada para ser intuitiva y fácil de usar, adecuada tanto para principiantes como para usuarios experimentados, con todas las funciones organizadas de manera lógica para una operación rápida y eficiente. Además, la herramienta está optimizada para el uso de los recursos del sistema, funcionando de manera ligera sin consumir demasiada RAM o CPU, garantizando que el dispositivo continúe operando con fluidez mientras el juego está en ejecución. El hecho de haber sido desarrollada y fundada por el programador Hữu Tình aumenta aún más su credibilidad y su identidad distintiva, dando como resultado un producto con un estilo único, fuerte y profesional. Tool Rejoin Zero Manager no es solo una herramienta de apoyo, sino también un símbolo de creatividad, espíritu tecnológico y pasión por la programación, mereciendo plenamente su lugar como una de las mejores opciones para quienes buscan una solución de rejoin rápida, eficiente, sofisticada y confiable
 # Tình sinh ra để khác biệt chứ không phải để hòa lẫn
 # Tình bước đi là tạo ra dấu ấn
 # Tình im lặng nhưng khí chất nói thay tất cả
