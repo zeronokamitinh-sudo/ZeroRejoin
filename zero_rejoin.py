@@ -1,7 +1,3 @@
-# Tool Rejoin Zero Manager By ZeroNokami | Bug Fixes By ZeroNokami | Hữu Tình dz
-# 36
-# 67
-＃ An Giang
 ＃ Bà Rịa – Vũng Tàu
 ＃ Bắc Giang
 ＃ Bắc Kạn
