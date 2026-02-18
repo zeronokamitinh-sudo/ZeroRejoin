@@ -2817,6 +2817,7 @@ def main():
         UIManager.print_header(version)
         FileManager.check_and_create_cookie_file()
         menu_options = [
+            "Exit",
             "Start Auto Rejoin (Auto setup User ID)",
             "Setup Game ID for Packages",
             "Auto Login with Cookie",
@@ -3029,6 +3030,11 @@ def main():
         elif setup_type == "8":
             auto_execute_setup()
             input("\033[1;32mPress Enter to return...\033[0m")
+            continue
+        elif setup_type == "0":
+            print(f"\n{Fore.YELLOW}[ZeroNokami] Đang thoát tool...{Style.RESET_ALL}")
+            time.sleep(1)
+            sys.exit(0)
             continue
 if __name__ == "__main__":
     try:
