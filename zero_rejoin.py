@@ -1343,11 +1343,48 @@ class ExecutorManager:
                         console.print(f"[bold yellow][ ZeroNokami ] - No valid path found to write custom Lua script for {executor_name}[/bold yellow]")
 class Runner:
     @staticmethod
+    def select_active_accounts(server_links):
+        """Prompt user to select which accounts will be active before launching."""
+        print(f"\033[1;36m[ ZeroNokami ] - The Account Will Be Active:\033[0m")
+        
+        selected_links = []
+        for package_name, server_link in server_links:
+            user_id = globals()["_user_"].get(package_name, "Unknown")
+            if user_id == "Unknown":
+                print(f"\033[1;31m[ ZeroNokami ] - No UserID found for {package_name}, skipping...\033[0m")
+                continue
+            
+            username = FileManager.get_username(user_id)
+            
+            while True:
+                choice = input(f"\033[1;36m[ ZeroNokami ] - Account {username} (y/n): \033[0m").strip().lower()
+                if choice in ("y", "n"):
+                    break
+                print(f"\033[1;31m[ ZeroNokami ] - Invalid input, please enter y or n.\033[0m")
+            
+            if choice == "y":
+                selected_links.append((package_name, server_link))
+            else:
+                print(f"\033[1;33m[ ZeroNokami ] - Skipping {username} ({package_name})\033[0m")
+        
+        return selected_links
+
+    @staticmethod
     def launch_package_sequentially(server_links):
+        # --- Account selection phase ---
+        active_links = Runner.select_active_accounts(server_links)
+        
+        if not active_links:
+            print(f"\033[1;31m[ ZeroNokami ] - No accounts selected, aborting launch.\033[0m")
+            return
+
+        # --- (Your existing time setup / other prompts go here before launch) ---
+
+        # --- Original launch logic (preserved exactly) ---
         next_package_event = Event()
         next_package_event.set()
         packages_to_launch = []
-        for package_name, server_link in server_links:
+        for package_name, server_link in active_links:
             user_id = globals()["_user_"].get(package_name, "Unknown")
             if user_id == "Unknown":
                 print(f"\033[1;31m[ ZeroNokami ] - No UserID found for {package_name}, skipping...\033[0m")
