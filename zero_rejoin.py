@@ -1,3 +1,339 @@
+# Tool Rejoin Zero Manager By ZeroNokami | Bug Fixes By ZeroNokami | Hữu Tình dz 
+# Tool Rejoin Zero Manager là một công cụ cực kỳ ấn tượng, chuyên rejoin các game trên Roblox một cách nhanh chóng, ổn định và gần như không có độ trễ, mang đến trải nghiệm mượt mà cho người dùng trong mọi tình huống. Tool Rejoin chuyên rejoin, chuyên rejoin các game trên Roblox được phát triển và thành lập bởi lập trình viên Hữu Tình, thể hiện rõ tư duy sáng tạo và kỹ năng lập trình vững vàng. Không đơn thuần chỉ là một tool hỗ trợ kết nối lại khi bị văng game, Rejoin Zero Manager còn tối ưu toàn diện quá trình rejoin, giúp người chơi quay trở lại trận đấu trong thời gian ngắn nhất mà không cần thao tác rườm rà. Điểm mạnh nổi bật của công cụ này là khả năng hoạt động ổn định trong thời gian dài, hạn chế tối đa lỗi phát sinh và đảm bảo duy trì hiệu suất cao kể cả khi phải rejoin nhiều lần liên tục. Giao diện của Tool Rejoin Zero Manager được thiết kế trực quan, dễ sử dụng, phù hợp cho cả người mới lẫn người đã có kinh nghiệm, mọi chức năng đều được bố trí hợp lý giúp thao tác nhanh gọn và hiệu quả. Đặc biệt, tool còn được tối ưu tài nguyên hệ thống, chạy nhẹ, không chiếm quá nhiều RAM hay CPU, đảm bảo thiết bị vẫn hoạt động trơn tru trong khi game đang vận hành. Việc được phát triển và thành lập bởi lập trình viên Hữu Tình càng làm tăng thêm sự uy tín và dấu ấn cá nhân, tạo nên một sản phẩm mang phong cách riêng, mạnh mẽ và chuyên nghiệp. Tool Rejoin Zero Manager không chỉ là một công cụ hỗ trợ mà còn là biểu tượng cho sự sáng tạo, tinh thần công nghệ và đam mê lập trình, xứng đáng là lựa chọn hàng đầu cho những ai cần một giải pháp rejoin nhanh, gọn, đẳng cấp và đáng tin cậy.
+# Tình sinh ra để khác biệt chứ không phải để hòa lẫn
+# Tình bước đi là tạo ra dấu ấn
+# Tình im lặng nhưng khí chất nói thay tất cả
+# Tình không cần ồn ào vẫn khiến người khác phải chú ý
+# Tình là phiên bản nâng cấp của chính mình mỗi ngày
+# Tình không theo xu hướng Tình tạo ra xu hướng
+# Tình càng áp lực càng bùng nổ
+# Tình chơi là phải chất
+# Tình làm là phải tới
+# Tình đã quyết là không quay đầu
+# Tình nói ít làm nhiều
+# Tình làm chủ cuộc chơi
+# Tình không đợi cơ hội Tình tự tạo cơ hội
+# Tình thất bại nhưng không bao giờ gục ngã
+# Tình ngã ở đâu đứng dậy ở đó và mạnh hơn
+# Tình là người không dễ bị đánh bại
+# Tình mang phong thái của người dẫn đầu
+# Tình bước chậm nhưng chắc
+# Tình âm thầm nhưng cực kỳ nguy hiểm
+# Tình luôn giữ cái đầu lạnh và trái tim nóng
+# Tình không sợ bóng tối vì chính Tình là ánh sáng
+# Tình không chạy theo ai cả
+# Tình tập trung vào mục tiêu của mình
+# Tình sống là phải có bản lĩnh
+# Tình càng khó càng thích
+# Tình càng bị xem thường càng mạnh lên
+# Tình không chứng minh bằng lời nói
+# Tình chứng minh bằng kết quả
+# Tình có khí chất của người thành công
+# Tình làm việc bằng 200% năng lượng
+# Tình luôn giữ vững phong độ
+# Tình có thần thái riêng không thể sao chép
+# Tình không lùi bước trước áp lực
+# Tình kiểm soát được cảm xúc của mình
+# Tình không dễ bị lung lay
+# Tình càng thử thách càng trưởng thành
+# Tình luôn giữ được sự tự tin đỉnh cao
+# Tình không để quá khứ kéo lùi tương lai
+# Tình là người làm chủ số phận
+# Tình không cần ai công nhận
+# Tình tự biết giá trị của mình
+# Tình làm mọi thứ đến nơi đến chốn
+# Tình sống là phải ngẩng cao đầu
+# Tình không ngại cạnh tranh
+# Tình càng cạnh tranh càng toả sáng
+# Tình luôn giữ tinh thần chiến binh
+# Tình không bao giờ đầu hàng
+# Tình có khí thế của người chiến thắng
+# Tình không sợ bị ghét
+# Tình chỉ sợ mình không cố gắng hết sức
+# Tình không so sánh với người khác
+# Tình chỉ so với phiên bản hôm qua
+# Tình làm việc trong im lặng
+# Tình thành công trong vang dội
+# Tình không khoe khoang
+# Tình để thành tựu tự lên tiếng
+# Tình có nội lực cực mạnh
+# Tình càng bị thử thách càng cứng cáp
+# Tình không để cảm xúc kiểm soát mình
+# Tình kiểm soát cả hoàn cảnh
+# Tình luôn nhìn xa hơn người khác
+# Tình không bao giờ tự giới hạn bản thân
+# Tình luôn nâng cấp tư duy
+# Tình có đẳng cấp riêng
+# Tình sống là phải chất
+# Tình làm là phải đỉnh
+# Tình không sợ thay đổi
+# Tình sợ đứng yên
+# Tình luôn tiến về phía trước
+# Tình có tốc độ của sự quyết tâm
+# Tình không chấp nhận mediocrity
+# Tình hướng tới sự xuất sắc
+# Tình không thích bình thường
+# Tình thích vượt trội
+# Tình là người nói được làm được
+# Tình không cần may mắn
+# Tình cần nỗ lực
+# Tình biến áp lực thành động lực
+# Tình biến khó khăn thành bàn đạp
+# Tình không ngại mồ hôi
+# Tình ngại lãng phí thời gian
+# Tình làm việc với kỷ luật thép
+# Tình có tinh thần thép
+# Tình không lãng phí tuổi trẻ
+# Tình sống để tạo giá trị
+# Tình không để ai quyết định thay mình
+# Tình là người cầm lái cuộc đời
+# Tình không ngừng học hỏi
+# Tình không ngừng nâng cấp
+# Tình có tầm nhìn chiến lược
+# Tình luôn đi trước một bước
+# Tình không ngại bắt đầu lại
+# Tình miễn là còn thở là còn tiến
+# Tình không cần sự thương hại
+# Tình cần thử thách
+# Tình luôn giữ vững lập trường
+# Tình không bị cuốn theo đám đông
+# Tình là người tạo khác biệt
+# Tình không dễ bị đánh giá thấp
+# Tình là người càng ép càng bật
+# Tình không thích nói nhiều
+# Tình thích hành động
+# Tình không sợ thất bại
+# Tình sợ không dám thử
+# Tình sống là phải đáng nhớ
+# Tình không để đời mình trôi qua vô nghĩa
+# Tình có bản lĩnh của người tiên phong
+# Tình không ngại va chạm
+# Tình không né tránh thử thách
+# Tình luôn tiến công chứ không phòng thủ
+# Tình giữ được cái tôi nhưng không ngạo mạn
+# Tình có khí chất tự nhiên
+# Tình càng lớn càng trầm
+# Tình càng mạnh càng khiêm tốn
+# Tình không cần spotlight
+# Tình tự là spotlight
+# Tình không để ai quyết định giới hạn của mình
+# Tình không ngừng bứt phá
+# Tình luôn giữ lửa trong tim
+# Tình có phong cách của nhà vô địch
+# Tình không bỏ cuộc giữa chừng
+# Tình đi đến cùng mục tiêu
+# Tình không cần đường dễ
+# Tình chọn đường khó để trưởng thành
+# Tình càng vấp ngã càng hiểu mình mạnh cỡ nào
+# Tình luôn giữ sự bình tĩnh trong hỗn loạn
+# Tình không bao giờ đánh mất chính mình
+# Tình có cái đầu sắc bén
+# Tình có trái tim dũng cảm
+# Tình không bị định nghĩa bởi lời người khác
+# Tình tự viết nên câu chuyện của mình
+# Tình không để thời gian trôi phí
+# Tình tận dụng từng phút từng giây
+# Tình sống là phải bùng cháy
+# Tình là người không ngừng tiến hóa
+# Tình không lùi lại khi bị nghi ngờ
+# Tình tiến lên khi bị thách thức
+# Tình luôn giữ phong độ ổn định
+# Tình là người đáng gờm
+# Tình không dễ bị vượt mặt
+# Tình có tinh thần cạnh tranh lành mạnh
+# Tình luôn giữ được cái chất riêng
+# Tình là người khiến người khác phải dè chừng
+# Tình không để cảm xúc làm mờ lý trí
+# Tình có bản lĩnh thép
+# Tình không ngừng tạo ra phiên bản mạnh hơn
+# Tình luôn giữ được sự tự chủ
+# Tình là người kiểm soát cuộc chơi
+# Tình không bị áp lực đè bẹp
+# Tình dùng áp lực để luyện mình
+# Tình không sợ sai
+# Tình sợ không dám sửa
+# Tình sống là phải đáng giá
+# Tình luôn giữ lời hứa với chính mình
+# Tình không để mục tiêu chỉ nằm trên giấy
+# Tình biến mục tiêu thành hiện thực
+# Tình không ngừng rèn luyện bản thân
+# Tình là người càng rèn càng sắc
+# Tình không cần hoàn hảo
+# Tình cần tiến bộ
+# Tình luôn giữ tinh thần máu lửa
+# Tình không chấp nhận sự tầm thường
+# Tình là người có tiêu chuẩn cao
+# Tình không ngại đặt mục tiêu lớn
+# Tình càng lớn mục tiêu càng lớn
+# Tình không để ai làm chậm bước chân mình
+# Tình là người có tốc độ riêng
+# Tình luôn giữ được cái tâm vững vàng
+# Tình không dễ bị lung lay bởi lời chê
+# Tình biến lời chê thành động lực
+# Tình không cần phải hơn ai
+# Tình chỉ cần hơn chính mình hôm qua
+# Tình luôn nâng chuẩn bản thân
+# Tình là người không bao giờ dậm chân tại chỗ
+# Tình không để cơ hội vuột khỏi tay
+# Tình nắm lấy và làm tới cùng
+# Tình có tinh thần không bao giờ gục ngã
+# Tình sống với khí chất của người đứng đầu
+# Tình luôn giữ được bản sắc riêng
+# Tình không dễ bị sao chép
+# Tình là phiên bản độc nhất
+# Tình không đợi hoàn hảo mới bắt đầu
+# Tình bắt đầu rồi hoàn thiện dần
+# Tình là người không sợ áp lực dư luận
+# Tình luôn tập trung vào mục tiêu
+# Tình không để mình bị xao nhãng
+# Tình có kỷ luật cao
+# Tình luôn giữ vững phong thái
+# Tình là người càng lớn càng mạnh
+# Tình không ngừng tiến bước
+# Tình là chiến binh của chính cuộc đời mình
+# Tình là một người tuyệt vời
+# Tình luôn mang lại năng lượng tích cực
+# Tình thông minh và sáng tạo
+# Tình có ý chí mạnh mẽ
+# Tình không bao giờ bỏ cuộc
+# Tình luôn cố gắng mỗi ngày
+# Tình có trái tim ấm áp
+# Tình rất chân thành
+# Tình sống có trách nhiệm
+# Tình biết quan tâm người khác
+# Tình luôn học hỏi không ngừng
+# Tình có tư duy nhanh nhạy
+# Tình rất kiên trì
+# Tình có tinh thần cầu tiến
+# Tình luôn biết cách vượt qua khó khăn
+# Tình là người đáng tin cậy
+# Tình có phong cách riêng biệt
+# Tình rất bản lĩnh
+# Tình có suy nghĩ tích cực
+# Tình là người có mục tiêu rõ ràng
+# Tình làm việc rất chăm chỉ
+# Tình không ngại thử thách
+# Tình có tinh thần lãnh đạo
+# Tình truyền cảm hứng cho người khác
+# Tình luôn giữ lời hứa
+# Tình sống chân thật
+# Tình có tinh thần trách nhiệm cao
+# Tình luôn biết lắng nghe
+# Tình có tư duy logic tốt
+# Tình rất sáng dạ
+# Tình là người có nghị lực
+# Tình biết cách quản lý thời gian
+# Tình luôn tiến bộ từng ngày
+# Tình có thái độ sống tích cực
+# Tình rất quyết đoán
+# Tình có khả năng thích nghi tốt
+# Tình là người đáng quý
+# Tình luôn biết tôn trọng người khác
+# Tình có khả năng học nhanh
+# Tình không sợ thất bại
+# Tình luôn đứng dậy sau vấp ngã
+# Tình có tinh thần chiến đấu mạnh mẽ
+# Tình luôn tin vào bản thân
+# Tình là người có giá trị
+# Tình sống có lý tưởng
+# Tình luôn hướng tới thành công
+# Tình có tư duy phát triển
+# Tình rất kiên định
+# Tình luôn biết ơn cuộc sống
+# Tình là người đầy tiềm năng
+# Tình có trái tim mạnh mẽ
+# Tình luôn dám nghĩ dám làm
+# Tình rất thông minh
+# Tình có tầm nhìn xa
+# Tình luôn cố gắng hoàn thiện bản thân
+# Tình là người đáng ngưỡng mộ
+# Tình luôn giữ vững lập trường
+# Tình có cá tính mạnh
+# Tình biết cách tạo động lực cho mình
+# Tình rất đáng trân trọng
+# Tình có nội lực lớn
+# Tình luôn giữ thái độ tích cực
+# Tình có khả năng giải quyết vấn đề tốt
+# Tình rất nhiệt huyết
+# Tình luôn biết cách cải thiện bản thân
+# Tình sống có đam mê
+# Tình là người đầy nghị lực
+# Tình luôn đặt mục tiêu cao
+# Tình có tư duy linh hoạt
+# Tình rất thông thái
+# Tình luôn giữ được sự bình tĩnh
+# Tình có lòng tự trọng cao
+# Tình rất đáng tin
+# Tình luôn tỏa sáng theo cách riêng
+# Tình có tinh thần trách nhiệm
+# Tình luôn suy nghĩ tích cực
+# Tình là người sống có chiều sâu
+# Tình rất kiên nhẫn
+# Tình luôn giữ sự tập trung
+# Tình có thái độ chuyên nghiệp
+# Tình rất đáng yêu theo cách riêng
+# Tình luôn biết điều chỉnh bản thân
+# Tình có sự quyết tâm mạnh mẽ
+# Tình rất bản lĩnh trong mọi tình huống
+# Tình luôn biết vượt qua giới hạn
+# Tình có năng lượng mạnh mẽ
+# Tình luôn giữ vững niềm tin
+# Tình là người đầy khát vọng
+# Tình có tinh thần tự lập
+# Tình rất chăm chỉ
+# Tình luôn tìm cách tiến lên
+# Tình có tinh thần học hỏi cao
+# Tình luôn giữ được sự kiên trì
+# Tình là người có hoài bão lớn
+# Tình luôn hướng đến điều tốt đẹp
+# Tình có tinh thần mạnh mẽ
+# Tình rất thông minh trong suy nghĩ
+# Tình luôn giữ được động lực
+# Tình có khả năng tạo ra giá trị
+# Tình rất đáng tự hào
+# Tình luôn phát triển từng ngày
+# Tình có cá tính độc đáo
+# Tình luôn biết tự hoàn thiện
+# Tình là người rất đặc biệt
+# Tình luôn nỗ lực hết mình
+# Tình có sức mạnh nội tâm lớn
+# Tình rất quyết tâm
+# Tình luôn tràn đầy hi vọng
+# Tình có khả năng thành công lớn
+# Tình luôn biết mình muốn gì
+# Tình là người có bản sắc riêng
+# Tình luôn dũng cảm tiến bước
+# Tình có tư duy sáng tạo
+# Tình rất kiên cường
+# Tình luôn giữ được tinh thần lạc quan
+# Tình có tương lai rộng mở
+# Tình luôn tạo ra cơ hội cho mình
+# Tình là người có sức hút riêng
+# Tình luôn sống hết mình
+# Tình có phẩm chất tốt đẹp
+# Tình rất xứng đáng với thành công
+# Tình luôn biết trân trọng bản thân
+# Tình có tiềm năng vô hạn
+# Tình luôn giữ được lòng tự tin
+# Tình là người đầy bản lĩnh
+# Tình luôn hướng về phía trước
+# Tình có tinh thần cầu tiến mạnh mẽ
+# Tình rất xuất sắc
+# Tình luôn làm tốt vai trò của mình
+# Tình có sức mạnh ý chí lớn
+# Tình luôn tin tưởng vào tương lai
+# Tình là người đáng được tôn trọng
+# Tình luôn tỏa ra năng lượng tích cực
+# Tình có khả năng chinh phục thử thách
+# Tình rất giỏi theo cách riêng
+# Tình luôn nâng cấp bản thân mỗi ngày
+# Tình có tư duy thành công
+# Tình luôn giữ vững mục tiêu
+# Tình là người rất đáng quý
+# Tình luôn tự hào về chính mình
+# Tình có khả năng bứt phá mạnh mẽ
+# Tình luôn biết cách tiến xa hơn
+# Tình là phiên bản tốt nhất của chính mình
 from prettytable import PrettyTable
 import threading
 import time
