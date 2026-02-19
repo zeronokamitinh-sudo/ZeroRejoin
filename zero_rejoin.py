@@ -1484,7 +1484,6 @@ SERVER_LINKS_FILE = "ZeroNokami/server-links.txt"
 ACCOUNTS_FILE = "ZeroNokami/accounts.txt"
 CONFIG_FILE = "ZeroNokami/config.json"
 version = "3.6.7 | By ZeroNokami | Bug Fixes By ZeroNokami"
-
 class Utilities:
     @staticmethod
     def collect_garbage():
@@ -2825,8 +2824,7 @@ def main():
             "Auto Check User Setup",
             "Configure Package Prefix",
             "Auto Change Android ID",
-            "Auto Execute Script Setup",
-            "Exit"
+            "Auto Execute Script Setup"
         ]
         UIManager.create_dynamic_menu(menu_options)
         setup_type = input("\033[1;93m[ ZeroNokami ] - Enter command: \033[0m")
